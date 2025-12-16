@@ -1,0 +1,119 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "scicat_widget"
+version = "0.0.0"
+readme = "README.md"
+description = "SciCat dataset widget"
+requires-python = ">=3.11"
+dependencies = ["anywidget>=0.9.21"]
+
+[dependency-groups]
+dev = [
+    {include-group = "format"},
+    {include-group = "lint"},
+    "anywidget[dev]",
+    "ipykernel>=7.1.0",
+    "jupyterlab>=4.5.0",
+    "mypy >= 1.17",
+    "ruff",
+    "watchfiles"
+]
+format = [
+    "ruff >= 0.14.3",
+    "mdformat >= 0.7.22",
+    "nbstripout >= 0.8.1",
+]
+lint = [
+    "codespell >= 2.4",
+    "ruff >= 0.14.3",
+]
+
+# TODO
+[project.urls]
+# "Documentation" = "https://scicatproject.github.io/scitacean"
+# "Bug Tracker" = "https://github.com/SciCatProject/scitacean/issues"
+# "Source" = "https://github.com/SciCatProject/scitacean"
+
+[tool.hatch.build]
+only-packages = true
+artifacts = ["src/anytest/static/*"]
+
+[tool.hatch.build.hooks.jupyter-builder]
+build-function = "hatch_jupyter_builder.npm_builder"
+ensured-targets = ["src/anytest/static/widget.js"]
+skip-if-exists = ["src/anytest/static/widget.js"]
+dependencies = ["hatch-jupyter-builder>=0.5.0"]
+
+[tool.hatch.build.hooks.jupyter-builder.build-kwargs]
+npm = "npm"
+build_cmd = "build"
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = "tests"
+addopts = """
+--strict-config
+--strict-markers
+-ra
+-v
+"""
+filterwarnings = [
+    "error",
+]
+
+[tool.mypy]
+plugins = "pydantic.mypy"
+mypy_path = "src"
+exclude = ["docs/conf.py", "venv", ".venv"]
+ignore_missing_imports = true
+enable_error_code = [
+    "ignore-without-code",
+    "redundant-expr",
+    "truthy-bool",
+]
+strict = true
+show_error_codes = true
+warn_unreachable = true
+
+[tool.pydantic-mypy]
+init_forbid_extra = true
+init_typed = true
+warn_required_dynamic_aliases = true
+
+[tool.ruff]
+line-length = 88
+extend-include = ["*.ipynb"]
+extend-exclude = [".*", "__pycache__", "build", "dist", "venv"]
+
+[tool.ruff.lint]
+select = ["B", "C4", "D", "DTZ", "E", "F", "G", "I", "FBT003", "FURB", "PERF", "PGH", "PT", "PYI", "RUF", "S", "T20", "UP", "W"]
+ignore = [
+    "D105",  # most magic methods don't need docstrings as their purpose is always the same
+    "E741", "E742", "E743",  # do not use names ‘l’, ‘O’, or ‘I’; they are not a problem with a proper font
+    # Conflict with ruff format, see
+    # https://docs.astral.sh/ruff/formatter/#conflicting-lint-rules
+    "COM812", "COM819", "D206", "D300", "E111", "E114", "E117", "ISC001", "ISC002", "Q000", "Q001", "Q002", "Q003", "W191",
+]
+fixable = ["B010", "I001", "PT001", "RUF022"]
+isort.known-first-party = ["scicat_widget"]
+pydocstyle.convention = "numpy"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S101",  # asserts are fine in tests
+    "D10",  # no docstrings required in tests
+]
+"docs/*" = [
+    "D", "E402", "F811", "F841", "RUF015", "S101", "T201",
+]
+"*.ipynb" = ["I"]
+"docs/conf.py" = ["D10"]
+
+[tool.codespell]
+ignore-words-list = [
+    "socio-economic",
+]
+skip = "build,docs/generated,html"

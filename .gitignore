@@ -1,0 +1,51 @@
+# PythonBuild artifacts
+build
+dist
+node_modules
+*.egg-info
+.DS_Store
+src/*/_static
+
+# Documentation
+html
+docs/generated
+
+# Caches
+*.ipynb_checkpoints
+__pycache__/
+.virtual_documents
+.hypothesis
+.pytest_cache
+.ruff_cache
+.mypy_cache
+
+# Editor config / caches
+.idea/
+.vscode/
+.vs/
+
+# Environments
+Pipfile
+venv
+.venv
+
+# Ontologies
+*.jsonld
+
+# Data files
+*.data
+*.dat
+*.csv
+*.xye
+*.h5
+*.hdf5
+*.hdf
+*.nxs
+*.raw
+*.cif
+*.rcif
+*.ort
+*.zip
+*.sqw
+*.nxspe
+*.mtz
