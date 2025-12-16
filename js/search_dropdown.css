@@ -15,6 +15,10 @@
         outline: none;
     }
 
+    &:focus {
+        border-color: var(--jp-input-active-border-color);
+    }
+
     &::selection {
         background-color: var(--jp-editor-selected-focused-background);
     }
