@@ -1,59 +1,49 @@
 .cean-dropdown {
     position: relative;
-    z-index: 100;
 }
 
 .cean-dropdown-search {
     display: block;
-    /*font-family: inherit;*/
-    /*font-size: 1rem;*/
-    /*font-weight: 400;*/
-    /*line-height: 1.5;*/
-    width: 80%;
+    width: 100%;
     box-sizing: border-box;
-    /*height: auto;*/
-    /*padding: 0.65rem 1.25rem;*/
     border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
     color: var(--jp-content-font-color1);
-    /*background-clip: padding-box;*/
     background-color: var(--jp-cell-editor-background);
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &::selection {
+        background-color: var(--jp-editor-selected-focused-background);
+    }
 }
 
 .cean-dropdown-list {
     position: absolute;
-    /*display: none;*/
+    display: none;
     top: 100%;
     left: 0;
-    width: 80%;
+    width: 100%;
+    box-sizing: border-box;
     z-index: 100;
-    /*border-radius: 0.25rem;*/
-    background-color: white;
-    border: 1px solid black;
-    /*transition: all 0.3s ease-in-out;*/
+    border: var(--jp-border-width) solid var(--jp-input-border-color);
+    border-top: none;
+    background-color: var(--jp-notebook-select-background);
+    padding: 0 0.5rem 0 0.5rem;
 
     max-height: 16rem;
     overflow-y: scroll;
     overflow-x: hidden;
 }
 
-.cean-dropdown-menu-item {
-    font-family: inherit;
-    font-size: 1rem;
-    font-weight: normal;
-    line-height: inherit;
+.cean-dropdown-item {
     cursor: pointer;
     user-select: none;
-    padding: 0.65rem 1.25rem;
-    background-color: white;
-    transition: all 0.2s ease-in-out;
+    padding: 0.1rem;
 
-    /*& .is-select, & .is-select:hover {*/
-    /*    color: white;*/
-    /*    background-color: blue;*/
-    /*}*/
-
-    /*&:hover {*/
-    /*    color: black;*/
-    /*    background-color: gray;*/
-    /*}*/
+    &:hover {
+        background-color: var(--jp-editor-selected-background);
+    }
 }

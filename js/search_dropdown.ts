@@ -108,7 +108,6 @@ function setFromList(item: HTMLDivElement, search: HTMLInputElement, underlying_
 function filterItems(search: HTMLInputElement, list: HTMLElement) {
     const searchString = search.value.toLowerCase();
 
-    console.log("Filtering", searchString);
     list.querySelectorAll("div.cean-dropdown-item").forEach((item: Element) => {
         const el = item as HTMLDivElement;
         if (el.textContent.toLowerCase().includes(searchString)) {
