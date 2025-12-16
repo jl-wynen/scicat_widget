@@ -122,4 +122,4 @@ pydocstyle.convention = "numpy"
 ignore-words-list = [
     "socio-economic",
 ]
-skip = "build,docs/generated,html"
+skip = "build,docs/generated,html,package.lock"
