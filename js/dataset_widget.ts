@@ -135,23 +135,38 @@ function render({model, el}: RenderProps<WidgetModel>) {
     const inputWidgets = new Map<string, BaseValueWidget<any>>();
 
     const columns = document.createElement("div");
-    const left = document.createElement("div");
-    const right = document.createElement("div");
+    columns.classList.add("cean-two-columns");
 
     const nameInput = new StringInputWidget();
     const nameLabel = createLabelFor(nameInput.element, "Name:");
     inputWidgets.set("name", nameInput);
-    left.appendChild(nameLabel);
-    right.appendChild(nameInput.element);
+    columns.appendChild(nameLabel);
+    columns.appendChild(nameInput.element);
 
     const descriptionInput = new StringInputWidget(true);
-    const descriptionLabel = createLabelFor(nameInput.element, "Description:");
+    const descriptionLabel = createLabelFor(descriptionInput.element, "Description:");
     inputWidgets.set("description", descriptionInput);
-    left.appendChild(descriptionLabel);
-    right.appendChild(descriptionInput.element);
+    columns.appendChild(descriptionLabel);
+    columns.appendChild(descriptionInput.element);
 
-    columns.appendChild(left);
-    columns.appendChild(right);
+    const proposalInput = new StringInputWidget();
+    const proposalLabel = createLabelFor(proposalInput.element, "Proposal:");
+    inputWidgets.set("proposal", proposalInput);
+    columns.appendChild(proposalLabel);
+    columns.appendChild(proposalInput.element);
+
+    const instrumentInput = new StringInputWidget();
+    const instrumentLabel = createLabelFor(instrumentInput.element, "Instrument:");
+    inputWidgets.set("instrument", instrumentInput);
+    columns.appendChild(instrumentLabel);
+    columns.appendChild(instrumentInput.element);
+
+    const creationLocationInput = new StringInputWidget();
+    const creationLocationLabel = createLabelFor(creationLocationInput.element, "creationLocation:");
+    inputWidgets.set("Creation Location", creationLocationInput);
+    columns.appendChild(creationLocationLabel);
+    columns.appendChild(creationLocationInput.element);
+
     container.appendChild(columns);
 
     model.on("msg:custom", msg => {

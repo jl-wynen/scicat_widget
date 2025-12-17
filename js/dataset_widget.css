@@ -1,3 +1,23 @@
+.cean-two-columns {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+
+    & > *:nth-child(2n) {
+        /* Ensure the right column can shrink and inputs don't overflow */
+        min-width: 0;
+    }
+
+    & input,
+    & select,
+    & textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
 textarea {
     resize: vertical;
 }
