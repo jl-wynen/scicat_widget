@@ -141,18 +141,21 @@ function render({model, el}: RenderProps<WidgetModel>) {
     const nameLabel = createLabelFor(nameInput.element, "Name:");
     inputWidgets.set("name", nameInput);
     columns.appendChild(nameLabel);
+    nameInput.element.classList.add("cean-span-3");
     columns.appendChild(nameInput.element);
 
     const descriptionInput = new StringInputWidget(true);
     const descriptionLabel = createLabelFor(descriptionInput.element, "Description:");
     inputWidgets.set("description", descriptionInput);
     columns.appendChild(descriptionLabel);
+    descriptionInput.element.classList.add("cean-span-3");
     columns.appendChild(descriptionInput.element);
 
     const proposalInput = new StringInputWidget();
     const proposalLabel = createLabelFor(proposalInput.element, "Proposal:");
     inputWidgets.set("proposal", proposalInput);
     columns.appendChild(proposalLabel);
+    proposalInput.element.classList.add("cean-span-3");
     columns.appendChild(proposalInput.element);
 
     const instrumentInput = new StringInputWidget();
