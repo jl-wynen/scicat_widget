@@ -26,7 +26,26 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
     }
 
     get value(): Array<Person> | null {
-        return null; // TODO
+        const persons: Array<Person> = [];
+
+        this.ownerWidgets.forEach((widgets) => {
+            const nameVal = widgets.name?.value;
+            const emailVal = widgets.email?.value;
+            const orcidVal = widgets.orcid?.value ?? null;
+
+            if (nameVal === null && emailVal === null && orcidVal === null) return;
+
+            const person: Person = {
+                name: nameVal ?? "",
+                email: emailVal ?? "",
+            };
+            if (orcidVal !== null && orcidVal !== undefined && orcidVal !== "") {
+                person.orcid = orcidVal;
+            }
+            persons.push(person);
+        });
+
+        return persons.length > 0 ? persons : null;
     }
 }
 
@@ -40,12 +59,19 @@ function createOwnersElement(ownerWidgets: Map<string, PersonWidgets>): HTMLDivE
     const ownersContainer = document.createElement("div");
     container.appendChild(ownersContainer);
 
+    container.addEventListener(
+        "owner-removed",
+        (event) => {
+            const custom = event as CustomEvent<{ ownerId: string }>;
+            ownerWidgets.delete(custom.detail.ownerId);
+        },
+        false,
+    );
+
     function addOwner() {
         const ownerId = crypto.randomUUID();
 
-        const [ownerWrap, widgets] = createSingleOwnerWidget(ownersContainer, ownerId);
-        ownersContainer.appendChild(ownerWrap);
-        ownerWidgets.set(ownerId, widgets);
+        ownerWidgets.set(ownerId, createSingleOwnerWidget(ownersContainer, ownerId));
         let trashButtons = ownersContainer.querySelectorAll(".cean-remove-item");
         if (trashButtons.length > 1) {
             trashButtons.forEach((button) => {
@@ -68,10 +94,7 @@ function createOwnersElement(ownerWidgets: Map<string, PersonWidgets>): HTMLDivE
     return container;
 }
 
-function createSingleOwnerWidget(
-    parent: HTMLElement,
-    ownerId: string,
-): [HTMLDivElement, PersonWidgets] {
+function createSingleOwnerWidget(parent: HTMLElement, ownerId: string): PersonWidgets {
     const container = document.createElement("div");
     container.classList.add("cean-single-owner");
 
@@ -82,16 +105,24 @@ function createSingleOwnerWidget(
     trashButton.classList.add("cean-remove-item");
     trashButton.textContent = "-";
     trashButton.addEventListener("click", () => {
+        // dispatch before removing the element so the element actually gets emitted:
+        container.dispatchEvent(
+            new CustomEvent("owner-removed", {
+                bubbles: true,
+                detail: { ownerId },
+            }),
+        );
+
         parent.removeChild(container);
         const remaining_buttons = parent.querySelectorAll(".cean-remove-item");
         if (remaining_buttons.length === 1) {
             remaining_buttons[0].setAttribute("disabled", "true");
         }
-        owners.delete(ownerId);
     });
     container.appendChild(trashButton);
 
-    return [container, widgets];
+    parent.appendChild(container);
+    return widgets;
 }
 
 function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] {
@@ -106,7 +137,7 @@ function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] 
     container.appendChild(emailLabel);
     container.appendChild(emailInput.element);
 
-    const widgets = {
+    const widgets: PersonWidgets = {
         name: nameInput,
         email: emailInput,
     };
@@ -121,5 +152,5 @@ function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] 
         widgets.orcid = orcidInput;
     }
 
-    return widgets;
+    return [container, widgets];
 }

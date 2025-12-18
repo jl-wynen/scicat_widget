@@ -18,13 +18,6 @@ class SearchDropdown(anywidget.AnyWidget):
     options = traitlets.List().tag(sync=True)
 
 
-class Owners(anywidget.AnyWidget):
-    _esm = _STATIC_PATH / "owners.js"
-    _css = _STATIC_PATH / "owners.css"
-    owners = traitlets.List().tag(sync=True)
-    pi = traitlets.Dict().tag(sync=True)
-
-
 class DatasetWidget(anywidget.AnyWidget):
     _esm = _STATIC_PATH / "dataset_widget.js"
     _css = _STATIC_PATH / "dataset_widget.css"
