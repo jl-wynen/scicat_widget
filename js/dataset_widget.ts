@@ -18,7 +18,7 @@ function createLabelFor(target: HTMLElement, label: string): HTMLLabelElement {
     return el;
 }
 
-abstract class BaseValueWidget<T> {
+abstract class InputWidget<T> {
     protected modified: boolean = false;
     private readonly setter: (v: T) => void;
 
@@ -35,9 +35,11 @@ abstract class BaseValueWidget<T> {
     }
 
     abstract get value(): T | null;
+
+    abstract get element(): HTMLElement;
 }
 
-class StringInputWidget extends BaseValueWidget<string> {
+class StringInputWidget extends InputWidget<string> {
     element: HTMLInputElement | HTMLTextAreaElement;
 
     constructor(multiLine: boolean = false) {
@@ -57,6 +59,7 @@ class StringInputWidget extends BaseValueWidget<string> {
 
 function makeStringElement(multiLine: boolean): HTMLInputElement | HTMLTextAreaElement {
     if (multiLine) {
+        // TODO enter does not insert new line
         return createFormElement("textarea") as HTMLTextAreaElement;
     } else {
         const element = createFormElement("input") as HTMLInputElement;
@@ -65,7 +68,7 @@ function makeStringElement(multiLine: boolean): HTMLInputElement | HTMLTextAreaE
     }
 }
 
-class DatetimeInputWidget extends BaseValueWidget<Date> {
+class DatetimeInputWidget extends InputWidget<Date> {
     element: HTMLInputElement;
 
     constructor() {
@@ -87,7 +90,7 @@ class DatetimeInputWidget extends BaseValueWidget<Date> {
     }
 }
 
-class CheckboxInputWidget extends BaseValueWidget<boolean> {
+class CheckboxInputWidget extends InputWidget<boolean> {
     element: HTMLInputElement;
 
     constructor() {
@@ -105,7 +108,7 @@ class CheckboxInputWidget extends BaseValueWidget<boolean> {
     }
 }
 
-class DropdownInputWidget extends BaseValueWidget<string> {
+class DropdownInputWidget extends InputWidget<string> {
     element: HTMLSelectElement;
 
     constructor(options: Array<string>) {
@@ -129,73 +132,13 @@ class DropdownInputWidget extends BaseValueWidget<string> {
     }
 }
 
+// TODO suppress shift+enter, else it re-renders the cell!
 function render({model, el}: RenderProps<WidgetModel>) {
     const container = document.createElement("div");
 
-    const inputWidgets = new Map<string, BaseValueWidget<any>>();
+    const inputWidgets = new Map<string, InputWidget<any>>();
 
-    const columns = document.createElement("div");
-    columns.classList.add("cean-two-columns");
-
-    const nameInput = new StringInputWidget();
-    const nameLabel = createLabelFor(nameInput.element, "Name:");
-    inputWidgets.set("name", nameInput);
-    columns.appendChild(nameLabel);
-    nameInput.element.classList.add("cean-span-3");
-    columns.appendChild(nameInput.element);
-
-    const descriptionInput = new StringInputWidget(true);
-    const descriptionLabel = createLabelFor(descriptionInput.element, "Description:");
-    inputWidgets.set("description", descriptionInput);
-    columns.appendChild(descriptionLabel);
-    descriptionInput.element.classList.add("cean-span-3");
-    columns.appendChild(descriptionInput.element);
-
-    const proposalInput = new StringInputWidget();
-    const proposalLabel = createLabelFor(proposalInput.element, "Proposal:");
-    inputWidgets.set("proposal_id", proposalInput);
-    columns.appendChild(proposalLabel);
-    proposalInput.element.classList.add("cean-span-3");
-    columns.appendChild(proposalInput.element);
-
-    const instrumentInput = new StringInputWidget();
-    const instrumentLabel = createLabelFor(instrumentInput.element, "Instrument:");
-    inputWidgets.set("instrument_id", instrumentInput);
-    columns.appendChild(instrumentLabel);
-    columns.appendChild(instrumentInput.element);
-
-    const creationLocationInput = new StringInputWidget();
-    const creationLocationLabel = createLabelFor(creationLocationInput.element, "Creation Location:");
-    inputWidgets.set("creation_location", creationLocationInput);
-    columns.appendChild(creationLocationLabel);
-    columns.appendChild(creationLocationInput.element);
-
-    const runRow = document.createElement("div");
-    runRow.classList.add("cean-run-row");
-    runRow.classList.add("cean-span-3");
-
-    const runNumberInput = new StringInputWidget();
-    const runNumberLabel = createLabelFor(runNumberInput.element, "Run Number:");
-    inputWidgets.set("run_number", runNumberInput);
-    runRow.appendChild(runNumberInput.element);
-
-    const startInput = new DatetimeInputWidget();
-    const startLabel = createLabelFor(startInput.element, "Start:");
-    inputWidgets.set("start_time", startInput);
-    runRow.appendChild(startLabel);
-    runRow.appendChild(startInput.element);
-
-    const endInput = new DatetimeInputWidget();
-    const endLabel = createLabelFor(endInput.element, "End:");
-    inputWidgets.set("end_time", endInput);
-    runRow.appendChild(endLabel);
-    runRow.appendChild(endInput.element);
-
-    columns.appendChild(runNumberLabel);
-    columns.appendChild(runRow);
-
-
-    container.appendChild(columns);
+    container.appendChild(createGeneralInfoPanel(inputWidgets));
 
     model.on("msg:custom", msg => {
         console.log(`new message: ${JSON.stringify(msg)}`);
@@ -206,6 +149,55 @@ function render({model, el}: RenderProps<WidgetModel>) {
         model.send({'type': 'my-reply', 'data': data});
     });
     el.appendChild(container);
+}
+
+function createGeneralInfoPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLDivElement {
+    const columns = document.createElement("div");
+    columns.classList.add("cean-ds-general-info");
+
+    const createAndAppend = (parent: HTMLElement, label: string, varName: string, widgetType: new (...args: any[]) => InputWidget<any>, ...args: any[]) => {
+        const [labelElement, inputWidget] = createInputWithLabel(label, widgetType, ...args);
+        parent.appendChild(labelElement);
+        parent.appendChild(inputWidget.element);
+        inputWidgets.set(varName, inputWidget);
+        return inputWidget;
+    }
+
+    const nameInput = createAndAppend(columns, "Name", "name", StringInputWidget);
+    nameInput.element.classList.add("cean-span-3");
+
+    const descriptionInput = createAndAppend(columns, "Description", "description", StringInputWidget, true);
+    descriptionInput.element.classList.add("cean-span-3");
+
+    const proposalInput = createAndAppend(columns, "Proposal", "proposal_id", StringInputWidget);
+    proposalInput.element.classList.add("cean-span-3");
+
+    createAndAppend(columns, "Instrument", "instrument_id", StringInputWidget);
+    createAndAppend(columns, "Creation location", "creation_location", StringInputWidget);
+
+    const runRow = document.createElement("div");
+    runRow.classList.add("cean-run-row");
+    runRow.classList.add("cean-span-3");
+
+    const [runNumberLabel, runNumberInput] = createInputWithLabel("Run number", StringInputWidget);
+    inputWidgets.set("run_number", runNumberInput);
+    runRow.appendChild(runNumberInput.element);
+
+    createAndAppend(runRow, "Start", "start_time", DatetimeInputWidget);
+    createAndAppend(runRow, "End", "end_time", DatetimeInputWidget);
+
+    columns.appendChild(runNumberLabel);
+    columns.appendChild(runRow);
+
+    return columns;
+}
+
+function createInputWithLabel<T, A extends unknown[]>(
+    label: string, widgetType: new (...args: A) => InputWidget<T>,
+    ...args: A): [HTMLLabelElement, InputWidget<T>] {
+    const inputWidget = new widgetType(...args);
+    const labelElement = createLabelFor(inputWidget.element, `${label}:`);
+    return [labelElement, inputWidget];
 }
 
 export default {render};

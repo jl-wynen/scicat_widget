@@ -1,12 +1,14 @@
-.cean-two-columns {
+.cean-ds-general-info {
     display: grid;
-    /* Four-column grid to allow two label-input pairs on the same row. */
+    /* Six-column grid to lign up labels and inputs. */
     grid-template-columns:
         max-content 2fr
         max-content 1fr;
     column-gap: 12px;
     row-gap: 10px;
     align-items: start;
+
+    background-color: var(--jp-layout-color2); /* TODO remove */
 
     & > *:nth-child(2n) {
         /* Ensure input columns can shrink and inputs don't overflow */
@@ -39,13 +41,6 @@
         /* Ensure input columns can shrink and inputs don't overflow */
         min-width: 0;
     }
-
-    /*& input,*/
-    /*& select,*/
-    /*& textarea {*/
-    /*    width: 100%;*/
-    /*    box-sizing: border-box;*/
-    /*}*/
 }
 
 textarea {
