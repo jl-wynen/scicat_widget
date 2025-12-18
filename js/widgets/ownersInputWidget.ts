@@ -3,20 +3,26 @@ import { Person } from "../models";
 import { createFormElement, createInputWithLabel } from "../forms";
 import { StringInputWidget } from "../widgets.ts";
 
+type PersonWidgets = {
+    name: InputWidget<string>;
+    email: InputWidget<string>;
+    orcid?: InputWidget<string>;
+};
+
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
     element: HTMLDivElement;
-    owners: Map<string, Person>; // TODO use map to widgets
+    ownerWidgets: Map<string, PersonWidgets>;
 
     constructor() {
-        const owners = new Map();
-        const element = createOwnersElement(owners) as HTMLDivElement;
+        const ownerWidgets = new Map();
+        const element = createOwnersElement(ownerWidgets) as HTMLDivElement;
         super((v: Array<Person>) => {
             setPersons(element, v);
         });
         // TODO mod detection (all widgets) or does event bubble?
 
         this.element = element;
-        this.owners = owners;
+        this.ownerWidgets = ownerWidgets;
     }
 
     get value(): Array<Person> | null {
@@ -28,20 +34,18 @@ function setPersons(element: HTMLElement, persons: Array<Person>) {
     // TODO
 }
 
-function createOwnersElement(owners: Map<string, Person>): HTMLDivElement {
+function createOwnersElement(ownerWidgets: Map<string, PersonWidgets>): HTMLDivElement {
     const container = createFormElement("div") as HTMLDivElement;
 
     const ownersContainer = document.createElement("div");
     container.appendChild(ownersContainer);
 
-    function addOwner(): string {
+    function addOwner() {
         const ownerId = crypto.randomUUID();
-        const owner = { name: "", email: "", orcid: "" };
-        owners.set(ownerId, owner);
 
-        ownersContainer.appendChild(
-            createSingleOwnerWidget(ownersContainer, owners, ownerId, owner),
-        );
+        const [ownerWrap, widgets] = createSingleOwnerWidget(ownersContainer, ownerId);
+        ownersContainer.appendChild(ownerWrap);
+        ownerWidgets.set(ownerId, widgets);
         let trashButtons = ownersContainer.querySelectorAll(".cean-remove-item");
         if (trashButtons.length > 1) {
             trashButtons.forEach((button) => {
@@ -50,8 +54,6 @@ function createOwnersElement(owners: Map<string, Person>): HTMLDivElement {
         } else {
             trashButtons[0].setAttribute("disabled", "true");
         }
-
-        return ownerId;
     }
 
     addOwner();
@@ -68,14 +70,13 @@ function createOwnersElement(owners: Map<string, Person>): HTMLDivElement {
 
 function createSingleOwnerWidget(
     parent: HTMLElement,
-    owners: Map<string, Person>,
     ownerId: string,
-    owner: Person,
-): HTMLDivElement {
+): [HTMLDivElement, PersonWidgets] {
     const container = document.createElement("div");
     container.classList.add("cean-single-owner");
 
-    container.appendChild(createPersonWidget(owner, true));
+    const [personWrap, widgets] = createPersonWidget(true);
+    container.appendChild(personWrap);
 
     const trashButton = document.createElement("button");
     trashButton.classList.add("cean-remove-item");
@@ -89,10 +90,11 @@ function createSingleOwnerWidget(
         owners.delete(ownerId);
     });
     container.appendChild(trashButton);
-    return container;
+
+    return [container, widgets];
 }
 
-function createPersonWidget(person: Person, hasOrcid: boolean): HTMLDivElement {
+function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] {
     const container = document.createElement("div");
     container.classList.add("cean-person-widget");
 
@@ -104,6 +106,11 @@ function createPersonWidget(person: Person, hasOrcid: boolean): HTMLDivElement {
     container.appendChild(emailLabel);
     container.appendChild(emailInput.element);
 
+    const widgets = {
+        name: nameInput,
+        email: emailInput,
+    };
+
     if (hasOrcid) {
         const [orcidLabel, orcidInput] = createInputWithLabel(
             "ORCID",
@@ -111,7 +118,8 @@ function createPersonWidget(person: Person, hasOrcid: boolean): HTMLDivElement {
         );
         container.appendChild(orcidLabel);
         container.appendChild(orcidInput.element);
+        widgets.orcid = orcidInput;
     }
 
-    return container;
+    return widgets;
 }
