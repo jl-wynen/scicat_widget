@@ -31,9 +31,9 @@
 .cean-run-row {
     display: grid;
     grid-template-columns:
-        0.5fr
-        max-content 1fr
-        max-content 1fr;
+        1fr
+        max-content max-content
+        max-content max-content;
     column-gap: 12px;
     row-gap: 10px;
     align-items: start;
@@ -156,4 +156,12 @@
     &::selection {
         background-color: var(--jp-editor-selected-focused-background);
     }
+}
+
+.cean-datetime-input {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 0;
+    row-gap: 10px;
+    align-items: start;
 }

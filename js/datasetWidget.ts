@@ -1,38 +1,40 @@
-import type { RenderProps } from "@anywidget/types";
-import "./dataset_widget.css";
 import {
     CheckboxInputWidget,
     DatetimeInputWidget,
     DropdownInputWidget,
     InputWidget,
     OwnersInputWidget,
-    StringInputWidget
-} from "./widgets";
+    StringInputWidget,
+} from "./inputWidgets";
 import { createInputWithLabel, createLabelFor } from "./forms.ts";
 
-interface WidgetModel {}
+export class DatasetWidget {
+    element: HTMLDivElement;
+    private readonly inputWidgets: Map<string, InputWidget<any>>;
 
-// TODO suppress shift+enter, else it re-renders the cell!
-function render({ model, el }: RenderProps<WidgetModel>) {
-    const container = document.createElement("div");
-    container.classList.add("cean-ds");
+    // TODO suppress shift+enter, else it re-renders the cell!
+    constructor() {
+        const container = document.createElement("div");
+        container.classList.add("cean-ds");
 
-    const inputWidgets = new Map<string, InputWidget<any>>();
+        this.inputWidgets = new Map<string, InputWidget<any>>();
 
-    container.appendChild(createGeneralInfoPanel(inputWidgets));
-    container.appendChild(createOwnerPanel(inputWidgets));
-    container.appendChild(createMiscPanel(inputWidgets));
-    container.appendChild(createScientificMetadataPanel(inputWidgets));
+        container.appendChild(createGeneralInfoPanel(this.inputWidgets));
+        container.appendChild(createOwnerPanel(this.inputWidgets));
+        container.appendChild(createMiscPanel(this.inputWidgets));
+        container.appendChild(createScientificMetadataPanel(this.inputWidgets));
 
-    model.on("msg:custom", (msg) => {
-        console.log(`new message: ${JSON.stringify(msg)}`);
+        this.element = container;
+    }
+
+    gatherData(): Record<string, any> {
         const data: Record<string, any> = {};
-        inputWidgets.forEach((widget, key) => {
-            data[key] = widget.value;
+        this.inputWidgets.forEach((widget, key) => {
+            const value = widget.value;
+            if (value !== null) data[key] = value;
         });
-        model.send({ type: "my-reply", data: data });
-    });
-    el.appendChild(container);
+        return data;
+    }
 }
 
 function createGeneralInfoPanel(
@@ -244,5 +246,3 @@ function createAndAppend(
     widgetsMap.set(varName, inputWidget);
     return inputWidget;
 }
-
-export default { render };

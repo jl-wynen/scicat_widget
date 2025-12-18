@@ -1,7 +1,7 @@
 import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
 import { createFormElement, createInputWithLabel } from "../forms";
-import { StringInputWidget } from "../widgets.ts";
+import { StringInputWidget } from "../inputWidgets.ts";
 
 type PersonWidgets = {
     name: InputWidget<string>;

@@ -12,12 +12,6 @@ except importlib.metadata.PackageNotFoundError:
 _STATIC_PATH = pathlib.Path(__file__).parent / "_static"
 
 
-class SearchDropdown(anywidget.AnyWidget):
-    _esm = _STATIC_PATH / "search_dropdown.js"
-    _css = _STATIC_PATH / "search_dropdown.css"
-    options = traitlets.List().tag(sync=True)
-
-
-class DatasetWidget(anywidget.AnyWidget):
-    _esm = _STATIC_PATH / "dataset_widget.js"
-    _css = _STATIC_PATH / "dataset_widget.css"
+class DatasetUploadWidget(anywidget.AnyWidget):
+    _esm = _STATIC_PATH / "datasetUploadWidget.js"
+    _css = _STATIC_PATH / "datasetUploadWidget.css"

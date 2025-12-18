@@ -1,4 +1,4 @@
-import { InputWidget } from "./widgets/inputWidget";
+import { InputWidget } from "./inputWidgets/inputWidget";
 
 /**
  * Create an element for a form.
