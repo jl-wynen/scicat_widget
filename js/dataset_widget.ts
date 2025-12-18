@@ -141,28 +141,27 @@ function render({model, el}: RenderProps<WidgetModel>) {
     const nameLabel = createLabelFor(nameInput.element, "Name:");
     inputWidgets.set("name", nameInput);
     columns.appendChild(nameLabel);
-    nameInput.element.classList.add("cean-span-5");
+    nameInput.element.classList.add("cean-span-3");
     columns.appendChild(nameInput.element);
 
     const descriptionInput = new StringInputWidget(true);
     const descriptionLabel = createLabelFor(descriptionInput.element, "Description:");
     inputWidgets.set("description", descriptionInput);
     columns.appendChild(descriptionLabel);
-    descriptionInput.element.classList.add("cean-span-5");
+    descriptionInput.element.classList.add("cean-span-3");
     columns.appendChild(descriptionInput.element);
 
     const proposalInput = new StringInputWidget();
     const proposalLabel = createLabelFor(proposalInput.element, "Proposal:");
     inputWidgets.set("proposal_id", proposalInput);
     columns.appendChild(proposalLabel);
-    proposalInput.element.classList.add("cean-span-5");
+    proposalInput.element.classList.add("cean-span-3");
     columns.appendChild(proposalInput.element);
 
     const instrumentInput = new StringInputWidget();
     const instrumentLabel = createLabelFor(instrumentInput.element, "Instrument:");
     inputWidgets.set("instrument_id", instrumentInput);
     columns.appendChild(instrumentLabel);
-    instrumentInput.element.classList.add("cean-span-3");
     columns.appendChild(instrumentInput.element);
 
     const creationLocationInput = new StringInputWidget();
@@ -171,23 +170,30 @@ function render({model, el}: RenderProps<WidgetModel>) {
     columns.appendChild(creationLocationLabel);
     columns.appendChild(creationLocationInput.element);
 
+    const runRow = document.createElement("div");
+    runRow.classList.add("cean-run-row");
+    runRow.classList.add("cean-span-3");
+
     const runNumberInput = new StringInputWidget();
     const runNumberLabel = createLabelFor(runNumberInput.element, "Run Number:");
     inputWidgets.set("run_number", runNumberInput);
-    columns.appendChild(runNumberLabel);
-    columns.appendChild(runNumberInput.element);
+    runRow.appendChild(runNumberInput.element);
 
     const startInput = new DatetimeInputWidget();
     const startLabel = createLabelFor(startInput.element, "Start:");
     inputWidgets.set("start_time", startInput);
-    columns.appendChild(startLabel);
-    columns.appendChild(startInput.element);
+    runRow.appendChild(startLabel);
+    runRow.appendChild(startInput.element);
 
     const endInput = new DatetimeInputWidget();
     const endLabel = createLabelFor(endInput.element, "End:");
     inputWidgets.set("end_time", endInput);
-    columns.appendChild(endLabel);
-    columns.appendChild(endInput.element);
+    runRow.appendChild(endLabel);
+    runRow.appendChild(endInput.element);
+
+    columns.appendChild(runNumberLabel);
+    columns.appendChild(runRow);
+
 
     container.appendChild(columns);
 
