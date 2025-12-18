@@ -5,23 +5,12 @@ import {
     DatetimeInputWidget,
     DropdownInputWidget,
     InputWidget,
+    OwnersInputWidget,
     StringInputWidget
 } from "./widgets";
+import { createInputWithLabel, createLabelFor } from "./forms.ts";
 
 interface WidgetModel {}
-
-/**
- * Create a label for a form element.
- *
- * @param target The form element the label is for. Must have an `id`.
- * @param label The label text.
- */
-export function createLabelFor(target: HTMLElement, label: string): HTMLLabelElement {
-    const el = document.createElement("label");
-    el.textContent = label;
-    el.setAttribute("for", target.id);
-    return el;
-}
 
 // TODO suppress shift+enter, else it re-renders the cell!
 function render({ model, el }: RenderProps<WidgetModel>) {
@@ -115,6 +104,14 @@ function createHumanOwnerPanel(
 ): HTMLDivElement {
     const columns = document.createElement("div");
     columns.classList.add("cean-ds-human-owners");
+    const ownersInput = createAndAppend(
+        inputWidgets,
+        columns,
+        "Owners",
+        "owners",
+        OwnersInputWidget,
+    );
+    // createAndAppend(inputWidgets, columns, "Principal investigator", "pi", PrincipalInvestigatorInputWidget, ownersInput);
     return columns;
 }
 
@@ -246,16 +243,6 @@ function createAndAppend(
     parent.appendChild(inputWidget.element);
     widgetsMap.set(varName, inputWidget);
     return inputWidget;
-}
-
-function createInputWithLabel<T, A extends unknown[]>(
-    label: string,
-    widgetType: new (...args: A) => InputWidget<T>,
-    ...args: A
-): [HTMLLabelElement, InputWidget<T>] {
-    const inputWidget = new widgetType(...args);
-    const labelElement = createLabelFor(inputWidget.element, `${label}:`);
-    return [labelElement, inputWidget];
 }
 
 export default { render };

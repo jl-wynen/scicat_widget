@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidget";
-import { createFormElement } from "./forms";
+import { createFormElement } from "../forms";
 
 export class CheckboxInputWidget extends InputWidget<boolean> {
     element: HTMLInputElement;

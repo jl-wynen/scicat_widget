@@ -8,7 +8,7 @@
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color2); /* TODO remove */
+    background-color: var(--jp-layout-color1);
     margin: 0.3rem;
 
     & > *:nth-child(2n) {
@@ -50,8 +50,6 @@
     column-gap: 12px;
     row-gap: 10px;
     align-items: start;
-
-    background-color: var(--jp-layout-color3); /* TODO remove */
 }
 
 .cean-ds-human-owners,
@@ -62,7 +60,7 @@
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color2); /* TODO remove */
+    background-color: var(--jp-layout-color1);
     margin: 0.3rem;
 
     & > *:nth-child(2n) {
@@ -83,6 +81,14 @@
     }
 }
 
+.cean-single-owner {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+}
+
 .cean-ds-misc-columns {
     display: grid;
     grid-template-columns: 3fr 2fr;
@@ -90,7 +96,6 @@
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color4); /* TODO remove */
 }
 
 .cean-ds-misc-left {
@@ -100,12 +105,17 @@
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color2); /* TODO remove */
+    background-color: var(--jp-layout-color1);
     margin: 0.3rem;
 }
 
 .cean-ds-misc-right {
-    background-color: var(--jp-layout-color2); /* TODO remove */
+    background-color: var(--jp-layout-color1);
+    margin: 0.3rem;
+}
+
+.cean-ds-scientific-metadata {
+    background-color: var(--jp-layout-color1);
     margin: 0.3rem;
 }
 
@@ -115,6 +125,14 @@
     & thead {
         border-bottom: 1px solid red;
     }
+}
+
+.cean-person-widget {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
 }
 
 .cean-ds textarea {
