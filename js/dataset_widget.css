@@ -9,6 +9,7 @@
     align-items: start;
 
     background-color: var(--jp-layout-color2); /* TODO remove */
+    margin: 0.3rem;
 
     & > *:nth-child(2n) {
         /* Ensure input columns can shrink and inputs don't overflow */
@@ -43,6 +44,98 @@
     }
 }
 
-textarea {
+.cean-ds-owner-columns {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+
+    background-color: var(--jp-layout-color3); /* TODO remove */
+}
+
+.cean-ds-human-owners,
+.cean-ds-technical-owners {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+
+    background-color: var(--jp-layout-color2); /* TODO remove */
+    margin: 0.3rem;
+
+    & > *:nth-child(2n) {
+        /* Ensure input columns can shrink and inputs don't overflow */
+        min-width: 0;
+    }
+
+    & input,
+    & select,
+    & textarea {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    & input[type="checkbox"] {
+        width: auto;
+        justify-self: start;
+    }
+}
+
+.cean-ds-misc-columns {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+
+    background-color: var(--jp-layout-color4); /* TODO remove */
+}
+
+.cean-ds-misc-left {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+
+    background-color: var(--jp-layout-color2); /* TODO remove */
+    margin: 0.3rem;
+}
+
+.cean-ds-misc-right {
+    background-color: var(--jp-layout-color2); /* TODO remove */
+    margin: 0.3rem;
+}
+
+.cean-ds-scientific-metadata-table {
+    width: 100%;
+
+    & thead {
+        border-bottom: 1px solid red;
+    }
+}
+
+.cean-ds textarea {
     resize: vertical;
+}
+
+.cean-ds input, .cean-ds textarea {
+    box-sizing: border-box;
+    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
+    color: var(--jp-content-font-color1);
+    background-color: var(--jp-cell-editor-background);
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &:focus {
+        border-color: var(--jp-input-active-border-color);
+    }
+
+    &::selection {
+        background-color: var(--jp-editor-selected-focused-background);
+    }
 }
