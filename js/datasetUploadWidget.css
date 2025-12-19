@@ -98,18 +98,13 @@
 
 }
 
-.cean-ds-misc-left {
+.cean-ds-misc-left, .cean-ds-misc-right {
     display: grid;
     grid-template-columns: max-content 1fr;
     column-gap: 12px;
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color1);
-    margin: 0.3rem;
-}
-
-.cean-ds-misc-right {
     background-color: var(--jp-layout-color1);
     margin: 0.3rem;
 }

@@ -139,23 +139,20 @@ function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLEleme
     const left = document.createElement("div");
     left.classList.add("cean-ds-misc-left");
     const right = document.createElement("div");
-    left.classList.add("cean-ds-misc-right");
+    right.classList.add("cean-ds-misc-right");
 
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
-    createLeft("Sample ID", "sample_id", StringInputWidget);
-    createLeft("Software", "used_software", StringInputWidget);
     createLeft("Techniques", "techniques", DropdownInputWidget, [
         "Technique 1",
         "Technique 2",
     ]);
+    createLeft("Software", "used_software", StringInputWidget);
+    createLeft("Sample ID", "sample_id", StringInputWidget);
     createLeft("Keywords", "keywords", StringInputWidget);
 
-    const relationshipsInput = document.createElement("input");
-    relationshipsInput.type = "text";
-    relationshipsInput.id = crypto.randomUUID();
-    const relationshipsLabel = createLabelFor(relationshipsInput, "Relationships:");
-    right.appendChild(relationshipsLabel);
-    right.appendChild(relationshipsInput);
+    const createRight = createAndAppend.bind(null, inputWidgets, right);
+    createRight("Type", "type", DropdownInputWidget, ["derived", "raw"]);
+    createRight("Relationships", "relationships", StringInputWidget);
 
     columns.appendChild(left);
     columns.appendChild(right);
