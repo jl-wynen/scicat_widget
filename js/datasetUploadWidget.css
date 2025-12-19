@@ -174,7 +174,23 @@
 
 .cean-tab-buttons {
     display: flex;
+    justify-content: space-between;
+    align-items: center;
     border-bottom: 1px solid var(--jp-border-color1);
+}
+
+.cean-tab-buttons-left {
+    display: flex;
+}
+
+.cean-tab-buttons-right {
+    display: flex;
+    align-items: center;
+    padding-right: 16px;
+
+    & a:hover {
+        text-decoration: underline;
+    }
 }
 
 .cean-tab-button {
@@ -198,4 +214,10 @@
 
 .cean-tab-content {
     padding: 10px 0;
+}
+
+.cean-upload-button {
+    background: var(--jp-info-color1);
+    color: var(--jp-ui-inverse-font-color1);
+    border-radius: var(--jp-border-radius);
 }

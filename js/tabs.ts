@@ -9,15 +9,16 @@ export class Tabs {
     private readonly tabs: Tab[];
 
     constructor(tabs: Tab[], right: HTMLElement[]) {
-        const [element, tabButtonsContainer, tabPanes] = makeTabs(tabs, (index) =>
-            this.selectTab(index),
+        const [element, tabButtonsContainer, tabPanes, rightContainer] = makeTabs(
+            tabs,
+            (index) => this.selectTab(index),
         );
         this.element = element;
         this.tabButtonsContainer = tabButtonsContainer;
         this.tabs = tabPanes.map((tab, index) => {
             return { label: tabs[index].label, element: tab };
         });
-        insertExtraTopContent(this.tabButtonsContainer, right);
+        insertExtraTopContent(rightContainer, right);
         this.selectTab(0);
     }
 
@@ -44,7 +45,7 @@ export class Tabs {
 function makeTabs(
     tabs: Tab[],
     selectTab: (index: number) => void,
-): [HTMLElement, HTMLElement, HTMLElement[]] {
+): [HTMLElement, HTMLElement, HTMLElement[], HTMLElement] {
     const container = document.createElement("div");
     container.classList.add("cean-tabs");
 
@@ -52,13 +53,21 @@ function makeTabs(
     buttonContainer.classList.add("cean-tab-buttons");
     container.appendChild(buttonContainer);
 
+    const leftContainer = document.createElement("div");
+    leftContainer.classList.add("cean-tab-buttons-left");
+    buttonContainer.appendChild(leftContainer);
+
+    const rightContainer = document.createElement("div");
+    rightContainer.classList.add("cean-tab-buttons-right");
+    buttonContainer.appendChild(rightContainer);
+
     const contentContainer = document.createElement("div");
     contentContainer.classList.add("cean-tab-content");
     container.appendChild(contentContainer);
 
-    const tabPanes = fillTabs(buttonContainer, contentContainer, tabs, selectTab);
+    const tabPanes = fillTabs(leftContainer, contentContainer, tabs, selectTab);
 
-    return [container, buttonContainer, tabPanes];
+    return [container, buttonContainer, tabPanes, rightContainer];
 }
 
 function fillTabs(
