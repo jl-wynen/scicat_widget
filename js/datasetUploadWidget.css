@@ -167,3 +167,35 @@
     row-gap: 10px;
     align-items: start;
 }
+
+.cean-tabs {
+    margin-bottom: 10px;
+}
+
+.cean-tab-buttons {
+    display: flex;
+    border-bottom: 1px solid var(--jp-border-color1);
+}
+
+.cean-tab-button {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--jp-ui-font-color2);
+    border-bottom: 2px solid transparent;
+}
+
+.cean-tab-button:hover {
+    background-color: var(--jp-layout-color2);
+}
+
+.cean-tab-button-active {
+    border-bottom: 2px solid var(--jp-brand-color1);
+    color: var(--jp-ui-font-color1);
+    font-weight: bold;
+}
+
+.cean-tab-content {
+    padding: 10px 0;
+}
