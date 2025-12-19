@@ -1,17 +1,11 @@
 import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
-import { createFormElement, createInputWithLabel } from "../forms";
-import { StringInputWidget } from "../inputWidgets.ts";
-
-type PersonWidgets = {
-    name: InputWidget<string>;
-    email: InputWidget<string>;
-    orcid?: InputWidget<string>;
-};
+import { createFormElement } from "../forms";
+import { PersonInputWidget } from "./personInputWidget.ts";
 
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
     element: HTMLDivElement;
-    ownerWidgets: Map<string, PersonWidgets>;
+    ownerWidgets: Map<string, PersonInputWidget>;
 
     constructor() {
         const ownerWidgets = new Map();
@@ -29,20 +23,8 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
         const persons: Array<Person> = [];
 
         this.ownerWidgets.forEach((widgets) => {
-            const nameVal = widgets.name?.value;
-            const emailVal = widgets.email?.value;
-            const orcidVal = widgets.orcid?.value ?? null;
-
-            if (nameVal === null && emailVal === null && orcidVal === null) return;
-
-            const person: Person = {
-                name: nameVal ?? "",
-                email: emailVal ?? "",
-            };
-            if (orcidVal !== null && orcidVal !== undefined && orcidVal !== "") {
-                person.orcid = orcidVal;
-            }
-            persons.push(person);
+            const person = widgets.value;
+            if (person !== null) persons.push(person);
         });
 
         return persons.length > 0 ? persons : null;
@@ -53,7 +35,9 @@ function setPersons(element: HTMLElement, persons: Array<Person>) {
     // TODO
 }
 
-function createOwnersElement(ownerWidgets: Map<string, PersonWidgets>): HTMLDivElement {
+function createOwnersElement(
+    ownerWidgets: Map<string, PersonInputWidget>,
+): HTMLDivElement {
     const container = createFormElement("div") as HTMLDivElement;
 
     const ownersContainer = document.createElement("div");
@@ -94,12 +78,15 @@ function createOwnersElement(ownerWidgets: Map<string, PersonWidgets>): HTMLDivE
     return container;
 }
 
-function createSingleOwnerWidget(parent: HTMLElement, ownerId: string): PersonWidgets {
+function createSingleOwnerWidget(
+    parent: HTMLElement,
+    ownerId: string,
+): PersonInputWidget {
     const container = document.createElement("div");
     container.classList.add("cean-single-owner");
 
-    const [personWrap, widgets] = createPersonWidget(true);
-    container.appendChild(personWrap);
+    const widget = new PersonInputWidget(true);
+    container.appendChild(widget.element);
 
     const trashButton = document.createElement("button");
     trashButton.classList.add("cean-remove-item");
@@ -122,35 +109,5 @@ function createSingleOwnerWidget(parent: HTMLElement, ownerId: string): PersonWi
     container.appendChild(trashButton);
 
     parent.appendChild(container);
-    return widgets;
-}
-
-function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] {
-    const container = document.createElement("div");
-    container.classList.add("cean-person-widget");
-
-    const [nameLabel, nameInput] = createInputWithLabel("Name", StringInputWidget);
-    container.appendChild(nameLabel);
-    container.appendChild(nameInput.element);
-
-    const [emailLabel, emailInput] = createInputWithLabel("Email", StringInputWidget);
-    container.appendChild(emailLabel);
-    container.appendChild(emailInput.element);
-
-    const widgets: PersonWidgets = {
-        name: nameInput,
-        email: emailInput,
-    };
-
-    if (hasOrcid) {
-        const [orcidLabel, orcidInput] = createInputWithLabel(
-            "ORCID",
-            StringInputWidget,
-        );
-        container.appendChild(orcidLabel);
-        container.appendChild(orcidInput.element);
-        widgets.orcid = orcidInput;
-    }
-
-    return [container, widgets];
+    return widget;
 }

@@ -3,4 +3,6 @@ export { DatetimeInputWidget } from "./inputWidgets/datetimeInputWidget.ts";
 export { DropdownInputWidget } from "./inputWidgets/dropdownInputWidget.ts";
 export { InputWidget } from "./inputWidgets/inputWidget.ts";
 export { OwnersInputWidget } from "./inputWidgets/ownersInputWidget.ts";
+export { PersonInputWidget } from "./inputWidgets/personInputWidget.ts";
+export { PrincipalInvestigatorInputWidget } from "./inputWidgets/principalInvestigatorInputWidget.ts";
 export { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";

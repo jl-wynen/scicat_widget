@@ -4,9 +4,10 @@ import {
     DropdownInputWidget,
     InputWidget,
     OwnersInputWidget,
+    PrincipalInvestigatorInputWidget,
     StringInputWidget,
 } from "./inputWidgets";
-import { createInputWithLabel, createLabelFor } from "./forms.ts";
+import { createInputWithLabel } from "./forms.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;
@@ -113,7 +114,14 @@ function createHumanOwnerPanel(
         "owners",
         OwnersInputWidget,
     );
-    // createAndAppend(inputWidgets, columns, "Principal investigator", "pi", PrincipalInvestigatorInputWidget, ownersInput);
+    createAndAppend(
+        inputWidgets,
+        columns,
+        "Principal investigator",
+        "pi",
+        PrincipalInvestigatorInputWidget,
+        ownersInput,
+    );
     return columns;
 }
 
