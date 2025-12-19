@@ -5,17 +5,25 @@ export class StringInputWidget extends InputWidget<string> {
     element: HTMLInputElement | HTMLTextAreaElement;
 
     constructor(multiLine: boolean = false) {
+        super();
         const element = makeStringElement(multiLine);
-        super((v: string) => {
-            element.value = v;
+        element.addEventListener("blur", () => this.emitUpdated(), true);
+        element.addEventListener("keydown", (ev) => {
+            const kev = ev as KeyboardEvent;
+            if (kev.key === "Enter" && element.tagName.toLowerCase() === "input") {
+                this.emitUpdated();
+            }
         });
-        element.addEventListener("input", () => this.markModified());
         this.element = element;
     }
 
     get value(): string | null {
         if (this.element.value === "") return null;
         else return this.element.value;
+    }
+
+    set value(v: string | null) {
+        this.element.value = v ?? "";
     }
 }
 

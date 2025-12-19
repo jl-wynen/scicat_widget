@@ -8,12 +8,15 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
     ownerWidgets: Map<string, PersonInputWidget>;
 
     constructor() {
+        super();
         const ownerWidgets = new Map();
         const element = createOwnersElement(ownerWidgets) as HTMLDivElement;
-        super((v: Array<Person>) => {
-            setPersons(element, v);
+
+        const emit = () => this.emitUpdated();
+        element.addEventListener("blur", emit, true);
+        element.addEventListener("keydown", (e) => {
+            if ((e as KeyboardEvent).key === "Enter") emit();
         });
-        // TODO mod detection (all widgets) or does event bubble?
 
         this.element = element;
         this.ownerWidgets = ownerWidgets;
@@ -29,9 +32,14 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
 
         return persons.length > 0 ? persons : null;
     }
+
+    set value(v: Array<Person> | null) {
+        if (!v) return; // TODO: implement UI update for owners list
+        setPersons(this.element, v);
+    }
 }
 
-function setPersons(element: HTMLElement, persons: Array<Person>) {
+function setPersons(_element: HTMLElement, _persons: Array<Person>) {
     // TODO
 }
 

@@ -23,7 +23,7 @@ export class DatasetWidget {
         container.appendChild(createGeneralInfoPanel(this.inputWidgets));
         container.appendChild(createOwnerPanel(this.inputWidgets));
         container.appendChild(createMiscPanel(this.inputWidgets));
-        container.appendChild(createScientificMetadataPanel(this.inputWidgets));
+        container.appendChild(createScientificMetadataPanel());
 
         this.element = container;
     }
@@ -83,6 +83,7 @@ function createGeneralInfoPanel(
         StringInputWidget,
     );
     inputWidgets.set("run_number", runNumberInput);
+    runNumberInput.setKey("run_number");
     runRow.appendChild(runNumberInput.element);
 
     create(runRow, "Start", "start_time", DatetimeInputWidget);
@@ -167,9 +168,7 @@ function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLEleme
     return columns;
 }
 
-function createScientificMetadataPanel(
-    inputWidgets: Map<string, InputWidget<any>>,
-): HTMLElement {
+function createScientificMetadataPanel(): HTMLElement {
     const container = document.createElement("section");
     container.classList.add("cean-ds-scientific-metadata");
 
@@ -249,5 +248,6 @@ function createAndAppend(
     parent.appendChild(labelElement);
     parent.appendChild(inputWidget.element);
     widgetsMap.set(varName, inputWidget);
+    inputWidget.setKey(varName);
     return inputWidget;
 }

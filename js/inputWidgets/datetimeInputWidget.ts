@@ -1,5 +1,5 @@
-import { InputWidget } from "./inputWidget";
-import { createFormElement } from "../forms";
+import {InputWidget} from "./inputWidget";
+import {createFormElement} from "../forms";
 
 export class DatetimeInputWidget extends InputWidget<Date> {
     dateElement: HTMLInputElement;
@@ -7,6 +7,8 @@ export class DatetimeInputWidget extends InputWidget<Date> {
     element: HTMLDivElement;
 
     constructor() {
+        super();
+
         const container = document.createElement("div");
         container.classList.add("cean-datetime-input");
 
@@ -20,15 +22,15 @@ export class DatetimeInputWidget extends InputWidget<Date> {
         container.appendChild(dateElement);
         container.appendChild(timeElement);
 
-        super((v: Date) => {
-            const localDate = new Date(v.getTime() - v.getTimezoneOffset() * 60000);
-            const dateString = localDate.toISOString();
-            dateElement.value = dateString.slice(0, 10);
-            timeElement.value = dateString.slice(11, 19);
+        const emit = () => this.emitUpdated();
+        dateElement.addEventListener("blur", emit, true);
+        timeElement.addEventListener("blur", emit, true);
+        dateElement.addEventListener("keydown", (e) => {
+            if ((e as KeyboardEvent).key === "Enter") emit();
         });
-
-        dateElement.addEventListener("input", () => this.markModified());
-        timeElement.addEventListener("input", () => this.markModified());
+        timeElement.addEventListener("keydown", (e) => {
+            if ((e as KeyboardEvent).key === "Enter") emit();
+        });
 
         this.dateElement = dateElement;
         this.timeElement = timeElement;
@@ -41,5 +43,17 @@ export class DatetimeInputWidget extends InputWidget<Date> {
 
         const timeVal = this.timeElement.value || "00:00:00";
         return new Date(`${dateVal}T${timeVal}`);
+    }
+
+    set value(v: Date | null) {
+        if (!v) {
+            this.dateElement.value = "";
+            this.timeElement.value = "";
+            return;
+        }
+        const localDate = new Date(v.getTime() - v.getTimezoneOffset() * 60000);
+        const dateString = localDate.toISOString();
+        this.dateElement.value = dateString.slice(0, 10);
+        this.timeElement.value = dateString.slice(11, 19);
     }
 }

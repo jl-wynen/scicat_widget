@@ -10,9 +10,13 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
     personWidget: PersonInputWidget;
 
     constructor() {
+        super();
         const [container, personWidget] = createPiWidget();
-        super((v: Person) => {
-            this.personWidget.setIfUnchanged(v);
+
+        const emit = () => this.emitUpdated();
+        container.addEventListener("blur", emit, true);
+        container.addEventListener("keydown", (e) => {
+            if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
         this.element = container;
@@ -22,6 +26,10 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
     get value(): Person | null {
         // TODO implement 'same as' functionality
         return this.personWidget.value;
+    }
+
+    set value(v: Person | null) {
+        this.personWidget.value = v;
     }
 }
 

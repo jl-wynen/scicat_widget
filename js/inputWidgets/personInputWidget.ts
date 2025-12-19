@@ -14,16 +14,16 @@ export class PersonInputWidget extends InputWidget<Person> {
     widgets: PersonWidgets;
 
     constructor(hasOrcid: boolean) {
+        super();
         const [container, widgets] = createPersonWidget(hasOrcid);
-        super((v: Person) => {
-            setPerson(widgets, v);
+
+        const emit = () => this.emitUpdated();
+        this.element = container;
+        this.element.addEventListener("blur", emit, true);
+        this.element.addEventListener("keydown", (e) => {
+            if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
-        for (const widget of Object.values(widgets)) {
-            widget.element.addEventListener("input", () => this.markModified());
-        }
-
-        this.element = container;
         this.widgets = widgets;
     }
 
@@ -44,6 +44,18 @@ export class PersonInputWidget extends InputWidget<Person> {
         return person;
     }
 
+    set value(person: Person | null) {
+        if (!person) {
+            this.widgets.name.value = "";
+            this.widgets.email.value = "";
+            if (this.widgets.orcid) this.widgets.orcid.value = "";
+        } else {
+            this.widgets.name.value = person.name ?? "";
+            this.widgets.email.value = person.email ?? "";
+            if (this.widgets.orcid) this.widgets.orcid.value = person.orcid ?? "";
+        }
+    }
+
     disable() {
         this.widgets.name.element.setAttribute("disabled", "true");
         this.widgets.email.element.setAttribute("disabled", "true");
@@ -55,12 +67,6 @@ export class PersonInputWidget extends InputWidget<Person> {
         this.widgets.email.element.removeAttribute("disabled");
         this.widgets.orcid?.element.removeAttribute("disabled");
     }
-}
-
-function setPerson(widgets: PersonWidgets, person: Person) {
-    widgets.name.setIfUnchanged(person.name);
-    widgets.email.setIfUnchanged(person.email);
-    widgets.orcid?.setIfUnchanged(person.orcid ?? "");
 }
 
 function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] {
