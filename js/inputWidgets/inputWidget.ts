@@ -12,7 +12,7 @@ export abstract class InputWidget<T> {
 
     /**
      * Emit an input-updated event with this widget's key and current value.
-     * Consumers may listen on any ancestor (the event bubbles).
+     * Consumers may listen to any ancestor (the event bubbles).
      */
     protected emitUpdated(): void {
         const detail = { key: this.key, value: this.value } as {
@@ -36,16 +36,38 @@ export abstract class InputWidget<T> {
         otherKey: string,
         handler: (widget: InputWidget<T>, value: U | null) => void,
         target: Document | HTMLElement = document,
-    ): () => void {
-        const listener = (e: Event) => {
+    ) {
+        if (this.key === undefined) {
+            console.warn("Cannot listen to widgets, no key set for this.");
+            return;
+        }
+
+        // Call the provided handler on events:
+        const listener = this.inputUpdatedListener(otherKey, handler);
+        target.addEventListener("input-updated", listener);
+        // Remove the handler when `this` is updated manually:
+        target.addEventListener(
+            "input-updated",
+            this.inputUpdatedListener(this.key, () =>
+                target.removeEventListener("input-updated", listener as EventListener),
+            ),
+        );
+    }
+
+    /**
+     * Make an event listener that calls the given handler when a custom event with
+     * the given key is emitted.
+     */
+    private inputUpdatedListener<U = unknown>(
+        otherKey: string,
+        handler: (widget: InputWidget<T>, value: U | null) => void,
+    ): EventListener {
+        return (e: Event) => {
             const ce = e as CustomEvent<{ key: string; value: U | null }>;
             if (ce.detail?.key === otherKey) {
                 handler(this, ce.detail.value ?? null);
             }
         };
-        target.addEventListener("input-updated", listener as EventListener);
-        return () =>
-            target.removeEventListener("input-updated", listener as EventListener);
     }
 
     abstract get value(): T | null;
