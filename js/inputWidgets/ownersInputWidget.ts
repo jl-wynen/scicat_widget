@@ -77,6 +77,7 @@ function createOwnersElement(
     addOwner();
 
     const addOwnerButton = document.createElement("button");
+    addOwnerButton.classList.add("cean-button");
     addOwnerButton.textContent = "Add owner";
     addOwnerButton.addEventListener("click", () => {
         addOwner();
@@ -98,7 +99,8 @@ function createSingleOwnerWidget(
 
     const trashButton = document.createElement("button");
     trashButton.classList.add("cean-remove-item");
-    trashButton.textContent = "-";
+    trashButton.classList.add("cean-button");
+    trashButton.innerHTML = '<i class="fa fa-trash"></i>';
     trashButton.addEventListener("click", () => {
         // dispatch before removing the element so the element actually gets emitted:
         container.dispatchEvent(

@@ -116,10 +116,6 @@
 
 .cean-ds-scientific-metadata-table {
     width: 100%;
-
-    & thead {
-        border-bottom: 1px solid red;
-    }
 }
 
 .cean-person-widget {
@@ -143,9 +139,9 @@
 
 .cean-ds input, .cean-ds textarea {
     box-sizing: border-box;
-    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
+    border: var(--jp-border-width) solid var(--jp-input-border-color);
     color: var(--jp-content-font-color1);
-    background-color: var(--jp-cell-editor-background);
+    background-color: var(--jp-input-background);
 
     &:focus-visible {
         outline: none;
@@ -153,10 +149,15 @@
 
     &:focus {
         border-color: var(--jp-input-active-border-color);
+        background-color: var(--jp-input-active-background);
     }
 
     &::selection {
         background-color: var(--jp-editor-selected-focused-background);
+    }
+
+    &:hover {
+        border-color: var(--jp-input-active-border-color);
     }
 }
 
@@ -219,5 +220,28 @@
 .cean-upload-button {
     background: var(--jp-info-color1);
     color: var(--jp-ui-inverse-font-color1);
+
+    &:hover {
+        background: var(--jp-info-color2);
+        box-shadow: none !important;
+    }
+}
+
+.cean-button {
+    background: var(--jp-input-background);
+    color: var(--jp-ui-font-color1);
     border-radius: var(--jp-border-radius);
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--jp-input-hover-background);
+        color: var(--jp-ui-font-color0);
+    }
+}
+
+.cean-button[disabled="true"] {
+    background: var(--jp-input-background);
+    color: var(--jp-ui-font-color2);
+    cursor: unset;
 }

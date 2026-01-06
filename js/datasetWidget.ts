@@ -223,6 +223,7 @@ function createScientificMetadataPanel(): HTMLElement {
     table.appendChild(body);
 
     const addItemButton = document.createElement("button");
+    addItemButton.classList.add("cean-button");
     addItemButton.textContent = "Add item";
     addItemButton.addEventListener("click", () => {});
 
