@@ -9,11 +9,11 @@ type Choice = {
 
 export class ComboboxInputWidget extends InputWidget<string> {
     element: HTMLElement;
-    private searchInput: HTMLInputElement;
-    private displayElement: HTMLElement;
-    private dropdownList: HTMLElement;
-    private choices: Array<Choice>;
-    private renderChoice: (choice: Choice) => HTMLElement;
+    private readonly searchInput: HTMLInputElement;
+    private readonly displayElement: HTMLElement;
+    private readonly dropdownList: HTMLElement;
+    private readonly choices: Array<Choice>;
+    private readonly renderChoice: (choice: Choice) => HTMLElement;
     private _value: string | null = null;
     private isFocused: boolean = false;
 
@@ -23,21 +23,21 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.renderChoice = renderChoice;
 
         this.element = createFormElement("div");
-        this.element.classList.add("cean-choice-dropdown");
+        this.element.classList.add("cean-combox-dropdown");
 
         this.searchInput = document.createElement("input");
         this.searchInput.type = "text";
         this.searchInput.placeholder = "Search...";
-        this.searchInput.classList.add("cean-choice-search");
+        this.searchInput.classList.add("cean-combox-search");
         this.element.appendChild(this.searchInput);
 
         this.displayElement = document.createElement("div");
-        this.displayElement.classList.add("cean-choice-display");
+        this.displayElement.classList.add("cean-combox-display");
         this.displayElement.style.display = "none";
         this.element.appendChild(this.displayElement);
 
         this.dropdownList = document.createElement("div");
-        this.dropdownList.classList.add("cean-choice-list");
+        this.dropdownList.classList.add("cean-combox-list");
         this.dropdownList.style.display = "none";
         this.element.appendChild(this.dropdownList);
 
@@ -55,7 +55,6 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
         this.searchInput.addEventListener("input", () => {
             this.filterItems();
-            // this.openDropdown();
         });
 
         this.searchInput.addEventListener("keydown", (e) => {
@@ -67,13 +66,10 @@ export class ComboboxInputWidget extends InputWidget<string> {
         });
 
         this.searchInput.addEventListener("blur", () => {
-            // Delay to allow mousedown on items to fire first
-            setTimeout(() => {
-                this.isFocused = false;
-                this.selectFromSearch();
-                this.closeDropdown();
-                this.updateDisplay();
-            }, 200);
+            this.isFocused = false;
+            this.selectFromSearch();
+            this.closeDropdown();
+            this.updateDisplay();
         });
 
         // Close when clicking outside
@@ -111,10 +107,10 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.dropdownList.innerHTML = "";
         for (const choice of this.choices) {
             const item = document.createElement("div");
-            item.classList.add("cean-choice-item");
+            item.classList.add("cean-combox-item");
             item.dataset.key = choice.key;
             if (choice.key === this._value) {
-                item.classList.add("cean-choice-selected");
+                item.classList.add("cean-combox-selected");
             }
 
             const rendered = this.renderChoice(choice);
@@ -131,13 +127,13 @@ export class ComboboxInputWidget extends InputWidget<string> {
     }
 
     private updateSelectedHighlight() {
-        const items = this.dropdownList.querySelectorAll(".cean-choice-item");
+        const items = this.dropdownList.querySelectorAll(".cean-combox-item");
         items.forEach((item) => {
             const htmlItem = item as HTMLElement;
             if (htmlItem.dataset.key === this._value) {
-                htmlItem.classList.add("cean-choice-selected");
+                htmlItem.classList.add("cean-combox-selected");
             } else {
-                htmlItem.classList.remove("cean-choice-selected");
+                htmlItem.classList.remove("cean-combox-selected");
             }
         });
     }
@@ -154,7 +150,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
     private filterItems() {
         const searchText = this.searchInput.value.toLowerCase();
-        const items = this.dropdownList.querySelectorAll(".cean-choice-item");
+        const items = this.dropdownList.querySelectorAll(".cean-combox-item");
         items.forEach((item) => {
             const htmlItem = item as HTMLElement;
             if (htmlItem.textContent?.toLowerCase().includes(searchText)) {

@@ -246,18 +246,18 @@
     cursor: unset;
 }
 
-.cean-choice-dropdown {
+.cean-combox-dropdown {
     position: relative;
 }
 
-.cean-choice-search,
-.cean-choice-display {
+.cean-combox-search,
+.cean-combox-display {
     display: block;
     width: 100%;
     box-sizing: border-box;
     border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
     color: var(--jp-content-font-color1);
-    background-color: var(--jp-cell-editor-background);
+    background: var(--jp-input-background);
     padding: 0.1rem 0.5rem 0.1rem 0.5rem;
 
     &:focus-visible {
@@ -273,7 +273,7 @@
     }
 }
 
-.cean-choice-display {
+.cean-combox-display {
     min-height: 1.5rem;
     cursor: text;
     white-space: nowrap;
@@ -281,7 +281,7 @@
     text-overflow: ellipsis;
 }
 
-.cean-choice-list {
+.cean-combox-list {
     position: absolute;
     display: none;
     top: 100%;
@@ -299,7 +299,7 @@
     overflow-x: hidden;
 }
 
-.cean-choice-item {
+.cean-combox-item {
     cursor: pointer;
     user-select: none;
     padding: 0.1rem;
@@ -309,7 +309,7 @@
     }
 }
 
-.cean-choice-selected {
+.cean-combox-selected {
     background-color: var(--jp-layout-color2);
     font-weight: bold;
 }

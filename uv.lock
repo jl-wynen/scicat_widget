@@ -1802,6 +1802,7 @@ version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "anywidget" },
+    { name = "pydantic" },
     { name = "scitacean" },
 ]
 
@@ -1830,6 +1831,7 @@ lint = [
 [package.metadata]
 requires-dist = [
     { name = "anywidget", specifier = ">=0.9.21" },
+    { name = "pydantic", specifier = ">=2.12" },
     { name = "scitacean", editable = "../scitacean" },
 ]
 
