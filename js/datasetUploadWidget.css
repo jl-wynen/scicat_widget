@@ -245,3 +245,57 @@
     color: var(--jp-ui-font-color2);
     cursor: unset;
 }
+
+.cean-choice-dropdown {
+    position: relative;
+}
+
+.cean-choice-search {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
+    color: var(--jp-content-font-color1);
+    background-color: var(--jp-cell-editor-background);
+    padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &:focus {
+        border-color: var(--jp-input-active-border-color);
+    }
+
+    &::selection {
+        background-color: var(--jp-editor-selected-focused-background);
+    }
+}
+
+.cean-choice-list {
+    position: absolute;
+    display: none;
+    top: 100%;
+    left: 0;
+    width: 100%;
+    box-sizing: border-box;
+    z-index: 100;
+    border: var(--jp-border-width) solid var(--jp-input-border-color);
+    border-top: none;
+    background-color: var(--jp-notebook-select-background);
+    padding: 0 0.5rem 0 0.5rem;
+
+    max-height: 16rem;
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.cean-choice-item {
+    cursor: pointer;
+    user-select: none;
+    padding: 0.1rem;
+
+    &:hover {
+        background-color: var(--jp-editor-selected-background);
+    }
+}

@@ -1,5 +1,6 @@
 import {
     CheckboxInputWidget,
+    ChoiceInputWidget,
     DatetimeInputWidget,
     DropdownInputWidget,
     InputWidget,
@@ -67,8 +68,22 @@ function createGeneralInfoPanel(
         columns,
         "Proposal",
         "proposal_id",
-        DropdownInputWidget,
-        ["Proposal 1", "Proposal 2"],
+        ChoiceInputWidget,
+        [
+            { key: "p1", data: { name: "Proposal 1", id: "123" } },
+            { key: "p2", data: { name: "Second proposal", id: "abc" } },
+        ],
+        (choice) => {
+            const el = document.createElement("div");
+            const name = document.createElement("span");
+            name.textContent = choice.data.name;
+            el.appendChild(name);
+            const id = document.createElement("span");
+            id.textContent = choice.data.id;
+            id.style.color = "gray";
+            el.appendChild(id);
+            return el;
+        },
     );
     proposalInput.element.classList.add("cean-span-3");
 
