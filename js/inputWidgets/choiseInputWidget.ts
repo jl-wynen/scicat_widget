@@ -3,6 +3,7 @@ import { createFormElement } from "../forms";
 
 type Choice = {
     key: string;
+    text: string;
     data: any;
 };
 

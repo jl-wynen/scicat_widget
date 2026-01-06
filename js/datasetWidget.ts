@@ -70,13 +70,13 @@ function createGeneralInfoPanel(
         "proposal_id",
         ComboboxInputWidget,
         [
-            { key: "p1", data: { name: "Proposal 1", id: "123" } },
-            { key: "p2", data: { name: "Second proposal", id: "abc" } },
+            { key: "p1", text: "Proposal 1", data: { id: "123" } },
+            { key: "p2", text: "Second proposal", data: { id: "abc" } },
         ],
         (choice) => {
             const el = document.createElement("div");
             const name = document.createElement("span");
-            name.textContent = choice.data.name;
+            name.textContent = choice.text;
             el.appendChild(name);
             const id = document.createElement("span");
             id.textContent = choice.data.id;

@@ -3,16 +3,19 @@ import { createFormElement } from "../forms";
 
 type Choice = {
     key: string;
+    text: string;
     data: any;
 };
 
 export class ComboboxInputWidget extends InputWidget<string> {
     element: HTMLElement;
     private searchInput: HTMLInputElement;
+    private displayElement: HTMLElement;
     private dropdownList: HTMLElement;
     private choices: Array<Choice>;
     private renderChoice: (choice: Choice) => HTMLElement;
     private _value: string | null = null;
+    private isFocused: boolean = false;
 
     constructor(choices: Array<Choice>, renderChoice: (choice: Choice) => HTMLElement) {
         super();
@@ -28,6 +31,11 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.searchInput.classList.add("cean-choice-search");
         this.element.appendChild(this.searchInput);
 
+        this.displayElement = document.createElement("div");
+        this.displayElement.classList.add("cean-choice-display");
+        this.displayElement.style.display = "none";
+        this.element.appendChild(this.displayElement);
+
         this.dropdownList = document.createElement("div");
         this.dropdownList.classList.add("cean-choice-list");
         this.dropdownList.style.display = "none";
@@ -35,7 +43,12 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
         this.renderChoices();
 
+        this.displayElement.addEventListener("click", () => {
+            this.enterEditMode();
+        });
+
         this.searchInput.addEventListener("focus", () => {
+            this.isFocused = true;
             this.openDropdown();
             this.searchInput.select();
         });
@@ -56,8 +69,10 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.searchInput.addEventListener("blur", () => {
             // Delay to allow mousedown on items to fire first
             setTimeout(() => {
+                this.isFocused = false;
                 this.selectFromSearch();
                 this.closeDropdown();
+                this.updateDisplay();
             }, 200);
         });
 
@@ -67,6 +82,29 @@ export class ComboboxInputWidget extends InputWidget<string> {
                 this.closeDropdown();
             }
         });
+    }
+
+    private enterEditMode() {
+        this.isFocused = true;
+        this.updateDisplay();
+        this.searchInput.focus();
+    }
+
+    private updateDisplay() {
+        if (this.isFocused || this._value === null) {
+            this.searchInput.style.display = "block";
+            this.displayElement.style.display = "none";
+        } else {
+            this.searchInput.style.display = "none";
+            this.displayElement.style.display = "block";
+            this.displayElement.innerHTML = "";
+
+            let choice = this.choices.find((c) => c.key === this._value);
+            if (!choice) {
+                choice = { key: this._value, text: this._value, data: {} };
+            }
+            this.displayElement.appendChild(this.renderChoice(choice));
+        }
     }
 
     private renderChoices() {
@@ -128,14 +166,13 @@ export class ComboboxInputWidget extends InputWidget<string> {
     }
 
     private selectChoice(choice: Choice) {
-        const rendered = this.renderChoice(choice);
-        this.searchInput.value = rendered.textContent || choice.key;
-        this.searchInput.select();
+        this.searchInput.value = choice.text;
 
         if (this._value !== choice.key) {
             this._value = choice.key;
             this.emitUpdated();
         }
+        this.searchInput.blur();
     }
 
     private selectFromSearch() {
@@ -153,8 +190,15 @@ export class ComboboxInputWidget extends InputWidget<string> {
         if (choiceByKey) {
             this.selectChoice(choiceByKey);
         } else {
-            this._value = text;
-            this.emitUpdated();
+            const choiceByText = this.choices.find((c) => c.text === text);
+            if (choiceByText) {
+                this.selectChoice(choiceByText);
+            } else {
+                if (this._value !== text) {
+                    this._value = text;
+                    this.emitUpdated();
+                }
+            }
         }
     }
 
@@ -176,11 +220,11 @@ export class ComboboxInputWidget extends InputWidget<string> {
         } else {
             const choice = this.choices.find((c) => c.key === key);
             if (choice) {
-                const rendered = this.renderChoice(choice);
-                this.searchInput.value = rendered.textContent || choice.key;
+                this.searchInput.value = choice.text;
             } else {
                 this.searchInput.value = key;
             }
         }
+        this.updateDisplay();
     }
 }

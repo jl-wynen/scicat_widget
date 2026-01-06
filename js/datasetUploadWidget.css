@@ -250,7 +250,8 @@
     position: relative;
 }
 
-.cean-choice-search {
+.cean-choice-search,
+.cean-choice-display {
     display: block;
     width: 100%;
     box-sizing: border-box;
@@ -270,6 +271,14 @@
     &::selection {
         background-color: var(--jp-editor-selected-focused-background);
     }
+}
+
+.cean-choice-display {
+    min-height: 1.5rem;
+    cursor: text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .cean-choice-list {
