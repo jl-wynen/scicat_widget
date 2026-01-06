@@ -10,6 +10,7 @@ description = "SciCat dataset widget"
 requires-python = ">=3.11"
 dependencies = [
     "anywidget>=0.9.21",
+    "pydantic>=2.12",
     "scitacean",
 ]
 
