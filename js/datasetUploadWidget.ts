@@ -3,13 +3,15 @@ import "./datasetUploadWidget.css";
 import { DatasetWidget } from "./datasetWidget.ts";
 import { Tabs } from "./tabs.ts";
 import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
+import { Instrument } from "./models.ts";
 
 interface WidgetModel {
     initial: object;
+    instruments: [Instrument];
 }
 
 function render({ model, el }: RenderProps<WidgetModel>) {
-    const datasetWidget = new DatasetWidget();
+    const datasetWidget = new DatasetWidget(model.get("instruments"));
     const filesWidget = new StringInputWidget();
     const attachmentsWidget = new StringInputWidget();
 

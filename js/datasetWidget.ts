@@ -6,22 +6,22 @@ import {
     InputWidget,
     OwnersInputWidget,
     PrincipalInvestigatorInputWidget,
-    StringInputWidget,
+    StringInputWidget
 } from "./inputWidgets";
 import { createInputWithLabel } from "./forms.ts";
+import { Instrument } from "./models";
 
 export class DatasetWidget {
     element: HTMLDivElement;
     private readonly inputWidgets: Map<string, InputWidget<any>>;
 
     // TODO suppress shift+enter, else it re-renders the cell!
-    constructor() {
+    constructor(instruments: [Instrument]) {
         const container = document.createElement("div");
         container.classList.add("cean-ds");
 
         this.inputWidgets = new Map<string, InputWidget<any>>();
-
-        container.appendChild(createGeneralInfoPanel(this.inputWidgets));
+        container.appendChild(createGeneralInfoPanel(this.inputWidgets, instruments));
         container.appendChild(createOwnerPanel(this.inputWidgets));
         container.appendChild(createMiscPanel(this.inputWidgets));
         container.appendChild(createScientificMetadataPanel());
@@ -46,6 +46,7 @@ export class DatasetWidget {
 
 function createGeneralInfoPanel(
     inputWidgets: Map<string, InputWidget<any>>,
+    instruments: [Instrument],
 ): HTMLElement {
     const create = createAndAppend.bind(null, inputWidgets);
 
@@ -84,14 +85,12 @@ function createGeneralInfoPanel(
             el.appendChild(id);
             return el;
         },
+        true,
     );
     proposalInput.element.classList.add("cean-span-3");
 
-    create(columns, "Instrument", "instrument_id", DropdownInputWidget, [
-        "DREAM",
-        "ODIN",
-        "LoKI",
-    ]);
+    createInstrumentsWidget(inputWidgets, columns, instruments);
+
     let creationLocation = create(
         columns,
         "Creation location",
@@ -260,6 +259,45 @@ function createScientificMetadataPanel(): HTMLElement {
     container.appendChild(table);
     container.appendChild(addItemButton);
     return container;
+}
+
+function createInstrumentsWidget(
+    inputWidgets: Map<string, InputWidget<any>>,
+    parent: HTMLElement,
+    instruments: [Instrument],
+) {
+    const instrumentChoices = [];
+    instruments.forEach((instrument) => {
+        instrumentChoices.push({
+            key: instrument.id,
+            text: instrument.uniqueName,
+        });
+    });
+
+    createAndAppend(
+        inputWidgets,
+        parent,
+        "Instrument",
+        "instrument_id",
+        ComboboxInputWidget,
+        instrumentChoices,
+        (choice) => {
+            const el = document.createElement("div");
+            el.classList.add("cean-instrument-item");
+
+            const name = document.createElement("div");
+            name.textContent = choice.text;
+            el.appendChild(name);
+
+            const id = document.createElement("div");
+            id.classList.add("cean-item-id");
+            id.textContent = choice.key;
+            el.appendChild(id);
+
+            return el;
+        },
+        false,
+    );
 }
 
 function createAndAppend(

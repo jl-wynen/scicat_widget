@@ -2,12 +2,15 @@
 # Copyright (c) 2026 SciCat Project (https://github.com/SciCatProject/scitacean)
 
 import pathlib
-from scitacean import Client, ScicatCommError
-import anywidget
-from ._scicat_api import get_user_and_scicat_info
 from typing import Any
-from ._logging import get_logger
+
+import anywidget
 import traitlets
+from scitacean import Client, ScicatCommError
+
+from ._logging import get_logger
+from ._model import Instrument
+from ._scicat_api import get_user_and_scicat_info
 
 _STATIC_PATH = pathlib.Path(__file__).parent / "_static"
 
@@ -17,28 +20,37 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     _css = _STATIC_PATH / "datasetUploadWidget.css"
 
     initial = traitlets.Dict().tag(sync=True)
+    instruments = traitlets.List().tag(sync=True)
 
 
 def dataset_upload_widget(client: Client | None = None) -> DatasetUploadWidget:
-    initial = _collect_initial_data(client)
-    widget = DatasetUploadWidget(initial=initial)
+    initial, instruments = _collect_initial_data(client)
+    widget = DatasetUploadWidget(
+        initial=initial,
+        instruments=[_serialize_instrument(instrument) for instrument in instruments],
+    )
     return widget
 
 
-def _collect_initial_data(client: Client | None = None) -> dict[str, Any]:
+def _collect_initial_data(
+    client: Client | None = None,
+) -> tuple[dict[str, Any], list[Instrument]]:
     if client is None:
-        return {}
-    return _download_initial_data(client)
+        return {}, []
+    data, instruments = _download_scicat_data(client)
+    return data, instruments
 
 
-def _download_initial_data(client: Client) -> dict[str, Any]:
+def _download_scicat_data(
+    client: Client,
+) -> tuple[dict[str, Any], list[Instrument]]:
     try:
         user_info, instruments = get_user_and_scicat_info(client)
     except (ScicatCommError, ValueError, TypeError) as error:
         get_logger().warning("Failed to download initial data for user: %s", error)
-        return {}
+        return {}, []
 
-    return {
+    initial_data = {
         "owners": [
             {
                 "name": user_info.display_name,
@@ -46,4 +58,13 @@ def _download_initial_data(client: Client) -> dict[str, Any]:
                 "orcid": user_info.orcid_id,
             },
         ],
+    }
+    return initial_data, instruments
+
+
+def _serialize_instrument(instrument: Instrument) -> dict[str, Any]:
+    return {
+        "id": instrument.pid,
+        "name": instrument.name,
+        "uniqueName": instrument.unique_name,
     }

@@ -14,13 +14,19 @@ export class ComboboxInputWidget extends InputWidget<string> {
     private readonly dropdownList: HTMLElement;
     private readonly choices: Array<Choice>;
     private readonly renderChoice: (choice: Choice) => HTMLElement;
+    private readonly allowArbitrary: boolean;
     private _value: string | null = null;
     private isFocused: boolean = false;
 
-    constructor(choices: Array<Choice>, renderChoice: (choice: Choice) => HTMLElement) {
+    constructor(
+        choices: Array<Choice>,
+        renderChoice: (choice: Choice) => HTMLElement,
+        allowArbitrary: boolean = true,
+    ) {
         super();
         this.choices = choices;
         this.renderChoice = renderChoice;
+        this.allowArbitrary = allowArbitrary;
 
         this.element = createFormElement("div");
         this.element.classList.add("cean-combox-dropdown");
@@ -29,12 +35,13 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.searchInput.type = "text";
         this.searchInput.placeholder = "Search...";
         this.searchInput.classList.add("cean-combox-search");
+        this.searchInput.style.display = "none";
         this.element.appendChild(this.searchInput);
 
         this.displayElement = document.createElement("div");
         this.displayElement.classList.add("cean-combox-display");
-        this.displayElement.style.display = "none";
         this.element.appendChild(this.displayElement);
+        this.showPlaceholder();
 
         this.dropdownList = document.createElement("div");
         this.dropdownList.classList.add("cean-combox-list");
@@ -80,6 +87,32 @@ export class ComboboxInputWidget extends InputWidget<string> {
         });
     }
 
+    /**
+     * Get the selected key.
+     */
+    get value(): string | null {
+        return this._value;
+    }
+
+    /**
+     * Set the selection by key.
+     */
+    set value(key: string | null) {
+        if (this._value === key) return;
+        this._value = key;
+        if (key === null) {
+            this.searchInput.value = "";
+        } else {
+            const choice = this.findChoice(key);
+            if (choice) {
+                this.searchInput.value = choice.text;
+            } else {
+                this.searchInput.value = key;
+            }
+        }
+        this.updateDisplay();
+    }
+
     private enterEditMode() {
         this.isFocused = true;
         this.updateDisplay();
@@ -87,7 +120,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
     }
 
     private updateDisplay() {
-        if (this.isFocused || this._value === null) {
+        if (this.isFocused || (this._value === null && this.allowArbitrary)) {
             this.searchInput.style.display = "block";
             this.displayElement.style.display = "none";
         } else {
@@ -95,7 +128,12 @@ export class ComboboxInputWidget extends InputWidget<string> {
             this.displayElement.style.display = "block";
             this.displayElement.innerHTML = "";
 
-            let choice = this.choices.find((c) => c.key === this._value);
+            if (this._value === null) {
+                this.showPlaceholder();
+                return;
+            }
+
+            let choice = this.findChoice(this._value);
             if (!choice) {
                 choice = { key: this._value, text: this._value, data: {} };
             }
@@ -182,45 +220,37 @@ export class ComboboxInputWidget extends InputWidget<string> {
             return;
         }
 
-        const choiceByKey = this.choices.find((c) => c.key === text);
-        if (choiceByKey) {
-            this.selectChoice(choiceByKey);
-        } else {
-            const choiceByText = this.choices.find((c) => c.text === text);
-            if (choiceByText) {
-                this.selectChoice(choiceByText);
-            } else {
-                if (this._value !== text) {
-                    this._value = text;
-                    this.emitUpdated();
-                }
+        const choice = this.findChoice(text, true);
+        if (choice) {
+            this.selectChoice(choice);
+            return;
+        }
+
+        if (this.allowArbitrary) {
+            if (this._value !== text) {
+                this._value = text;
+                this.emitUpdated();
             }
+            this.searchInput.blur();
+        } else {
+            if (this._value !== null) {
+                this._value = null;
+                this.emitUpdated();
+            }
+            this.updateDisplay();
         }
     }
 
-    /**
-     * Get the selected key.
-     */
-    get value(): string | null {
-        return this._value;
+    private findChoice(value: string, allowText: boolean = false): Choice | null {
+        const byKey = this.choices.find((c) => c.key === value);
+        if (byKey) return byKey;
+        if (allowText) {
+            return this.choices.find((c) => c.text === value) ?? null;
+        }
+        return null;
     }
 
-    /**
-     * Set the selection by key.
-     */
-    set value(key: string | null) {
-        if (this._value === key) return;
-        this._value = key;
-        if (key === null) {
-            this.searchInput.value = "";
-        } else {
-            const choice = this.choices.find((c) => c.key === key);
-            if (choice) {
-                this.searchInput.value = choice.text;
-            } else {
-                this.searchInput.value = key;
-            }
-        }
-        this.updateDisplay();
+    private showPlaceholder() {
+        this.displayElement.textContent = this.allowArbitrary ? "Search…" : "Select…";
     }
 }

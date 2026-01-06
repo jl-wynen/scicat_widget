@@ -3,3 +3,9 @@ export type Person = {
     email?: string;
     orcid?: string;
 };
+
+export type Instrument = {
+    id: string;
+    name: string;
+    uniqueName: string;
+};
