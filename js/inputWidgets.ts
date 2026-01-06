@@ -1,5 +1,6 @@
 export { CheckboxInputWidget } from "./inputWidgets/checkboxInputWidget.ts";
 export { ChoiceInputWidget } from "./inputWidgets/choiseInputWidget.ts";
+export { ComboboxInputWidget } from "./inputWidgets/comboboxInputWidget.ts";
 export { DatetimeInputWidget } from "./inputWidgets/datetimeInputWidget.ts";
 export { DropdownInputWidget } from "./inputWidgets/dropdownInputWidget.ts";
 export { InputWidget } from "./inputWidgets/inputWidget.ts";

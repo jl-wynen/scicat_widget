@@ -299,3 +299,8 @@
         background-color: var(--jp-editor-selected-background);
     }
 }
+
+.cean-choice-selected {
+    background-color: var(--jp-layout-color2);
+    font-weight: bold;
+}

@@ -1,6 +1,6 @@
 import {
     CheckboxInputWidget,
-    ChoiceInputWidget,
+    ComboboxInputWidget,
     DatetimeInputWidget,
     DropdownInputWidget,
     InputWidget,
@@ -68,7 +68,7 @@ function createGeneralInfoPanel(
         columns,
         "Proposal",
         "proposal_id",
-        ChoiceInputWidget,
+        ComboboxInputWidget,
         [
             { key: "p1", data: { name: "Proposal 1", id: "123" } },
             { key: "p2", data: { name: "Second proposal", id: "abc" } },
