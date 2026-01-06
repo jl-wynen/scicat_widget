@@ -4,7 +4,9 @@ import { DatasetWidget } from "./datasetWidget.ts";
 import { Tabs } from "./tabs.ts";
 import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 
-interface WidgetModel {}
+interface WidgetModel {
+    initial: object;
+}
 
 function render({ model, el }: RenderProps<WidgetModel>) {
     const datasetWidget = new DatasetWidget();
@@ -23,6 +25,11 @@ function render({ model, el }: RenderProps<WidgetModel>) {
         ],
         [makeSciCatLink("https://scicat.ess.eu/"), uploadButton],
     );
+
+    let initial = model.get("initial");
+    if (initial.hasOwnProperty("owners")) {
+        datasetWidget.setValue("owners", initial.owners);
+    }
 
     el.appendChild(tabs.element);
 }

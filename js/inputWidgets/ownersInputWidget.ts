@@ -34,13 +34,20 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
     }
 
     set value(v: Array<Person> | null) {
-        if (!v) return; // TODO: implement UI update for owners list
-        setPersons(this.element, v);
-    }
-}
+        if (!v) return;
 
-function setPersons(_element: HTMLElement, _persons: Array<Person>) {
-    // TODO
+        this.clearOwners();
+        let container = this.element.querySelector(".cean-owners-container");
+        v.forEach((person) => {
+            let owner = addOwner(this.ownerWidgets, container as HTMLElement);
+            owner.value = person;
+        });
+    }
+
+    private clearOwners() {
+        this.ownerWidgets.clear();
+        this.element.querySelector(".cean-owners-container")?.replaceChildren();
+    }
 }
 
 function createOwnersElement(
@@ -49,6 +56,7 @@ function createOwnersElement(
     const container = createFormElement("div") as HTMLDivElement;
 
     const ownersContainer = document.createElement("div");
+    ownersContainer.classList.add("cean-owners-container");
     container.appendChild(ownersContainer);
 
     container.addEventListener(
@@ -60,31 +68,36 @@ function createOwnersElement(
         false,
     );
 
-    function addOwner() {
-        const ownerId = crypto.randomUUID();
-
-        ownerWidgets.set(ownerId, createSingleOwnerWidget(ownersContainer, ownerId));
-        let trashButtons = ownersContainer.querySelectorAll(".cean-remove-item");
-        if (trashButtons.length > 1) {
-            trashButtons.forEach((button) => {
-                button.removeAttribute("disabled");
-            });
-        } else {
-            trashButtons[0].setAttribute("disabled", "true");
-        }
-    }
-
-    addOwner();
+    addOwner(ownerWidgets, ownersContainer);
 
     const addOwnerButton = document.createElement("button");
     addOwnerButton.classList.add("cean-button");
     addOwnerButton.textContent = "Add owner";
     addOwnerButton.addEventListener("click", () => {
-        addOwner();
+        addOwner(ownerWidgets, ownersContainer);
     });
     container.appendChild(addOwnerButton);
 
     return container;
+}
+
+function addOwner(
+    ownerWidgets: Map<string, PersonInputWidget>,
+    ownersContainer: HTMLElement,
+): PersonInputWidget {
+    const ownerId = crypto.randomUUID();
+
+    let widget = createSingleOwnerWidget(ownersContainer, ownerId);
+    ownerWidgets.set(ownerId, widget);
+    let trashButtons = ownersContainer.querySelectorAll(".cean-remove-item");
+    if (trashButtons.length > 1) {
+        trashButtons.forEach((button) => {
+            button.removeAttribute("disabled");
+        });
+    } else {
+        trashButtons[0].setAttribute("disabled", "true");
+    }
+    return widget;
 }
 
 function createSingleOwnerWidget(

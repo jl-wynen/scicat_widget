@@ -36,6 +36,11 @@ export class DatasetWidget {
         });
         return data;
     }
+
+    setValue(key: string, value: any) {
+        let widget = this.inputWidgets.get(key);
+        if (widget !== undefined) widget.value = value;
+    }
 }
 
 function createGeneralInfoPanel(
@@ -72,7 +77,16 @@ function createGeneralInfoPanel(
         "ODIN",
         "LoKI",
     ]);
-    create(columns, "Creation location", "creation_location", StringInputWidget);
+    let creationLocation = create(
+        columns,
+        "Creation location",
+        "creation_location",
+        StringInputWidget,
+    );
+    creationLocation.listenToWidget("instrument_id", (widget, instrumentId) => {
+        // TODO construct location based on input pattern (python)
+        widget.value = `ESS:${instrumentId}`;
+    });
 
     const runRow = document.createElement("div");
     runRow.classList.add("cean-run-row");
