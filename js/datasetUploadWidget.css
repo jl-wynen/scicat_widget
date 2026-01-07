@@ -87,6 +87,11 @@
     column-gap: 12px;
     row-gap: 10px;
     align-items: start;
+
+
+    & button.cean-remove-item[disabled="true"] {
+        visibility: hidden;
+    }
 }
 
 .cean-ds-misc-columns {
@@ -345,12 +350,13 @@
 .cean-single-file-widget {
     grid-template-columns: 1fr max-content;
 
-    & button.cean-remove-item[disabled=""] {
+    & button.cean-remove-item[disabled="true"] {
         visibility: hidden;
     }
 }
 
 .cean-file-stats {
+    /* make sure this element always has the same height */
     min-height: 1.2em;
     line-height: 1.2em;
     overflow: hidden;
@@ -369,4 +375,9 @@
 select.cean-chk-alg {
     /* this dropdown looks strange when it is the full width of the parent */
     width: 10em !important;
+}
+
+select.cean-dropdown {
+    background: var(--jp-input-background);
+    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
 }

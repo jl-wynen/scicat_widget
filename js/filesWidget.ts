@@ -101,7 +101,7 @@ class SingleFileWidget {
         this.element.appendChild(input.element);
 
         const removeButton = iconButton("trash", () => this.remove(model));
-        removeButton.disabled = true;
+        removeButton.setAttribute("disabled", "true");
         removeButton.classList.add("cean-remove-item");
         this.element.appendChild(removeButton);
 
