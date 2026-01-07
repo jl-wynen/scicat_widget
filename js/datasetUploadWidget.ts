@@ -19,7 +19,7 @@ function render({ model, el }: RenderProps<WidgetModel>) {
         model.get("instruments"),
         model.get("accessGroups"),
     );
-    const filesWidget = new FilesWidget();
+    const filesWidget = new FilesWidget(model);
     const attachmentsWidget = new StringInputWidget();
 
     const uploadButton = makeUploadButton(

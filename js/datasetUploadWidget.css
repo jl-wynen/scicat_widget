@@ -137,7 +137,7 @@
     resize: vertical;
 }
 
-.cean-ds input, .cean-ds textarea {
+.cean-ds input, .cean-ds textarea, .cean-files-widget input {
     box-sizing: border-box;
     border: var(--jp-border-width) solid var(--jp-input-border-color);
     color: var(--jp-content-font-color1);
@@ -326,4 +326,19 @@
 
 .cean-item-id {
     color: var(--jp-content-font-color3);
+}
+
+.cean-files-widget {
+    & input {
+        width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+.cean-file-input[data-error="true"] {
+    border-color: var(--jp-error-color2) !important;
+}
+
+.cean-file-input[data-error="true"] + .cean-file-stats {
+    color: var(--jp-error-color2);
 }

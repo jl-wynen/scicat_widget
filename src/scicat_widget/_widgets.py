@@ -6,7 +6,7 @@ from typing import Any
 
 import anywidget
 import traitlets
-from scitacean import Client, ScicatCommError
+from scitacean import Client, ScicatCommError, File
 
 from ._logging import get_logger
 from ._model import Instrument, ProposalOverview
@@ -33,6 +33,7 @@ def dataset_upload_widget(client: Client | None = None) -> DatasetUploadWidget:
         proposals=[_serialize_proposal(proposal) for proposal in proposals],
         accessGroups=access_groups,
     )
+    widget.on_msg(_handle_event)
     return widget
 
 
@@ -83,3 +84,41 @@ def _serialize_proposal(proposal: ProposalOverview) -> dict[str, Any]:
         "title": proposal.title,
         "instrumentIds": proposal.instrument_ids,
     }
+
+
+def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]):
+    try:
+        file = File.from_local(input_payload["filename"])
+        payload = {
+            "success": True,
+            "size": file.size,
+            "creationTime": file.creation_time,
+        }
+    except FileNotFoundError:
+        payload = {"success": False, "error": "File not found"}
+    widget.send(
+        {
+            "type": "rsp:inspect-file",
+            "payload": {
+                # Echo the input to identify the element that the request came from.
+                **input_payload,
+                **payload,
+            },
+        }
+    )
+
+
+_EVENT_HANDLERS = {
+    "req:inspect-file": _inspect_file,
+}
+
+
+def _handle_event(
+    widget: DatasetUploadWidget, content: dict[str, object], buffer: object
+) -> None:
+    try:
+        handler = _EVENT_HANDLERS[content["type"]]  # type: ignore[arg-type]
+    except KeyError:
+        get_logger().warning("Received unknown event from widget: %s", content)
+        return
+    handler(widget, content["payload"])

@@ -30,7 +30,6 @@ export abstract class InputWidget<T> {
 
     /**
      * Register a listener that reacts to "input-updated" events from another widget.
-     * Returns an unsubscribe function that can be called manually if needed.
      */
     listenToWidget<U = unknown>(
         otherKey: string,

@@ -2,6 +2,7 @@ export { CheckboxInputWidget } from "./inputWidgets/checkboxInputWidget.ts";
 export { ComboboxInputWidget } from "./inputWidgets/comboboxInputWidget.ts";
 export { DatetimeInputWidget } from "./inputWidgets/datetimeInputWidget.ts";
 export { DropdownInputWidget } from "./inputWidgets/dropdownInputWidget.ts";
+export { FileInputWidget } from "./inputWidgets/fileInputWidget.ts";
 export { InputWidget } from "./inputWidgets/inputWidget.ts";
 export { OwnersInputWidget } from "./inputWidgets/ownersInputWidget.ts";
 export { PersonInputWidget } from "./inputWidgets/personInputWidget.ts";
