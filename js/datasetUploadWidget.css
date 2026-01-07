@@ -259,6 +259,7 @@
     color: var(--jp-content-font-color1);
     background: var(--jp-input-background);
     padding: 0.1rem 0.5rem 0.1rem 0.5rem;
+    min-height: 1.5rem;
 
     &:focus-visible {
         outline: none;
@@ -274,7 +275,6 @@
 }
 
 .cean-combox-display {
-    min-height: 1.5rem;
     cursor: text;
     white-space: nowrap;
     overflow: hidden;
