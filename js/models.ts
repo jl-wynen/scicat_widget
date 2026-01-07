@@ -9,3 +9,9 @@ export type Instrument = {
     name: string;
     uniqueName: string;
 };
+
+export type Proposal = {
+    id: string;
+    title: string;
+    instrumentIds: [string];
+};

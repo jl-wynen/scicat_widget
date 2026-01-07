@@ -324,12 +324,6 @@
     font-weight: bold;
 }
 
-.cean-instrument-item {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
 .cean-item-id {
     color: var(--jp-content-font-color3);
 }

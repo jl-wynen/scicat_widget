@@ -9,7 +9,7 @@ import {
     StringInputWidget,
 } from "./inputWidgets";
 import { createInputWithLabel } from "./forms.ts";
-import { Instrument } from "./models";
+import { Instrument, Proposal } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 
 export class DatasetWidget {
@@ -17,13 +17,19 @@ export class DatasetWidget {
     private readonly inputWidgets: Map<string, InputWidget<any>>;
 
     // TODO suppress shift+enter, else it re-renders the cell!
-    constructor(instruments: [Instrument]) {
+    constructor(
+        proposals: [Proposal],
+        instruments: [Instrument],
+        accessGroups: [string],
+    ) {
         const container = document.createElement("div");
         container.classList.add("cean-ds");
 
         this.inputWidgets = new Map<string, InputWidget<any>>();
-        container.appendChild(createGeneralInfoPanel(this.inputWidgets, instruments));
-        container.appendChild(createOwnerPanel(this.inputWidgets));
+        container.appendChild(
+            createGeneralInfoPanel(this.inputWidgets, proposals, instruments),
+        );
+        container.appendChild(createOwnerPanel(this.inputWidgets, accessGroups));
         container.appendChild(createMiscPanel(this.inputWidgets));
         container.appendChild(createScientificMetadataPanel());
 
@@ -47,6 +53,7 @@ export class DatasetWidget {
 
 function createGeneralInfoPanel(
     inputWidgets: Map<string, InputWidget<any>>,
+    proposals: [Proposal],
     instruments: [Instrument],
 ): HTMLElement {
     const create = createAndAppend.bind(null, inputWidgets);
@@ -66,7 +73,7 @@ function createGeneralInfoPanel(
     );
     descriptionInput.element.classList.add("cean-span-3");
 
-    const proposalInput = createProposalsWidget(inputWidgets, columns);
+    const proposalInput = createProposalsWidget(inputWidgets, columns, proposals);
     proposalInput.element.classList.add("cean-span-3");
 
     createInstrumentsWidget(inputWidgets, columns, instruments);
@@ -103,11 +110,14 @@ function createGeneralInfoPanel(
     return columns;
 }
 
-function createOwnerPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLElement {
+function createOwnerPanel(
+    inputWidgets: Map<string, InputWidget<any>>,
+    accessGroups: [string],
+): HTMLElement {
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-owner-columns");
     columns.appendChild(createHumanOwnerPanel(inputWidgets));
-    columns.appendChild(createTechnicalOwnerPanel(inputWidgets));
+    columns.appendChild(createTechnicalOwnerPanel(inputWidgets, accessGroups));
     return columns;
 }
 
@@ -136,13 +146,14 @@ function createHumanOwnerPanel(
 
 function createTechnicalOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
+    accessGroups: [string],
 ): HTMLDivElement {
     const columns = document.createElement("div");
     columns.classList.add("cean-ds-technical-owners");
 
     const create = createAndAppend.bind(null, inputWidgets, columns);
 
-    create("Owner group", "owner_group", DropdownInputWidget, ["Group 1", "Group 2"]);
+    createOwnerGroupWidget(inputWidgets, columns, accessGroups);
     create("Access groups", "access_groups", StringInputWidget);
     create("License", "license", StringInputWidget);
     create("Publish", "is_published", CheckboxInputWidget);
@@ -165,7 +176,7 @@ function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLEleme
     createLeft("Keywords", "keywords", StringInputWidget);
 
     const createRight = createAndAppend.bind(null, inputWidgets, right);
-    createRight("Type", "type", DropdownInputWidget, ["derived", "raw"]);
+    createTypeWidget(inputWidgets, right);
     createRight("Relationships", "relationships", StringInputWidget);
 
     columns.appendChild(left);
@@ -260,7 +271,6 @@ function createInstrumentsWidget(
         instrumentChoices,
         (choice: Choice) => {
             const el = document.createElement("div");
-            el.classList.add("cean-instrument-item");
             el.textContent = choice.text;
             return el;
         },
@@ -271,12 +281,15 @@ function createInstrumentsWidget(
 function createProposalsWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
+    proposals: [Proposal],
 ): InputWidget<any> {
-    const proposalChoices = [
-        { key: "p1", text: "Proposal 1", data: { id: "123" } },
-        { key: "p2", text: "Second proposal", data: { id: "abc" } },
-        { key: "p3", text: "proposal no 3", data: { id: "abc.456" } },
-    ];
+    const proposalChoices = proposals.map((proposal) => {
+        return {
+            key: proposal.id,
+            text: proposal.title,
+            data: {},
+        };
+    });
 
     return createAndAppend(
         inputWidgets,
@@ -293,8 +306,8 @@ function createProposalsWidget(
             el.appendChild(name);
 
             const id = document.createElement("span");
-            id.textContent = choice.data.id;
-            id.style.color = "gray";
+            id.textContent = choice.key;
+            id.classList.add("cean-item-id");
             el.appendChild(id);
 
             return el;
@@ -329,13 +342,66 @@ function createTechniquesWidget(
 
             const id = document.createElement("span");
             id.textContent = choice.key;
-            id.style.color = "gray";
+            id.classList.add("cean-item-id");
             el.appendChild(id);
 
             return el;
         },
         true,
     );
+}
+
+function createOwnerGroupWidget(
+    inputWidgets: Map<string, InputWidget<any>>,
+    parent: HTMLElement,
+    accessGroups: [string],
+): InputWidget<any> {
+    const ownerChoices = accessGroups.map((group) => {
+        return { key: group, text: group, data: {} };
+    });
+
+    return createAndAppend(
+        inputWidgets,
+        parent,
+        "Owner group",
+        "owner_group",
+        ComboboxInputWidget,
+        ownerChoices,
+        (choice: Choice) => {
+            const el = document.createElement("div");
+            el.textContent = choice.text;
+            return el;
+        },
+        true,
+    );
+}
+
+function createTypeWidget(
+    inputWidgets: Map<string, InputWidget<any>>,
+    parent: HTMLElement,
+): InputWidget<any> {
+    const typeChoices = [
+        { key: "derived", text: "derived", data: {} },
+        { key: "raw", text: "raw", data: {} },
+    ];
+
+    const widget = createAndAppend(
+        inputWidgets,
+        parent,
+        "Type",
+        "type",
+        ComboboxInputWidget,
+        typeChoices,
+        (choice: Choice) => {
+            const el = document.createElement("div");
+            el.textContent = choice.text;
+            return el;
+        },
+        true,
+        false,
+    );
+    widget.value = "derived";
+    return widget;
 }
 
 function createAndAppend(

@@ -15,6 +15,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
     private readonly choices: Array<Choice>;
     private readonly renderChoice: (choice: Choice) => HTMLElement;
     private readonly allowArbitrary: boolean;
+    private readonly filter: boolean;
     private _value: string | null = null;
     private isFocused: boolean = false;
 
@@ -22,11 +23,13 @@ export class ComboboxInputWidget extends InputWidget<string> {
         choices: Array<Choice>,
         renderChoice: (choice: Choice) => HTMLElement,
         allowArbitrary: boolean = true,
+        filter: boolean = true,
     ) {
         super();
         this.choices = choices;
         this.renderChoice = renderChoice;
         this.allowArbitrary = allowArbitrary;
+        this.filter = filter;
 
         this.element = createFormElement("div");
         this.element.classList.add("cean-combox-dropdown");
@@ -199,6 +202,10 @@ export class ComboboxInputWidget extends InputWidget<string> {
     }
 
     private filterItems() {
+        if (!this.filter) {
+            return;
+        }
+
         const searchText = this.searchInput.value.toLowerCase();
         const items = this.dropdownList.querySelectorAll(".cean-combox-item");
         items.forEach((item) => {
