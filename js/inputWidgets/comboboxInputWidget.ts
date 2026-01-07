@@ -1,7 +1,7 @@
 import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
 
-type Choice = {
+export type Choice = {
     key: string;
     text: string;
     data: any;
@@ -43,6 +43,14 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.element.appendChild(this.displayElement);
         this.showPlaceholder();
 
+        const arrowIcon = document.createElement("i");
+        arrowIcon.className = "fa fa-chevron-down cean-combox-arrow";
+        this.element.appendChild(arrowIcon);
+        arrowIcon.addEventListener("click", (e) => {
+            e.stopPropagation();
+            this.enterEditMode();
+        });
+
         this.dropdownList = document.createElement("div");
         this.dropdownList.classList.add("cean-combox-list");
         this.dropdownList.style.display = "none";
@@ -62,12 +70,16 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
         this.searchInput.addEventListener("input", () => {
             this.filterItems();
+            this.openDropdown();
         });
 
         this.searchInput.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
                 this.selectFromSearch();
+                this.closeDropdown();
+            } else if (e.key == "Escape") {
+                e.preventDefault();
                 this.closeDropdown();
             }
         });

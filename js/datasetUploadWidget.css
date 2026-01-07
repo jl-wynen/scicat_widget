@@ -281,6 +281,16 @@
     text-overflow: ellipsis;
 }
 
+.cean-combox-arrow {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: default;
+    color: var(--jp-ui-font-color2);
+    font-size: 0.8rem;
+}
+
 .cean-combox-list {
     position: absolute;
     display: none;

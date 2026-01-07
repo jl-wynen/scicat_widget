@@ -6,10 +6,11 @@ import {
     InputWidget,
     OwnersInputWidget,
     PrincipalInvestigatorInputWidget,
-    StringInputWidget
+    StringInputWidget,
 } from "./inputWidgets";
 import { createInputWithLabel } from "./forms.ts";
 import { Instrument } from "./models";
+import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;
@@ -65,28 +66,7 @@ function createGeneralInfoPanel(
     );
     descriptionInput.element.classList.add("cean-span-3");
 
-    const proposalInput = create(
-        columns,
-        "Proposal",
-        "proposal_id",
-        ComboboxInputWidget,
-        [
-            { key: "p1", text: "Proposal 1", data: { id: "123" } },
-            { key: "p2", text: "Second proposal", data: { id: "abc" } },
-        ],
-        (choice) => {
-            const el = document.createElement("div");
-            const name = document.createElement("span");
-            name.textContent = choice.text;
-            el.appendChild(name);
-            const id = document.createElement("span");
-            id.textContent = choice.data.id;
-            id.style.color = "gray";
-            el.appendChild(id);
-            return el;
-        },
-        true,
-    );
+    const proposalInput = createProposalsWidget(inputWidgets, columns);
     proposalInput.element.classList.add("cean-span-3");
 
     createInstrumentsWidget(inputWidgets, columns, instruments);
@@ -178,11 +158,8 @@ function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLEleme
     const right = document.createElement("div");
     right.classList.add("cean-ds-misc-right");
 
+    createTechniquesWidget(inputWidgets, left);
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
-    createLeft("Techniques", "techniques", DropdownInputWidget, [
-        "Technique 1",
-        "Technique 2",
-    ]);
     createLeft("Software", "used_software", StringInputWidget);
     createLeft("Sample ID", "sample_id", StringInputWidget);
     createLeft("Keywords", "keywords", StringInputWidget);
@@ -266,12 +243,12 @@ function createInstrumentsWidget(
     parent: HTMLElement,
     instruments: [Instrument],
 ) {
-    const instrumentChoices = [];
-    instruments.forEach((instrument) => {
-        instrumentChoices.push({
+    const instrumentChoices = instruments.map((instrument) => {
+        return {
             key: instrument.id,
             text: instrument.uniqueName,
-        });
+            data: {},
+        };
     });
 
     createAndAppend(
@@ -281,22 +258,83 @@ function createInstrumentsWidget(
         "instrument_id",
         ComboboxInputWidget,
         instrumentChoices,
-        (choice) => {
+        (choice: Choice) => {
             const el = document.createElement("div");
             el.classList.add("cean-instrument-item");
+            el.textContent = choice.text;
+            return el;
+        },
+        false,
+    );
+}
 
-            const name = document.createElement("div");
+function createProposalsWidget(
+    inputWidgets: Map<string, InputWidget<any>>,
+    parent: HTMLElement,
+): InputWidget<any> {
+    const proposalChoices = [
+        { key: "p1", text: "Proposal 1", data: { id: "123" } },
+        { key: "p2", text: "Second proposal", data: { id: "abc" } },
+        { key: "p3", text: "proposal no 3", data: { id: "abc.456" } },
+    ];
+
+    return createAndAppend(
+        inputWidgets,
+        parent,
+        "Proposal",
+        "proposal_id",
+        ComboboxInputWidget,
+        proposalChoices,
+        (choice: Choice) => {
+            const el = document.createElement("div");
+
+            const name = document.createElement("span");
             name.textContent = choice.text;
             el.appendChild(name);
 
-            const id = document.createElement("div");
-            id.classList.add("cean-item-id");
-            id.textContent = choice.key;
+            const id = document.createElement("span");
+            id.textContent = choice.data.id;
+            id.style.color = "gray";
             el.appendChild(id);
 
             return el;
         },
-        false,
+        true,
+    );
+}
+
+function createTechniquesWidget(
+    inputWidgets: Map<string, InputWidget<any>>,
+    parent: HTMLElement,
+): InputWidget<any> {
+    const techniqueChoices = [
+        { key: "t1", text: "Indirect Spectroscopy", data: {} },
+        { key: "t2", text: "Neutron Powder Diffraction", data: {} },
+        { key: "t3", text: "SANS", data: {} },
+    ];
+
+    return createAndAppend(
+        inputWidgets,
+        parent,
+        "Techniques",
+        "techniques",
+        ComboboxInputWidget,
+        techniqueChoices,
+        (choice: Choice) => {
+            const el = document.createElement("div");
+
+            const name = document.createElement("span");
+            name.textContent = choice.text;
+            el.appendChild(name);
+
+            const id = document.createElement("span");
+            id.textContent = choice.key;
+            id.style.color = "gray";
+            el.appendChild(id);
+
+            return el;
+        },
+        true,
     );
 }
 
