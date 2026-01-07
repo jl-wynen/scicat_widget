@@ -2,6 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
 import { createFormElement } from "../forms";
 import { PersonInputWidget } from "./personInputWidget.ts";
+import { iconButton } from "../widgets/iconButton.ts";
 
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
     element: HTMLDivElement;
@@ -110,11 +111,7 @@ function createSingleOwnerWidget(
     const widget = new PersonInputWidget(true);
     container.appendChild(widget.element);
 
-    const trashButton = document.createElement("button");
-    trashButton.classList.add("cean-remove-item");
-    trashButton.classList.add("cean-button");
-    trashButton.innerHTML = '<i class="fa fa-trash"></i>';
-    trashButton.addEventListener("click", () => {
+    const trashButton = iconButton("trash", () => {
         // dispatch before removing the element so the element actually gets emitted:
         container.dispatchEvent(
             new CustomEvent("owner-removed", {
@@ -129,6 +126,7 @@ function createSingleOwnerWidget(
             remaining_buttons[0].setAttribute("disabled", "true");
         }
     });
+    trashButton.classList.add("cean-remove-item");
     container.appendChild(trashButton);
 
     parent.appendChild(container);
