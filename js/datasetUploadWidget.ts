@@ -8,18 +8,44 @@ import { FilesWidget } from "./filesWidget.ts";
 
 interface WidgetModel {
     initial: object;
-    instruments: [Instrument];
-    proposals: [Proposal];
-    accessGroups: [string];
+    instruments: Instrument[];
+    proposals: Proposal[];
+    accessGroups: string[];
 }
 
 function render({ model, el }: RenderProps<WidgetModel>) {
+    const [tabs, datasetWidget, filesWidget] = createTabs(model);
+
+    let initial = model.get("initial");
+    if (initial.hasOwnProperty("owners")) {
+        datasetWidget.setValue("owners", initial.owners);
+    }
+
+    el.appendChild(tabs.element);
+}
+
+function createTabs(model: AnyModel<any>): [Tabs, DatasetWidget, FilesWidget] {
+    const datasetLabel = document.createElement("span");
+    datasetLabel.textContent = "Dataset";
+
+    const filesLabel = document.createElement("div");
+    const filesSpan = document.createElement("span");
+    filesSpan.textContent = "Files";
+    filesLabel.appendChild(filesSpan);
+    const nFiles = document.createElement("span");
+    nFiles.textContent = "(0)";
+    nFiles.style.marginLeft = "0.5em";
+    filesLabel.appendChild(nFiles);
+
+    const attachmentsLabel = document.createElement("span");
+    attachmentsLabel.textContent = "Attachments";
+
     const datasetWidget = new DatasetWidget(
         model.get("proposals"),
         model.get("instruments"),
         model.get("accessGroups"),
     );
-    const filesWidget = new FilesWidget(model);
+    const filesWidget = new FilesWidget(model, nFiles);
     const attachmentsWidget = new StringInputWidget();
 
     const uploadButton = makeUploadButton(
@@ -28,19 +54,14 @@ function render({ model, el }: RenderProps<WidgetModel>) {
 
     const tabs = new Tabs(
         [
-            { label: "Dataset", element: datasetWidget.element },
-            { label: "Files", element: filesWidget.element },
-            { label: "Attachments", element: attachmentsWidget.element },
+            { label: datasetLabel, element: datasetWidget.element },
+            { label: filesLabel, element: filesWidget.element },
+            { label: attachmentsLabel, element: attachmentsWidget.element },
         ],
         [makeSciCatLink("https://scicat.ess.eu/"), uploadButton],
     );
 
-    let initial = model.get("initial");
-    if (initial.hasOwnProperty("owners")) {
-        datasetWidget.setValue("owners", initial.owners);
-    }
-
-    el.appendChild(tabs.element);
+    return [tabs, datasetWidget, filesWidget];
 }
 
 function doUpload(

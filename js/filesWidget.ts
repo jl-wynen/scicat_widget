@@ -1,36 +1,40 @@
 import type { AnyModel } from "@anywidget/types";
-import { FileInputWidget, StringInputWidget } from "./inputWidgets.ts";
+import {
+    DropdownInputWidget,
+    FileInputWidget,
+    StringInputWidget,
+} from "./inputWidgets.ts";
 import { iconButton } from "./widgets/iconButton.ts";
+import { createInputWithLabel } from "./forms.ts";
 
 export class FilesWidget {
     element: HTMLDivElement;
-    private model: AnyModel<object>;
-    private fileWidgets: [SingleFileWidget];
+    private readonly model: AnyModel<object>;
+    private readonly fileWidgets: SingleFileWidget[] = [];
+    private nFilesTabElement: HTMLSpanElement;
     private nFilesElement: HTMLSpanElement;
     private totalSizeElement: HTMLSpanElement;
 
-    constructor(model: AnyModel<object>) {
+    constructor(model: AnyModel<object>, nFilesTabElement: HTMLSpanElement) {
         this.model = model;
+        this.nFilesTabElement = nFilesTabElement;
 
         const element = document.createElement("div");
         element.classList.add("cean-files-widget");
 
         element.appendChild(this.createSummary());
-
-        const widget = new SingleFileWidget(model, () => this.updateSummary());
-        element.appendChild(widget.element);
-        this.fileWidgets = [widget];
-        const widget2 = new SingleFileWidget(model, () => this.updateSummary());
-        element.appendChild(widget2.element);
-        this.fileWidgets.push(widget2);
+        element.appendChild(createGeneralInputs());
+        element.appendChild(this.createFileWidgets());
 
         this.element = element;
     }
 
     private updateSummary() {
-        this.nFilesElement.textContent = this.fileWidgets
+        const nFiles = this.fileWidgets
             .filter((w) => w.size !== null)
             .length.toString();
+        this.nFilesElement.textContent = nFiles;
+        this.nFilesTabElement.textContent = `(${nFiles})`;
 
         let size = 0;
         for (const widget of this.fileWidgets) {
@@ -58,6 +62,23 @@ export class FilesWidget {
 
         return container;
     }
+
+    private createFileWidgets() {
+        const container = document.createElement("div");
+
+        const label = document.createElement("div");
+        label.textContent = "Files:";
+        container.appendChild(label);
+
+        const widget = new SingleFileWidget(this.model, () => this.updateSummary());
+        container.appendChild(widget.element);
+        this.fileWidgets.push(widget);
+        const widget2 = new SingleFileWidget(this.model, () => this.updateSummary());
+        container.appendChild(widget2.element);
+        this.fileWidgets.push(widget2);
+
+        return container;
+    }
 }
 
 class SingleFileWidget {
@@ -72,6 +93,7 @@ class SingleFileWidget {
         this.element = document.createElement("div");
         this.element.id = this.key;
         this.element.classList.add("cean-single-file-widget");
+        this.element.classList.add("cean-input-grid");
 
         const input = new FileInputWidget();
         input.setKey(this.key);
@@ -99,7 +121,7 @@ class SingleFileWidget {
 
         input.element.addEventListener("input-updated", () => {
             if (input.value === null) {
-                clearFileStats(input, stats);
+                stats.replaceChildren();
                 this.size_ = null;
                 this.creationTime_ = null;
                 onChange();
@@ -163,8 +185,28 @@ class SingleFileWidget {
     }
 }
 
-function clearFileStats(input: FileInputWidget, stats: HTMLDivElement) {
-    stats.replaceChildren();
+function createGeneralInputs(): HTMLElement {
+    const container = document.createElement("div");
+    container.style.gridTemplateColumns = "max-content 1fr";
+    container.classList.add("cean-input-grid");
+
+    const [sourceFolderLabel, sourceFolderInput] = createInputWithLabel(
+        "Source folder",
+        StringInputWidget,
+    );
+    container.appendChild(sourceFolderLabel);
+    container.appendChild(sourceFolderInput.element);
+
+    const [algLabel, algInput] = createInputWithLabel(
+        "Checksum algorithm",
+        DropdownInputWidget,
+        CHECKSUM_ALGORITHMS,
+    );
+    algInput.element.classList.add("cean-chk-alg");
+    container.appendChild(algLabel);
+    container.appendChild(algInput.element);
+
+    return container;
 }
 
 function humanSize(size: number): string {
@@ -173,3 +215,7 @@ function humanSize(size: number): string {
     const unit = ["B", "kiB", "MiB", "GiB", "TiB"][i];
     return `${value} ${unit}`;
 }
+
+// Checksum algorithms supported by Python (Scitacean) and SciCat.
+// The first one is the default.
+const CHECKSUM_ALGORITHMS = ["blake2b", "sha256", "md5"];

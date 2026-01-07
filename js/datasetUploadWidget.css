@@ -343,11 +343,7 @@
 }
 
 .cean-single-file-widget {
-    display: grid;
     grid-template-columns: 1fr max-content;
-    column-gap: 12px;
-    row-gap: 10px;
-    align-items: start;
 
     & button.cean-remove-item[disabled=""] {
         visibility: hidden;
@@ -360,4 +356,17 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+/* TODO use throughout */
+.cean-input-grid {
+    display: grid;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+}
+
+select.cean-chk-alg {
+    /* this dropdown looks strange when it is the full width of the parent */
+    width: 10em !important;
 }

@@ -1,5 +1,5 @@
 export interface Tab {
-    label: string;
+    label: HTMLElement;
     element: HTMLElement;
 }
 
@@ -79,7 +79,7 @@ function fillTabs(
     const tabPanes: HTMLElement[] = [];
     tabs.forEach((tab, index) => {
         const button = document.createElement("button");
-        button.textContent = tab.label;
+        button.appendChild(tab.label);
         button.classList.add("cean-tab-button");
         button.addEventListener("click", () => selectTab(index));
         buttonContainer.appendChild(button);
