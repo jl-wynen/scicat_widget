@@ -95,7 +95,6 @@
     column-gap: 12px;
     row-gap: 10px;
     align-items: start;
-
 }
 
 .cean-ds-misc-left, .cean-ds-misc-right {
@@ -341,4 +340,24 @@
 
 .cean-file-input[data-error="true"] + .cean-file-stats {
     color: var(--jp-error-color2);
+}
+
+.cean-single-file-widget {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+
+    & button.cean-remove-item[disabled=""] {
+        visibility: hidden;
+    }
+}
+
+.cean-file-stats {
+    min-height: 1.2em;
+    line-height: 1.2em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
