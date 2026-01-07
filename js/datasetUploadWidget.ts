@@ -4,6 +4,7 @@ import { DatasetWidget } from "./datasetWidget.ts";
 import { Tabs } from "./tabs.ts";
 import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 import { Instrument, Proposal } from "./models.ts";
+import { FilesWidget } from "./filesWidget.ts";
 
 interface WidgetModel {
     initial: object;
@@ -18,7 +19,7 @@ function render({ model, el }: RenderProps<WidgetModel>) {
         model.get("instruments"),
         model.get("accessGroups"),
     );
-    const filesWidget = new StringInputWidget();
+    const filesWidget = new FilesWidget();
     const attachmentsWidget = new StringInputWidget();
 
     const uploadButton = makeUploadButton(
@@ -45,7 +46,7 @@ function render({ model, el }: RenderProps<WidgetModel>) {
 function doUpload(
     model: AnyModel<WidgetModel>,
     datasetWidget: DatasetWidget,
-    filesWidget: StringInputWidget,
+    filesWidget: FilesWidget,
     attachmentsWidget: StringInputWidget,
 ) {
     model.send({
@@ -56,12 +57,12 @@ function doUpload(
 
 function gatherData(
     datasetWidget: DatasetWidget,
-    filesWidget: StringInputWidget,
+    filesWidget: FilesWidget,
     attachmentsWidget: StringInputWidget,
 ): Record<string, any> {
     return {
         ...datasetWidget.gatherData(),
-        files: filesWidget.value,
+        files: null, // TODO
         attachments: attachmentsWidget.value,
     };
 }
