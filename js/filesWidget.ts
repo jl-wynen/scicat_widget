@@ -12,8 +12,9 @@ export class FilesWidget {
     private readonly model: AnyModel<object>;
     private readonly fileWidgets: SingleFileWidget[] = [];
     private nFilesTabElement: HTMLSpanElement;
-    private nFilesElement: HTMLSpanElement;
-    private totalSizeElement: HTMLSpanElement;
+    private nFilesElement!: HTMLSpanElement;
+    private totalSizeElement!: HTMLSpanElement;
+    private widgetsContainer!: HTMLDivElement;
 
     constructor(model: AnyModel<object>, nFilesTabElement: HTMLSpanElement) {
         this.model = model;
@@ -64,20 +65,29 @@ export class FilesWidget {
     }
 
     private createFileWidgets() {
-        const container = document.createElement("div");
+        this.widgetsContainer = document.createElement("div");
 
         const label = document.createElement("div");
         label.textContent = "Files:";
-        container.appendChild(label);
+        this.widgetsContainer.appendChild(label);
 
-        const widget = new SingleFileWidget(this.model, () => this.updateSummary());
-        container.appendChild(widget.element);
+        this.addFileWidget();
+
+        return this.widgetsContainer;
+    }
+
+    private addFileWidget() {
+        const widget = new SingleFileWidget(
+            this.model,
+            () => this.updateSummary(),
+            () => {
+                if (widget === this.fileWidgets[this.fileWidgets.length - 1]) {
+                    this.addFileWidget();
+                }
+            },
+        );
+        this.widgetsContainer.appendChild(widget.element);
         this.fileWidgets.push(widget);
-        const widget2 = new SingleFileWidget(this.model, () => this.updateSummary());
-        container.appendChild(widget2.element);
-        this.fileWidgets.push(widget2);
-
-        return container;
     }
 }
 
@@ -88,7 +98,7 @@ class SingleFileWidget {
     private size_: number | null = null;
     private creationTime_: Date | null = null;
 
-    constructor(model: AnyModel<object>, onChange: () => void) {
+    constructor(model: AnyModel<object>, onChange: () => void, onSuccess: () => void) {
         this.key = crypto.randomUUID();
         this.element = document.createElement("div");
         this.element.id = this.key;
@@ -116,6 +126,9 @@ class SingleFileWidget {
 
             this.renderFileStats(payload, input, stats);
             onChange();
+            if (payload.success) {
+                onSuccess();
+            }
         };
         model.on("msg:custom", this.responseHandler);
 
