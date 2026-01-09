@@ -2,7 +2,6 @@ import {
     CheckboxInputWidget,
     ComboboxInputWidget,
     DatetimeInputWidget,
-    DropdownInputWidget,
     InputWidget,
     OwnersInputWidget,
     PrincipalInvestigatorInputWidget,

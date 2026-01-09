@@ -14,10 +14,10 @@ interface WidgetModel {
 }
 
 function render({ model, el }: RenderProps<WidgetModel>) {
-    const [tabs, datasetWidget, filesWidget] = createTabs(model);
+    const [tabs, datasetWidget] = createTabs(model);
 
-    let initial = model.get("initial");
-    if (initial.hasOwnProperty("owners")) {
+    const initial = model.get("initial") as any;
+    if (initial && initial.hasOwnProperty("owners")) {
         datasetWidget.setValue("owners", initial.owners);
     }
 
@@ -78,7 +78,7 @@ function doUpload(
 
 function gatherData(
     datasetWidget: DatasetWidget,
-    filesWidget: FilesWidget,
+    _filesWidget: FilesWidget,
     attachmentsWidget: StringInputWidget,
 ): Record<string, any> {
     return {

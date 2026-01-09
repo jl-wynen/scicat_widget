@@ -81,39 +81,71 @@ export class FilesWidget {
             this.model,
             () => this.updateSummary(),
             () => {
-                if (widget === this.fileWidgets[this.fileWidgets.length - 1]) {
+                if (
+                    widget === this.fileWidgets[this.fileWidgets.length - 1] &&
+                    widget.value !== null
+                ) {
                     this.addFileWidget();
                 }
             },
+            () => this.removeFileWidget(widget),
         );
         this.widgetsContainer.appendChild(widget.element);
         this.fileWidgets.push(widget);
+        this.updateRemoveButtonsState();
+    }
+
+    private removeFileWidget(widget: SingleFileWidget) {
+        const index = this.fileWidgets.indexOf(widget);
+        if (index !== -1) {
+            this.fileWidgets.splice(index, 1);
+        }
+        this.updateSummary();
+        this.updateRemoveButtonsState();
+    }
+
+    private updateRemoveButtonsState() {
+        this.fileWidgets.forEach((widget, index) => {
+            const isLast = index === this.fileWidgets.length - 1;
+            widget.setRemoveDisabled(isLast);
+        });
     }
 }
 
 class SingleFileWidget {
     readonly key: string;
     readonly element: HTMLDivElement;
+    private readonly input: FileInputWidget;
     private readonly responseHandler: (response: any) => void;
     private size_: number | null = null;
     private creationTime_: Date | null = null;
 
-    constructor(model: AnyModel<object>, onChange: () => void, onSuccess: () => void) {
+    private readonly removeButton: HTMLButtonElement;
+
+    constructor(
+        model: AnyModel<object>,
+        onChange: () => void,
+        onInput: () => void,
+        onRemove: () => void,
+    ) {
         this.key = crypto.randomUUID();
         this.element = document.createElement("div");
         this.element.id = this.key;
         this.element.classList.add("cean-single-file-widget");
         this.element.classList.add("cean-input-grid");
 
-        const input = new FileInputWidget();
-        input.setKey(this.key);
-        input.element.classList.add("cean-file-input");
-        this.element.appendChild(input.element);
+        this.input = new FileInputWidget();
+        this.input.setKey(this.key);
+        this.input.element.classList.add("cean-file-input");
+        this.element.appendChild(this.input.element);
 
-        const removeButton = iconButton("trash", () => this.remove(model));
-        removeButton.setAttribute("disabled", "true");
-        removeButton.classList.add("cean-remove-item");
-        this.element.appendChild(removeButton);
+        this.removeButton = iconButton("trash", () => {
+            this.remove(model);
+            onRemove();
+        });
+        this.removeButton.setAttribute("disabled", "true");
+        this.removeButton.classList.add("cean-remove-item");
+        this.element.appendChild(this.removeButton);
 
         const stats = document.createElement("div");
         stats.classList.add("cean-file-stats");
@@ -124,30 +156,33 @@ class SingleFileWidget {
             const payload = message.payload;
             if (payload.key !== this.key) return;
 
-            this.renderFileStats(payload, input, stats);
+            this.renderFileStats(payload, stats);
             onChange();
-            if (payload.success) {
-                onSuccess();
-            }
         };
         model.on("msg:custom", this.responseHandler);
 
-        input.element.addEventListener("input-updated", () => {
-            if (input.value === null) {
+        this.input.element.addEventListener("input-updated", () => {
+            onInput();
+            if (!this.value) {
                 stats.replaceChildren();
                 this.size_ = null;
                 this.creationTime_ = null;
                 onChange();
                 return;
+            } else {
+                model.send({
+                    type: "req:inspect-file",
+                    payload: {
+                        filename: this.value,
+                        key: this.key, // To identify responses for this input element.
+                    },
+                });
             }
-            model.send({
-                type: "req:inspect-file",
-                payload: {
-                    filename: input.value,
-                    key: this.key, // To identify responses for this input element.
-                },
-            });
         });
+    }
+
+    get value(): string | null {
+        return this.input.value?.trim() ?? null;
     }
 
     get size(): number | null {
@@ -158,21 +193,25 @@ class SingleFileWidget {
         return this.creationTime_;
     }
 
+    setRemoveDisabled(disabled: boolean) {
+        if (disabled) {
+            this.removeButton.setAttribute("disabled", "true");
+        } else {
+            this.removeButton.removeAttribute("disabled");
+        }
+    }
+
     private remove(model: AnyModel<object>) {
         this.element.remove();
         model.off("msg:custom", this.responseHandler);
     }
 
-    private renderFileStats(
-        payload: any,
-        input: FileInputWidget,
-        stats: HTMLDivElement,
-    ) {
+    private renderFileStats(payload: any, stats: HTMLDivElement) {
         if (payload.success) {
             this.size_ = payload.size;
             this.creationTime_ = new Date(payload.creationTime);
 
-            delete input.element.dataset.error;
+            delete this.input.element.dataset.error;
 
             const sizeLabel = document.createElement("span");
             sizeLabel.textContent = "Size:";
@@ -189,7 +228,7 @@ class SingleFileWidget {
             this.size_ = null;
             this.creationTime_ = null;
 
-            input.element.dataset["error"] = "true";
+            this.input.element.dataset["error"] = "true";
 
             const span = document.createElement("span");
             span.textContent = payload.error;
