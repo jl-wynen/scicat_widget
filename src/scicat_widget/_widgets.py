@@ -88,6 +88,7 @@ def _serialize_proposal(proposal: ProposalOverview) -> dict[str, Any]:
 
 def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]):
     try:
+        # TODO do not allow folders (probably in scitacean)
         file = File.from_local(input_payload["filename"])
         payload = {
             "success": True,
