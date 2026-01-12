@@ -7,9 +7,9 @@ import {
     PrincipalInvestigatorInputWidget,
     StringInputWidget,
 } from "./inputWidgets";
-import {createInputWithLabel} from "./forms.ts";
-import {Instrument, Proposal} from "./models";
-import {Choice} from "./inputWidgets/comboboxInputWidget.ts";
+import { createInputWithLabel } from "./forms.ts";
+import { Instrument, Proposal } from "./models";
+import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;

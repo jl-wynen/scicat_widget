@@ -78,12 +78,12 @@ function doUpload(
 
 function gatherData(
     datasetWidget: DatasetWidget,
-    _filesWidget: FilesWidget,
+    filesWidget: FilesWidget,
     attachmentsWidget: StringInputWidget,
 ): Record<string, any> {
     return {
         ...datasetWidget.gatherData(),
-        files: null, // TODO
+        files: filesWidget.gatherData(),
         attachments: attachmentsWidget.value,
     };
 }

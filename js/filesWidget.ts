@@ -1,9 +1,5 @@
 import type { AnyModel } from "@anywidget/types";
-import {
-    DropdownInputWidget,
-    FileInputWidget,
-    StringInputWidget,
-} from "./inputWidgets.ts";
+import { DropdownInputWidget, FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
 import { iconButton } from "./widgets/iconButton.ts";
 import { createInputWithLabel } from "./forms.ts";
 
@@ -11,6 +7,8 @@ export class FilesWidget {
     element: HTMLDivElement;
     private readonly model: AnyModel<object>;
     private readonly fileWidgets: SingleFileWidget[] = [];
+    private readonly sourceFolderInput: InputWidget<string>;
+    private readonly algInput: InputWidget<string>;
     private nFilesTabElement: HTMLSpanElement;
     private nFilesElement!: HTMLSpanElement;
     private totalSizeElement!: HTMLSpanElement;
@@ -24,10 +22,24 @@ export class FilesWidget {
         element.classList.add("cean-files-widget");
 
         element.appendChild(this.createSummary());
-        element.appendChild(createGeneralInputs());
+        const [generalContainer, folder, alg] = createGeneralInputs();
+        this.sourceFolderInput = folder;
+        this.algInput = alg;
+        element.appendChild(generalContainer);
         element.appendChild(this.createFileWidgets());
 
         this.element = element;
+    }
+
+    gatherData(): Record<string, any> {
+        return {
+            source_folder: this.sourceFolderInput.value,
+            checksum_algorithm: this.algInput.value,
+            files: this.fileWidgets
+                .filter((widget) => widget.fileExists())
+                .map((widget) => widget.value)
+                .filter((v) => v),
+        };
     }
 
     private updateSummary() {
@@ -193,6 +205,10 @@ class SingleFileWidget {
         return this.creationTime_;
     }
 
+    fileExists(): boolean {
+        return this.size_ !== null;
+    }
+
     setRemoveDisabled(disabled: boolean) {
         if (disabled) {
             this.removeButton.setAttribute("disabled", "true");
@@ -237,7 +253,11 @@ class SingleFileWidget {
     }
 }
 
-function createGeneralInputs(): HTMLElement {
+function createGeneralInputs(): [
+    HTMLElement,
+    InputWidget<string>,
+    InputWidget<string>,
+] {
     const container = document.createElement("div");
     container.style.gridTemplateColumns = "max-content 1fr";
     container.classList.add("cean-input-grid");
@@ -258,7 +278,7 @@ function createGeneralInputs(): HTMLElement {
     container.appendChild(algLabel);
     container.appendChild(algInput.element);
 
-    return container;
+    return [container, sourceFolderInput, algInput];
 }
 
 function humanSize(size: number): string {
