@@ -381,3 +381,50 @@ select.cean-dropdown {
     background: var(--jp-input-background);
     border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
 }
+
+.cean-string-list-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cean-string-list-input-row {
+    display: grid;
+    column-gap: 8px;
+    grid-template-columns:
+        1fr max-content;
+}
+
+.cean-string-list-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+}
+
+.cean-string-list-item {
+    display: flex;
+    align-items: center;
+    background: var(--jp-layout-color2);
+    padding: 2px 8px;
+    gap: 4px;
+    border: var(--jp-border-width) solid var(--jp-layout-color3);
+    border-radius: var(--jp-border-radius);
+}
+
+.cean-string-list-item span {
+    max-width: 200px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.cean-string-list-item .cean-button {
+    padding: 0;
+    background: none;
+    min-height: unset;
+    font-size: 0.8em;
+}
+
+.cean-string-list-item .cean-button:hover {
+    color: var(--jp-error-color1);
+}

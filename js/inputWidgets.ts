@@ -8,3 +8,4 @@ export { OwnersInputWidget } from "./inputWidgets/ownersInputWidget.ts";
 export { PersonInputWidget } from "./inputWidgets/personInputWidget.ts";
 export { PrincipalInvestigatorInputWidget } from "./inputWidgets/principalInvestigatorInputWidget.ts";
 export { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
+export { StringListInputWidget } from "./inputWidgets/stringListInputWidget.ts";

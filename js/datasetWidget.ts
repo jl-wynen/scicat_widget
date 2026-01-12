@@ -6,6 +6,7 @@ import {
     OwnersInputWidget,
     PrincipalInvestigatorInputWidget,
     StringInputWidget,
+    StringListInputWidget,
 } from "./inputWidgets";
 import { createInputWithLabel } from "./forms.ts";
 import { Instrument, Proposal } from "./models";
@@ -172,7 +173,7 @@ function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLEleme
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
     createLeft("Software", "used_software", StringInputWidget);
     createLeft("Sample ID", "sample_id", StringInputWidget);
-    createLeft("Keywords", "keywords", StringInputWidget);
+    createLeft("Keywords", "keywords", StringListInputWidget);
 
     const createRight = createAndAppend.bind(null, inputWidgets, right);
     createTypeWidget(inputWidgets, right);
