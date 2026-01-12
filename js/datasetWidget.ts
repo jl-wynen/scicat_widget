@@ -7,9 +7,9 @@ import {
     PrincipalInvestigatorInputWidget,
     StringInputWidget,
 } from "./inputWidgets";
-import { createInputWithLabel } from "./forms.ts";
-import { Instrument, Proposal } from "./models";
-import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
+import {createInputWithLabel} from "./forms.ts";
+import {Instrument, Proposal} from "./models";
+import {Choice} from "./inputWidgets/comboboxInputWidget.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;
@@ -253,13 +253,15 @@ function createInstrumentsWidget(
     parent: HTMLElement,
     instruments: [Instrument],
 ) {
-    const instrumentChoices = instruments.map((instrument) => {
-        return {
-            key: instrument.id,
-            text: instrument.uniqueName,
-            data: {},
-        };
-    });
+    const instrumentChoices = instruments
+        .map((instrument) => {
+            return {
+                key: instrument.id,
+                text: instrument.uniqueName,
+                data: {},
+            };
+        })
+        .sort((a, b) => a.text.localeCompare(b.text));
 
     createAndAppend(
         inputWidgets,
@@ -282,13 +284,15 @@ function createProposalsWidget(
     parent: HTMLElement,
     proposals: [Proposal],
 ): InputWidget<any> {
-    const proposalChoices = proposals.map((proposal) => {
-        return {
-            key: proposal.id,
-            text: proposal.title,
-            data: {},
-        };
-    });
+    const proposalChoices = proposals
+        .map((proposal) => {
+            return {
+                key: proposal.id,
+                text: proposal.title,
+                data: {},
+            };
+        })
+        .sort((a, b) => a.text.localeCompare(b.text));
 
     return createAndAppend(
         inputWidgets,
@@ -355,7 +359,7 @@ function createOwnerGroupWidget(
     parent: HTMLElement,
     accessGroups: [string],
 ): InputWidget<any> {
-    const ownerChoices = accessGroups.map((group) => {
+    const ownerChoices = accessGroups.sort().map((group) => {
         return { key: group, text: group, data: {} };
     });
 
