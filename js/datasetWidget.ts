@@ -5,6 +5,7 @@ import {
     InputWidget,
     OwnersInputWidget,
     PrincipalInvestigatorInputWidget,
+    ScientificMetadataInputWidget,
     StringInputWidget,
     StringListInputWidget,
 } from "./inputWidgets";
@@ -31,7 +32,7 @@ export class DatasetWidget {
         );
         container.appendChild(createOwnerPanel(this.inputWidgets, accessGroups));
         container.appendChild(createMiscPanel(this.inputWidgets));
-        container.appendChild(createScientificMetadataPanel());
+        container.appendChild(createScientificMetadataPanel(this.inputWidgets));
 
         this.element = container;
     }
@@ -184,68 +185,20 @@ function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLEleme
     return columns;
 }
 
-function createScientificMetadataPanel(): HTMLElement {
+function createScientificMetadataPanel(
+    inputWidgets: Map<string, InputWidget<any>>,
+): HTMLElement {
     const container = document.createElement("section");
     container.classList.add("cean-ds-scientific-metadata");
 
-    const table = document.createElement("table");
-    table.id = crypto.randomUUID();
-    table.classList.add("cean-ds-scientific-metadata-table");
+    createAndAppend(
+        inputWidgets,
+        container,
+        "Scientific metadata",
+        "scientific_metadata",
+        ScientificMetadataInputWidget,
+    );
 
-    const title = document.createElement("label");
-    title.textContent = "Scientific metadata";
-    title.setAttribute("for", table.id);
-
-    const head = document.createElement("thead");
-    const headerRow = document.createElement("tr");
-    const nameLabel = document.createElement("th");
-    nameLabel.textContent = "Name";
-    headerRow.appendChild(nameLabel);
-    const valueLabel = document.createElement("th");
-    valueLabel.textContent = "Value";
-    headerRow.appendChild(valueLabel);
-    const unitRow = document.createElement("th");
-    unitRow.textContent = "Unit";
-    headerRow.appendChild(unitRow);
-    head.appendChild(headerRow);
-    table.appendChild(head);
-
-    const body = document.createElement("tbody");
-
-    const row = document.createElement("tr");
-
-    const nameTd = document.createElement("td");
-    const fieldName = document.createElement("input");
-    fieldName.type = "text";
-    fieldName.textContent = "Field 1";
-    nameTd.appendChild(fieldName);
-    row.appendChild(nameTd);
-
-    const valueTd = document.createElement("td");
-    const fieldValue = document.createElement("input");
-    fieldValue.type = "text";
-    fieldName.textContent = "Lots of value";
-    valueTd.appendChild(fieldValue);
-    row.appendChild(valueTd);
-
-    const unitTd = document.createElement("td");
-    const fieldUnit = document.createElement("input");
-    fieldUnit.type = "text";
-    unitTd.appendChild(fieldUnit);
-    row.appendChild(unitTd);
-
-    body.appendChild(row);
-
-    table.appendChild(body);
-
-    const addItemButton = document.createElement("button");
-    addItemButton.classList.add("cean-button");
-    addItemButton.textContent = "Add item";
-    addItemButton.addEventListener("click", () => {});
-
-    container.appendChild(title);
-    container.appendChild(table);
-    container.appendChild(addItemButton);
     return container;
 }
 
