@@ -20,9 +20,6 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     converted.update(file_meta)
     attachments = _convert_attachments(converted.pop("attachments"))
 
-    # TODO implement support (should just need removing this line)
-    converted.pop("techniques")
-
     dataset = Dataset(**converted)
     dataset.add_files(*files)
     return dataset
