@@ -100,9 +100,8 @@ def _load_techniques() -> dict[str, Any]:
     return {
         "prefix": prefix,
         "techniques": [
-            {"id": id_.rsplit("/", 1)[-1], "name": name}
+            {"id": id_.rsplit("/", 1)[-1], "name": names[0]}
             for (id_, names) in expands_techniques().items()
-            for name in names
         ],
     }
 

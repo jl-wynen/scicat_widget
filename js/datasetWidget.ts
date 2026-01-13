@@ -7,7 +7,8 @@ import {
     PrincipalInvestigatorInputWidget,
     ScientificMetadataInputWidget,
     StringInputWidget,
-    StringListInputWidget
+    StringListInputWidget,
+    TechniquesInputWidget,
 } from "./inputWidgets";
 import { createInputWithLabel } from "./forms.ts";
 import { Instrument, Proposal, Techniques } from "./models";
@@ -174,14 +175,14 @@ function createMiscPanel(
     const right = document.createElement("div");
     right.classList.add("cean-ds-misc-right");
 
-    createTechniquesWidget(inputWidgets, left, techniques);
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
+    createLeft("Techniques", "techniques", TechniquesInputWidget, techniques);
     createLeft("Software", "used_software", StringInputWidget);
     createLeft("Sample ID", "sample_id", StringInputWidget);
-    createLeft("Keywords", "keywords", StringListInputWidget);
 
     const createRight = createAndAppend.bind(null, inputWidgets, right);
     createTypeWidget(inputWidgets, right);
+    createRight("Keywords", "keywords", StringListInputWidget);
     createRight("Relationships", "relationships", StringInputWidget);
 
     columns.appendChild(left);
@@ -262,50 +263,14 @@ function createProposalsWidget(
         (choice: Choice) => {
             const el = document.createElement("div");
 
-            const name = document.createElement("span");
-            name.textContent = choice.text;
-            el.appendChild(name);
-
             const id = document.createElement("span");
             id.textContent = choice.key;
             id.classList.add("cean-item-id");
             el.appendChild(id);
 
-            return el;
-        },
-        true,
-    );
-}
-
-function createTechniquesWidget(
-    inputWidgets: Map<string, InputWidget<any>>,
-    parent: HTMLElement,
-    techniques: Techniques,
-): InputWidget<any> {
-    const techniqueChoices = techniques.techniques
-        .map((technique) => {
-            return { key: technique.id, text: technique.name, data: {} };
-        })
-        .sort((a, b) => a.key.localeCompare(b.key));
-
-    return createAndAppend(
-        inputWidgets,
-        parent,
-        "Techniques",
-        "techniques",
-        ComboboxInputWidget,
-        techniqueChoices,
-        (choice: Choice) => {
-            const el = document.createElement("div");
-
             const name = document.createElement("span");
             name.textContent = choice.text;
             el.appendChild(name);
-
-            const id = document.createElement("span");
-            id.textContent = choice.key;
-            id.classList.add("cean-item-id");
-            el.appendChild(id);
 
             return el;
         },

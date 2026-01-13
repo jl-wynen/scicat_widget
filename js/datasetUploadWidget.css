@@ -166,7 +166,7 @@ table.cean-scientific-metadata-table {
 
 .cean-ds input, .cean-ds textarea, .cean-files-widget input {
     box-sizing: border-box;
-    border: var(--jp-border-width) solid var(--jp-input-border-color);
+    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
     color: var(--jp-content-font-color1);
     background-color: var(--jp-input-background);
 
@@ -353,6 +353,7 @@ table.cean-scientific-metadata-table {
 
 .cean-item-id {
     color: var(--jp-content-font-color3);
+    font-family: monospace;
 }
 
 .cean-files-widget {
@@ -450,4 +451,54 @@ select.cean-dropdown {
 
 .cean-string-list-item .cean-button:hover {
     color: var(--jp-error-color1);
+}
+
+.cean-techniques-widget {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cean-techniques-items {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.cean-techniques-item {
+    display: flex;
+    background: var(--jp-layout-color2);
+    padding: 2px 8px;
+    border: var(--jp-border-width) solid var(--jp-layout-color3);
+    border-radius: var(--jp-border-radius);
+}
+
+.cean-techniques-item-content {
+    flex-grow: 1;
+}
+
+.cean-techniques-item .cean-button {
+    padding: 0;
+    background: none;
+    min-height: unset;
+    font-size: 0.8em;
+}
+
+.cean-techniques-item .cean-button:hover {
+    color: var(--jp-error-color1);
+}
+
+.cean-techniques-selected-item {
+    display: flex;
+    flex-direction: column;
+
+    & .cean-item-id {
+        color: var(--jp-content-link-color);
+        font-family: unset;
+    }
+
+    & .cean-item-id:hover {
+        color: var(--jp-content-link-color);
+        text-decoration: underline;
+    }
 }

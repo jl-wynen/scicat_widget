@@ -11,10 +11,10 @@ def upload_dataset(client: Client, widget_data: dict[str, object]) -> None:
 def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     """Construct a Scitacean dataset from widget data."""
     converted = dict(data)
-    converted["meta"] = converted.pop("scientific_metadata")
+    converted["meta"] = converted.pop("scientific_metadata", {})
 
-    converted.update(_convert_owners(converted.pop("owners")))
-    converted.update(_convert_pi(converted.pop("pi")))
+    converted.update(_convert_owners(converted.pop("owners", [])))
+    converted.update(_convert_pi(converted.pop("pi", {})))
 
     [file_meta, files] = _convert_files(converted.pop("files"))
     converted.update(file_meta)

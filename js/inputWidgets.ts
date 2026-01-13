@@ -10,3 +10,4 @@ export { PrincipalInvestigatorInputWidget } from "./inputWidgets/principalInvest
 export { ScientificMetadataInputWidget } from "./inputWidgets/scientificMetadataInputWidget.ts";
 export { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 export { StringListInputWidget } from "./inputWidgets/stringListInputWidget.ts";
+export { TechniquesInputWidget } from "./inputWidgets/techniquesInputWidget.ts";
