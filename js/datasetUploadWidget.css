@@ -118,8 +118,31 @@
     margin: 0.3rem;
 }
 
-.cean-ds-scientific-metadata-table {
+table.cean-scientific-metadata-table {
     width: 100%;
+    border-collapse: collapse;
+
+    & th:last-child,
+    & td:last-child {
+        width: 1%;
+        white-space: nowrap;
+        border: none;
+        padding: 0;
+    }
+
+    & td {
+        border: 1px solid var(--jp-border-color1);
+    }
+
+    & input {
+        width: 100%;
+        border: none !important;
+        background: unset !important;
+    }
+
+    & button {
+        margin: 0 0 0 1rem;
+    }
 }
 
 .cean-person-widget {

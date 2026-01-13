@@ -74,6 +74,7 @@ function createOwnersElement(
     const addOwnerButton = document.createElement("button");
     addOwnerButton.classList.add("cean-button");
     addOwnerButton.textContent = "Add owner";
+    addOwnerButton.title = "Add owner";
     addOwnerButton.addEventListener("click", () => {
         addOwner(ownerWidgets, ownersContainer);
     });
@@ -126,6 +127,7 @@ function createSingleOwnerWidget(
             remaining_buttons[0].setAttribute("disabled", "true");
         }
     });
+    trashButton.title = "Remove item";
     trashButton.classList.add("cean-remove-item");
     container.appendChild(trashButton);
 

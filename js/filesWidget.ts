@@ -155,6 +155,7 @@ class SingleFileWidget {
             this.remove(model);
             onRemove();
         });
+        this.removeButton.title = "Remove item";
         this.removeButton.setAttribute("disabled", "true");
         this.removeButton.classList.add("cean-remove-item");
         this.element.appendChild(this.removeButton);
