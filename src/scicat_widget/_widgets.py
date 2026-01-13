@@ -6,11 +6,13 @@ from typing import Any
 
 import anywidget
 import traitlets
-from scitacean import Client, ScicatCommError, File
+from scitacean import Client, File, ScicatCommError
+from scitacean.ontology import expands_techniques
 
 from ._logging import get_logger
 from ._model import Instrument, ProposalOverview
 from ._scicat_api import get_user_and_scicat_info
+from ._upload import upload_dataset
 
 _STATIC_PATH = pathlib.Path(__file__).parent / "_static"
 
@@ -23,6 +25,11 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     instruments = traitlets.List().tag(sync=True)
     proposals = traitlets.List().tag(sync=True)
     accessGroups = traitlets.List().tag(sync=True)
+    techniques = traitlets.Dict().tag(sync=True)
+
+    def __init__(self, *, client: Client, **kwargs: Any) -> None:
+        super().__init__(**kwargs)
+        self.client = client
 
 
 def dataset_upload_widget(client: Client | None = None) -> DatasetUploadWidget:
@@ -32,6 +39,8 @@ def dataset_upload_widget(client: Client | None = None) -> DatasetUploadWidget:
         instruments=[_serialize_instrument(instrument) for instrument in instruments],
         proposals=[_serialize_proposal(proposal) for proposal in proposals],
         accessGroups=access_groups,
+        techniques=_load_techniques(),
+        client=client,
     )
     widget.on_msg(_handle_event)
     return widget
@@ -86,7 +95,19 @@ def _serialize_proposal(proposal: ProposalOverview) -> dict[str, Any]:
     }
 
 
-def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]):
+def _load_techniques() -> dict[str, Any]:
+    prefix = next(iter(expands_techniques().keys())).rsplit("/", 1)[0]
+    return {
+        "prefix": prefix,
+        "techniques": [
+            {"id": id_.rsplit("/", 1)[-1], "name": name}
+            for (id_, names) in expands_techniques().items()
+            for name in names
+        ],
+    }
+
+
+def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) -> None:
     try:
         # TODO do not allow folders (probably in scitacean)
         file = File.from_local(input_payload["filename"])
@@ -109,8 +130,15 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]):
     )
 
 
+def _upload_dataset(widget: DatasetUploadWidget, payload: dict[str, object]) -> None:
+    print("Uploading")
+    print(payload)
+    dataset = upload_dataset(widget.client, payload)
+
+
 _EVENT_HANDLERS = {
     "req:inspect-file": _inspect_file,
+    "cmd:upload-dataset": _upload_dataset,
 }
 
 

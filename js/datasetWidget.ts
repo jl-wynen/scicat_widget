@@ -7,10 +7,10 @@ import {
     PrincipalInvestigatorInputWidget,
     ScientificMetadataInputWidget,
     StringInputWidget,
-    StringListInputWidget,
+    StringListInputWidget
 } from "./inputWidgets";
 import { createInputWithLabel } from "./forms.ts";
-import { Instrument, Proposal } from "./models";
+import { Instrument, Proposal, Techniques } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 
 export class DatasetWidget {
@@ -22,6 +22,7 @@ export class DatasetWidget {
         proposals: [Proposal],
         instruments: [Instrument],
         accessGroups: [string],
+        techniques: Techniques,
     ) {
         const container = document.createElement("div");
         container.classList.add("cean-ds");
@@ -31,7 +32,7 @@ export class DatasetWidget {
             createGeneralInfoPanel(this.inputWidgets, proposals, instruments),
         );
         container.appendChild(createOwnerPanel(this.inputWidgets, accessGroups));
-        container.appendChild(createMiscPanel(this.inputWidgets));
+        container.appendChild(createMiscPanel(this.inputWidgets, techniques));
         container.appendChild(createScientificMetadataPanel(this.inputWidgets));
 
         this.element = container;
@@ -162,7 +163,10 @@ function createTechnicalOwnerPanel(
     return columns;
 }
 
-function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLElement {
+function createMiscPanel(
+    inputWidgets: Map<string, InputWidget<any>>,
+    techniques: Techniques,
+): HTMLElement {
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-misc-columns");
     const left = document.createElement("div");
@@ -170,7 +174,7 @@ function createMiscPanel(inputWidgets: Map<string, InputWidget<any>>): HTMLEleme
     const right = document.createElement("div");
     right.classList.add("cean-ds-misc-right");
 
-    createTechniquesWidget(inputWidgets, left);
+    createTechniquesWidget(inputWidgets, left, techniques);
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
     createLeft("Software", "used_software", StringInputWidget);
     createLeft("Sample ID", "sample_id", StringInputWidget);
@@ -276,12 +280,13 @@ function createProposalsWidget(
 function createTechniquesWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
+    techniques: Techniques,
 ): InputWidget<any> {
-    const techniqueChoices = [
-        { key: "t1", text: "Indirect Spectroscopy", data: {} },
-        { key: "t2", text: "Neutron Powder Diffraction", data: {} },
-        { key: "t3", text: "SANS", data: {} },
-    ];
+    const techniqueChoices = techniques.techniques
+        .map((technique) => {
+            return { key: technique.id, text: technique.name, data: {} };
+        })
+        .sort((a, b) => a.key.localeCompare(b.key));
 
     return createAndAppend(
         inputWidgets,

@@ -140,6 +140,7 @@ class SingleFileWidget {
         onInput: () => void,
         onRemove: () => void,
     ) {
+        // TODO add input of remote name
         this.key = crypto.randomUUID();
         this.element = document.createElement("div");
         this.element.id = this.key;

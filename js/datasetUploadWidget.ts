@@ -3,7 +3,7 @@ import "./datasetUploadWidget.css";
 import { DatasetWidget } from "./datasetWidget.ts";
 import { Tabs } from "./tabs.ts";
 import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
-import { Instrument, Proposal } from "./models.ts";
+import { Instrument, Proposal, Techniques } from "./models.ts";
 import { FilesWidget } from "./filesWidget.ts";
 
 interface WidgetModel {
@@ -11,6 +11,7 @@ interface WidgetModel {
     instruments: Instrument[];
     proposals: Proposal[];
     accessGroups: string[];
+    techniques: Techniques;
 }
 
 function render({ model, el }: RenderProps<WidgetModel>) {
@@ -44,6 +45,7 @@ function createTabs(model: AnyModel<any>): [Tabs, DatasetWidget, FilesWidget] {
         model.get("proposals"),
         model.get("instruments"),
         model.get("accessGroups"),
+        model.get("techniques"),
     );
     const filesWidget = new FilesWidget(model, nFiles);
     const attachmentsWidget = new StringInputWidget();
@@ -71,8 +73,8 @@ function doUpload(
     attachmentsWidget: StringInputWidget,
 ) {
     model.send({
-        type: "upload-dataset",
-        data: gatherData(datasetWidget, filesWidget, attachmentsWidget),
+        type: "cmd:upload-dataset",
+        payload: gatherData(datasetWidget, filesWidget, attachmentsWidget),
     });
 }
 

@@ -15,3 +15,13 @@ export type Proposal = {
     title: string;
     instrumentIds: [string];
 };
+
+export type Technique = {
+    id: string;
+    name: string;
+};
+
+export type Techniques = {
+    prefix: string;
+    techniques: Technique[];
+};
