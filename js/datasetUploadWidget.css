@@ -208,6 +208,16 @@ table.cean-scientific-metadata-table {
 }
 
 .cean-tab-buttons-left {
+    padding: 0 1em 0 1em;
+
+    & svg {
+        height: 1.8rem;
+        width: auto;
+        transform: translateY(0.4em);
+    }
+}
+
+.cean-tab-buttons-middle {
     display: flex;
 }
 
@@ -215,6 +225,7 @@ table.cean-scientific-metadata-table {
     display: flex;
     align-items: center;
     padding-right: 16px;
+    margin-left: auto;
 
     & a:hover {
         text-decoration: underline;

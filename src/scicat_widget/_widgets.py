@@ -44,7 +44,7 @@ def dataset_upload_widget(
         proposals=[_serialize_proposal(proposal) for proposal in proposals],
         accessGroups=access_groups,
         techniques=_load_techniques(),
-        scicatUrl="https://scicat.ess.eu/",  # TODO detector from client
+        scicatUrl="https://staging.scicat.ess.eu/",  # TODO detector from client
         skipConfirm=skip_confirm,
         client=client,
     )

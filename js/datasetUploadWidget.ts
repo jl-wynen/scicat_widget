@@ -73,6 +73,7 @@ function createTabs(
             { label: attachmentsLabel, element: attachmentsWidget.element },
         ],
         [makeSciCatLinkDiv(scicatUrl), uploadButton],
+        scicatUrl,
     );
 
     return [tabs, datasetWidget, filesWidget];
