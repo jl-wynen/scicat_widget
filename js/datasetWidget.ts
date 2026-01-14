@@ -135,7 +135,7 @@ function createHumanOwnerPanel(
         "Owners",
         "owners",
         OwnersInputWidget,
-    );
+    ) as OwnersInputWidget;
     createAndAppend(
         inputWidgets,
         columns,

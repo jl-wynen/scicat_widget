@@ -46,6 +46,8 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
         if (v.length === 0) {
             addOwner(this.ownerWidgets, container as HTMLElement);
         }
+        // Need this to update the PI widget.
+        this.emitUpdated();
     }
 
     private clearOwners() {

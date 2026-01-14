@@ -12,13 +12,8 @@ export class DropdownInputWidget extends InputWidget<string> {
         element.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") this.emitUpdated();
         });
-        options.forEach((option) => {
-            const item = document.createElement("option");
-            item.value = option;
-            item.textContent = option;
-            element.appendChild(item);
-        });
         this.element = element;
+        this.buildOptions(options);
     }
 
     get value(): string | null {
@@ -33,5 +28,27 @@ export class DropdownInputWidget extends InputWidget<string> {
         const has = Array.from(this.element.options).some((o) => o.value === val);
         if (has) this.element.value = val;
         else this.element.value = "";
+    }
+
+    set options(options: Array<string>) {
+        this.element.replaceChildren();
+        this.buildOptions(options);
+    }
+
+    disable() {
+        this.element.setAttribute("disabled", "true");
+    }
+
+    enable() {
+        this.element.removeAttribute("disabled");
+    }
+
+    private buildOptions(options: Array<string>) {
+        options.forEach((option) => {
+            const item = document.createElement("option");
+            item.value = option;
+            item.textContent = option;
+            this.element.appendChild(item);
+        });
     }
 }

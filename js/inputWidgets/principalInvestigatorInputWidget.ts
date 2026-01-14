@@ -4,14 +4,20 @@ import { createInputWithLabel } from "../forms";
 import { DropdownInputWidget } from "./dropdownInputWidget.ts";
 import { CheckboxInputWidget } from "./checkboxInputWidget.ts";
 import { PersonInputWidget } from "./personInputWidget.ts";
+import { OwnersInputWidget } from "./ownersInputWidget.ts";
 
 export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
     element: HTMLDivElement;
     personWidget: PersonInputWidget;
+    ownersInput: OwnersInputWidget;
+    sameAsCheckbox: CheckboxInputWidget;
+    sameAsDropdown: DropdownInputWidget;
 
-    constructor() {
+    constructor(ownersInput: OwnersInputWidget) {
         super();
-        const [container, personWidget] = createPiWidget();
+        this.ownersInput = ownersInput;
+        const [container, personWidget, sameAsCheckbox, sameAsDropdown] =
+            this.createPiWidget();
 
         const emit = () => this.emitUpdated();
         container.addEventListener("blur", emit, true);
@@ -21,42 +27,89 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
 
         this.element = container;
         this.personWidget = personWidget;
+        this.sameAsCheckbox = sameAsCheckbox;
+        this.sameAsDropdown = sameAsDropdown;
+
+        this.updateDropdown();
+        this.ownersInput.element.addEventListener("input-updated", () => {
+            this.updateDropdown();
+        });
+    }
+
+    private updateDropdown() {
+        const owners = this.ownersInput.value || [];
+        this.sameAsDropdown.options = owners.map((o) => o.name).filter((n) => !!n);
+        if (this.sameAsCheckbox.value) {
+            this.updateFromDropdown();
+        }
+    }
+
+    private updateFromDropdown() {
+        const selectedName = this.sameAsDropdown.value;
+        const owners = this.ownersInput.value || [];
+        const selectedOwner = owners.find((o) => o.name === selectedName);
+        if (selectedOwner) {
+            this.personWidget.value = selectedOwner;
+        }
     }
 
     get value(): Person | null {
-        // TODO implement 'same as' functionality
         return this.personWidget.value;
     }
 
     set value(v: Person | null) {
         this.personWidget.value = v;
     }
-}
 
-function createPiWidget(): [HTMLDivElement, PersonInputWidget] {
-    const container = document.createElement("div");
+    private createPiWidget(): [
+        HTMLDivElement,
+        PersonInputWidget,
+        CheckboxInputWidget,
+        DropdownInputWidget,
+    ] {
+        const container = document.createElement("div");
 
-    const [sameAsLabel, sameAsCheckbox] = createInputWithLabel("", CheckboxInputWidget);
-    sameAsLabel.textContent = "same as";
-    const sameAsDropdown = new DropdownInputWidget([]);
+        const [sameAsLabel, sameAsCheckbox] = createInputWithLabel(
+            "",
+            CheckboxInputWidget,
+        );
+        sameAsLabel.textContent = "same as";
+        const sameAsDropdown = new DropdownInputWidget([]);
 
-    const sameAsContainer = document.createElement("div");
-    sameAsContainer.classList.add("cean-same-as-container");
-    sameAsContainer.appendChild(sameAsCheckbox.element);
-    sameAsContainer.appendChild(sameAsLabel);
-    sameAsContainer.appendChild(sameAsDropdown.element);
+        const sameAsContainer = document.createElement("div");
+        sameAsContainer.classList.add("cean-same-as-container");
+        sameAsContainer.appendChild(sameAsCheckbox.element);
+        sameAsContainer.appendChild(sameAsLabel);
+        sameAsContainer.appendChild(sameAsDropdown.element);
 
-    const personWidget = new PersonInputWidget(false);
+        const personWidget = new PersonInputWidget(false);
 
-    sameAsCheckbox.element.addEventListener("change", (e) => {
-        if ((e.target as HTMLInputElement).checked) {
-            personWidget.disable();
-        } else {
-            personWidget.enable();
-        }
-    });
+        sameAsCheckbox.element.addEventListener("change", (e) => {
+            if ((e.target as HTMLInputElement).checked) {
+                personWidget.disable();
+                sameAsDropdown.enable();
+                this.updateFromDropdown();
+            } else {
+                personWidget.enable();
+                sameAsDropdown.disable();
+            }
+        });
 
-    container.appendChild(sameAsContainer);
-    container.appendChild(personWidget.element);
-    return [container, personWidget];
+        sameAsDropdown.disable();
+
+        sameAsDropdown.element.addEventListener("change", () => {
+            if (sameAsCheckbox.value) {
+                this.updateFromDropdown();
+            }
+        });
+
+        container.appendChild(sameAsContainer);
+        container.appendChild(personWidget.element);
+        return [
+            container,
+            personWidget,
+            sameAsCheckbox as CheckboxInputWidget,
+            sameAsDropdown,
+        ];
+    }
 }

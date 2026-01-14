@@ -178,7 +178,7 @@ table.cean-scientific-metadata-table {
         background-color: var(--jp-editor-selected-focused-background);
     }
 
-    &:hover {
+    &:hover:not(:disabled) {
         border-color: var(--jp-input-active-border-color);
     }
 }
