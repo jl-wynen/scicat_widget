@@ -43,6 +43,9 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
             let owner = addOwner(this.ownerWidgets, container as HTMLElement);
             owner.value = person;
         });
+        if (v.length === 0) {
+            addOwner(this.ownerWidgets, container as HTMLElement);
+        }
     }
 
     private clearOwners() {
@@ -89,22 +92,15 @@ function addOwner(
 ): PersonInputWidget {
     const ownerId = crypto.randomUUID();
 
-    let widget = createSingleOwnerWidget(ownersContainer, ownerId);
+    let widget = createSingleOwnerWidget(ownersContainer, ownerId, ownerWidgets);
     ownerWidgets.set(ownerId, widget);
-    let trashButtons = ownersContainer.querySelectorAll(".cean-remove-item");
-    if (trashButtons.length > 1) {
-        trashButtons.forEach((button) => {
-            button.removeAttribute("disabled");
-        });
-    } else {
-        trashButtons[0].setAttribute("disabled", "true");
-    }
     return widget;
 }
 
 function createSingleOwnerWidget(
     parent: HTMLElement,
     ownerId: string,
+    ownerWidgets: Map<string, PersonInputWidget>,
 ): PersonInputWidget {
     const container = document.createElement("div");
     container.classList.add("cean-single-owner");
@@ -122,9 +118,8 @@ function createSingleOwnerWidget(
         );
 
         parent.removeChild(container);
-        const remaining_buttons = parent.querySelectorAll(".cean-remove-item");
-        if (remaining_buttons.length === 1) {
-            remaining_buttons[0].setAttribute("disabled", "true");
+        if (ownerWidgets.size === 0) {
+            addOwner(ownerWidgets, parent);
         }
     });
     trashButton.title = "Remove item";
