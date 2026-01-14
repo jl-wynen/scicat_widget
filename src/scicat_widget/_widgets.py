@@ -26,13 +26,17 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     proposals = traitlets.List().tag(sync=True)
     accessGroups = traitlets.List().tag(sync=True)
     techniques = traitlets.Dict().tag(sync=True)
+    scicatUrl = traitlets.Unicode().tag(sync=True)
+    skipConfirm = traitlets.Bool().tag(sync=True)
 
     def __init__(self, *, client: Client, **kwargs: Any) -> None:
         super().__init__(**kwargs)
         self.client = client
 
 
-def dataset_upload_widget(client: Client | None = None) -> DatasetUploadWidget:
+def dataset_upload_widget(
+    client: Client | None = None, *, skip_confirm: bool = False
+) -> DatasetUploadWidget:
     initial, instruments, proposals, access_groups = _collect_initial_data(client)
     widget = DatasetUploadWidget(
         initial=initial,
@@ -40,6 +44,8 @@ def dataset_upload_widget(client: Client | None = None) -> DatasetUploadWidget:
         proposals=[_serialize_proposal(proposal) for proposal in proposals],
         accessGroups=access_groups,
         techniques=_load_techniques(),
+        scicatUrl="https://scicat.ess.eu/",  # TODO detector from client
+        skipConfirm=skip_confirm,
         client=client,
     )
     widget.on_msg(_handle_event)
