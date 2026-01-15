@@ -46,6 +46,7 @@ export function createInputWithLabel<T, A extends unknown[]>(
         inputWidget.element,
         label ?? (info === null ? key : info.label),
     );
+    labelElement.title = info?.description ?? "";
 
     return [labelElement, inputWidget];
 }

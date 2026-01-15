@@ -9,7 +9,7 @@
     },
     "creationLocation": {
         "label": "Creation location",
-        "description": "Identifier for the place where data was taken, usually of the form ':site:facility:instrument.'"
+        "description": "Identifier for the place where data was taken, usually of the form 'site:facility:instrument'."
     },
     "datasetName": {
         "label": "Name",
