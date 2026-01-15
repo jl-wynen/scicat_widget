@@ -85,7 +85,7 @@ export class FilesWidget {
         this.widgetsContainer = document.createElement("div");
 
         const label = document.createElement("div");
-        label.textContent = "Files:";
+        label.textContent = "Files";
         this.widgetsContainer.appendChild(label);
 
         this.addFileWidget();
