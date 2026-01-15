@@ -7,8 +7,8 @@ export class StringListInputWidget extends InputWidget<string[]> {
     private readonly input: HTMLInputElement;
     private items: string[] = [];
 
-    constructor() {
-        super();
+    constructor(key: string) {
+        super(key);
         // TODO datasetWidget needs to add label to the search box, not `element`
         this.element = document.createElement("div");
         this.element.classList.add("cean-string-list-widget");

@@ -4,8 +4,8 @@ import { createFormElement } from "../forms";
 export class CheckboxInputWidget extends InputWidget<boolean> {
     element: HTMLInputElement;
 
-    constructor() {
-        super();
+    constructor(key: string) {
+        super(key);
         const element = createFormElement("input") as HTMLInputElement;
         element.type = "checkbox";
         element.addEventListener("blur", () => this.emitUpdated(), true);

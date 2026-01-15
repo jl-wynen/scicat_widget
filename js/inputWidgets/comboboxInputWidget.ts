@@ -20,12 +20,13 @@ export class ComboboxInputWidget extends InputWidget<string> {
     private isFocused: boolean = false;
 
     constructor(
+        key: string,
         choices: Array<Choice>,
         renderChoice: (choice: Choice) => HTMLElement,
         allowArbitrary: boolean = true,
         filter: boolean = true,
     ) {
-        super();
+        super(key);
         this.choices = choices;
         this.renderChoice = renderChoice;
         this.allowArbitrary = allowArbitrary;

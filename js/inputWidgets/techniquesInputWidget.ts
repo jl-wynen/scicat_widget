@@ -1,4 +1,4 @@
-import { InputWidget } from "./inputWidget";
+import { InputWidget, UpdateEvent } from "./inputWidget";
 import { Choice, ComboboxInputWidget } from "./comboboxInputWidget";
 import { iconButton } from "../widgets/iconButton";
 import { Techniques } from "../models.ts";
@@ -11,8 +11,8 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
     private readonly idPrefix: string;
     private readonly choices: Choice[];
 
-    constructor(techniques: Techniques) {
-        super();
+    constructor(key: string, techniques: Techniques) {
+        super(key);
         this.idPrefix = techniques.prefix;
         this.choices = techniques.techniques
             .map((technique) => {
@@ -23,11 +23,16 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
         this.element = document.createElement("div");
         this.element.classList.add("cean-techniques-widget");
 
-        this.combobox = new ComboboxInputWidget(this.choices, renderChoice, false);
-        this.combobox.setKey("techniques-selection");
+        const choicesKey = `${this.key}_choices`;
+        this.combobox = new ComboboxInputWidget(
+            choicesKey,
+            this.choices,
+            renderChoice,
+            false,
+        );
         this.combobox.element.addEventListener("input-updated", (e) => {
-            const ce = e as CustomEvent<{ key: string; value: string | null }>;
-            if (ce.detail.value && ce.detail.key === "techniques-selection") {
+            const event = e as UpdateEvent;
+            if (event.key === choicesKey && event.value !== null) {
                 this.addItem();
             }
         });

@@ -13,8 +13,8 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
     sameAsCheckbox: CheckboxInputWidget;
     sameAsDropdown: DropdownInputWidget;
 
-    constructor(ownersInput: OwnersInputWidget) {
-        super();
+    constructor(key: string, ownersInput: OwnersInputWidget) {
+        super(key);
         this.ownersInput = ownersInput;
         const [container, personWidget, sameAsCheckbox, sameAsDropdown] =
             this.createPiWidget();
@@ -70,11 +70,12 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
         const container = document.createElement("div");
 
         const [sameAsLabel, sameAsCheckbox] = createInputWithLabel(
+            `${this.key}_same_as_checkbox`,
             "",
             CheckboxInputWidget,
         );
         sameAsLabel.textContent = "same as";
-        const sameAsDropdown = new DropdownInputWidget([]);
+        const sameAsDropdown = new DropdownInputWidget(`${this.key}_same_as`, []);
 
         const sameAsContainer = document.createElement("div");
         sameAsContainer.classList.add("cean-same-as-container");
@@ -82,7 +83,7 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
         sameAsContainer.appendChild(sameAsLabel);
         sameAsContainer.appendChild(sameAsDropdown.element);
 
-        const personWidget = new PersonInputWidget(false);
+        const personWidget = new PersonInputWidget(`${this.key}_person`, false);
 
         sameAsCheckbox.element.addEventListener("change", (e) => {
             if ((e.target as HTMLInputElement).checked) {

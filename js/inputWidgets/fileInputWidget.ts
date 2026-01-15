@@ -6,9 +6,9 @@ export class FileInputWidget extends InputWidget<string> {
     private debounceTimer: number | null = null;
     private previousValue: string | null = null;
 
-    constructor() {
-        super();
-        this.stringInput = new StringInputWidget();
+    constructor(key: string) {
+        super(key);
+        this.stringInput = new StringInputWidget(`${key}_path`);
 
         const el = this.stringInput.element;
         el.addEventListener("input", () => {

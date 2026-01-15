@@ -8,8 +8,8 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
     element: HTMLDivElement;
     ownerWidgets: Map<string, PersonInputWidget>;
 
-    constructor() {
-        super();
+    constructor(key: string) {
+        super(key);
         const ownerWidgets = new Map();
         const element = createOwnersElement(ownerWidgets) as HTMLDivElement;
 
@@ -107,7 +107,7 @@ function createSingleOwnerWidget(
     const container = document.createElement("div");
     container.classList.add("cean-single-owner");
 
-    const widget = new PersonInputWidget(true);
+    const widget = new PersonInputWidget(ownerId, true);
     container.appendChild(widget.element);
 
     const trashButton = iconButton("trash", () => {

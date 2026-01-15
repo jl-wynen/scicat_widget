@@ -4,8 +4,8 @@ import { createFormElement } from "../forms";
 export class DropdownInputWidget extends InputWidget<string> {
     element: HTMLSelectElement;
 
-    constructor(options: Array<string>) {
-        super();
+    constructor(key: string, options: Array<string>) {
+        super(key);
         const element = createFormElement("select") as HTMLSelectElement;
         element.classList.add("cean-dropdown");
         element.addEventListener("blur", () => this.emitUpdated(), true);

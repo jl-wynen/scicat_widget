@@ -13,9 +13,9 @@ export class PersonInputWidget extends InputWidget<Person> {
     element: HTMLDivElement;
     widgets: PersonWidgets;
 
-    constructor(hasOrcid: boolean) {
-        super();
-        const [container, widgets] = createPersonWidget(hasOrcid);
+    constructor(key: string, hasOrcid: boolean) {
+        super(key);
+        const [container, widgets] = createPersonWidget(key, hasOrcid);
 
         const emit = () => this.emitUpdated();
         this.element = container;
@@ -69,16 +69,27 @@ export class PersonInputWidget extends InputWidget<Person> {
     }
 }
 
-function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] {
+function createPersonWidget(
+    personKey: string,
+    hasOrcid: boolean,
+): [HTMLDivElement, PersonWidgets] {
     // TODO try fieldset
     const container = document.createElement("div");
     container.classList.add("cean-person-widget");
 
-    const [nameLabel, nameInput] = createInputWithLabel("Name", StringInputWidget);
+    const [nameLabel, nameInput] = createInputWithLabel(
+        `${personKey}_name`,
+        "Name",
+        StringInputWidget,
+    );
     container.appendChild(nameLabel);
     container.appendChild(nameInput.element);
 
-    const [emailLabel, emailInput] = createInputWithLabel("Email", StringInputWidget);
+    const [emailLabel, emailInput] = createInputWithLabel(
+        `${personKey}_email`,
+        "Email",
+        StringInputWidget,
+    );
     container.appendChild(emailLabel);
     container.appendChild(emailInput.element);
 
@@ -89,6 +100,7 @@ function createPersonWidget(hasOrcid: boolean): [HTMLDivElement, PersonWidgets] 
 
     if (hasOrcid) {
         const [orcidLabel, orcidInput] = createInputWithLabel(
+            `${personKey}_orcid`,
             "ORCID",
             StringInputWidget,
         );

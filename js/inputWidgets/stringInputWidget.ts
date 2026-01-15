@@ -4,8 +4,8 @@ import { createFormElement } from "../forms";
 export class StringInputWidget extends InputWidget<string> {
     element: HTMLInputElement | HTMLTextAreaElement;
 
-    constructor(multiLine: boolean = false) {
-        super();
+    constructor(key: string, multiLine: boolean = false) {
+        super(key);
         const element = makeStringElement(multiLine);
         element.addEventListener("blur", () => this.emitUpdated(), true);
         element.addEventListener("keydown", (ev) => {

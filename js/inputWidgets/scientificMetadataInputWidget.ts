@@ -15,8 +15,8 @@ export class ScientificMetadataInputWidget extends InputWidget<
     private readonly tableBody: HTMLTableSectionElement;
     private items: ScientificMetadataItem[] = [];
 
-    constructor() {
-        super();
+    constructor(key: string) {
+        super(key);
         this.element = createFormElement("div") as HTMLDivElement;
         this.element.classList.add("cean-scientific-metadata-widget");
 

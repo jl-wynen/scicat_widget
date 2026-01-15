@@ -27,16 +27,17 @@ export function createLabelFor(target: HTMLElement, label: string): HTMLLabelEle
 /**
  * Create an input widget and a label for it.
  *
- * @param label Text for the label.
+ * @param key Unique identifier (within the parent dataset) for the input widget.
  * @param widgetType Type of the input widget.
  * @param args Arguments to pass to the constructor of the widget.
  */
 export function createInputWithLabel<T, A extends unknown[]>(
+    key: string,
     label: string,
-    widgetType: new (...args: A) => InputWidget<T>,
+    widgetType: new (key: string, ...args: A) => InputWidget<T>,
     ...args: A
 ): [HTMLLabelElement, InputWidget<T>] {
-    const inputWidget = new widgetType(...args);
+    const inputWidget = new widgetType(key, ...args);
     const labelElement = createLabelFor(inputWidget.element, `${label}:`);
     return [labelElement, inputWidget];
 }

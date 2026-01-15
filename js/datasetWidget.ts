@@ -97,11 +97,11 @@ function createGeneralInfoPanel(
     runRow.classList.add("cean-span-3");
 
     const [runNumberLabel, runNumberInput] = createInputWithLabel(
+        "run_number",
         "Run number",
         StringInputWidget,
     );
     inputWidgets.set("run_number", runNumberInput);
-    runNumberInput.setKey("run_number");
     runRow.appendChild(runNumberInput.element);
 
     create(runRow, "Start", "start_time", DatetimeInputWidget);
@@ -340,6 +340,7 @@ function createAndAppend(
     ...args: any[]
 ): InputWidget<any> {
     const [labelElement, inputWidget] = createInputWithLabel(
+        varName,
         label,
         widgetType,
         ...args,
@@ -347,6 +348,5 @@ function createAndAppend(
     parent.appendChild(labelElement);
     parent.appendChild(inputWidget.element);
     widgetsMap.set(varName, inputWidget);
-    inputWidget.setKey(varName);
     return inputWidget;
 }

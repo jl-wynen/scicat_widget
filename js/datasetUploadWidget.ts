@@ -53,7 +53,7 @@ function createTabs(
         model.get("techniques"),
     );
     const filesWidget = new FilesWidget(model, nFiles);
-    const attachmentsWidget = new StringInputWidget();
+    const attachmentsWidget = new StringInputWidget("attachments");
 
     const uploadButton = makeUploadButton(
         doUpload.bind(

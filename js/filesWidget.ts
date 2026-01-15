@@ -147,8 +147,7 @@ class SingleFileWidget {
         this.element.classList.add("cean-single-file-widget");
         this.element.classList.add("cean-input-grid");
 
-        this.input = new FileInputWidget();
-        this.input.setKey(this.key);
+        this.input = new FileInputWidget(this.key);
         this.input.element.classList.add("cean-file-input");
         this.element.appendChild(this.input.element);
 
@@ -265,6 +264,7 @@ function createGeneralInputs(): [
     container.classList.add("cean-input-grid");
 
     const [sourceFolderLabel, sourceFolderInput] = createInputWithLabel(
+        "sourceFolder",
         "Source folder",
         StringInputWidget,
     );
@@ -272,6 +272,7 @@ function createGeneralInputs(): [
     container.appendChild(sourceFolderInput.element);
 
     const [algLabel, algInput] = createInputWithLabel(
+        "checksumAlgorithm",
         "Checksum algorithm",
         DropdownInputWidget,
         CHECKSUM_ALGORITHMS,

@@ -1,13 +1,13 @@
-import {InputWidget} from "./inputWidget";
-import {createFormElement} from "../forms";
+import { InputWidget } from "./inputWidget";
+import { createFormElement } from "../forms";
 
 export class DatetimeInputWidget extends InputWidget<Date> {
     dateElement: HTMLInputElement;
     timeElement: HTMLInputElement;
     element: HTMLDivElement;
 
-    constructor() {
-        super();
+    constructor(key: string) {
+        super(key);
 
         const container = document.createElement("div");
         container.classList.add("cean-datetime-input");

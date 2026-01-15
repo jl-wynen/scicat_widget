@@ -2,7 +2,7 @@
  * Base class for input widgets.
  */
 export abstract class InputWidget<T> {
-    private readonly key: string;
+    protected readonly key: string;
 
     protected constructor(key: string) {
         this.key = key;
