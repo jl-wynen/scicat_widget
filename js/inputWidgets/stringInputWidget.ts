@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
 
 export class StringInputWidget extends InputWidget<string> {
-    element: HTMLInputElement | HTMLTextAreaElement;
+    container: HTMLInputElement | HTMLTextAreaElement;
 
     constructor(key: string, multiLine: boolean = false) {
         super(key);
@@ -14,16 +14,16 @@ export class StringInputWidget extends InputWidget<string> {
                 this.emitUpdated();
             }
         });
-        this.element = element;
+        this.container = element;
     }
 
     get value(): string | null {
-        if (this.element.value === "") return null;
-        else return this.element.value;
+        if (this.container.value === "") return null;
+        else return this.container.value;
     }
 
     set value(v: string | null) {
-        this.element.value = v ?? "";
+        this.container.value = v ?? "";
     }
 }
 

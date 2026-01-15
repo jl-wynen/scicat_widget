@@ -153,8 +153,8 @@ class SingleFileWidget {
         this.element.classList.add("cean-input-grid");
 
         this.input = new FileInputWidget(this.key);
-        this.input.element.classList.add("cean-file-input");
-        this.element.appendChild(this.input.element);
+        this.input.container.classList.add("cean-file-input");
+        this.element.appendChild(this.input.container);
 
         this.removeButton = iconButton("trash", () => {
             this.remove(model);
@@ -180,7 +180,7 @@ class SingleFileWidget {
         };
         model.on("msg:custom", this.responseHandler);
 
-        this.input.element.addEventListener("input-updated", () => {
+        this.input.container.addEventListener("input-updated", () => {
             onInput();
             if (!this.value) {
                 stats.replaceChildren();
@@ -234,7 +234,7 @@ class SingleFileWidget {
             this.size_ = payload.size;
             this.creationTime_ = new Date(payload.creationTime);
 
-            delete this.input.element.dataset.error;
+            delete this.input.container.dataset.error;
 
             const sizeLabel = document.createElement("span");
             sizeLabel.textContent = "Size:";
@@ -251,7 +251,7 @@ class SingleFileWidget {
             this.size_ = null;
             this.creationTime_ = null;
 
-            this.input.element.dataset["error"] = "true";
+            this.input.container.dataset["error"] = "true";
 
             const span = document.createElement("span");
             span.textContent = payload.error;
@@ -274,16 +274,16 @@ function createGeneralInputs(): [
         StringInputWidget,
     );
     container.appendChild(sourceFolderLabel);
-    container.appendChild(sourceFolderInput.element);
+    container.appendChild(sourceFolderInput.container);
 
     const [algLabel, algInput] = createInputWithLabel(
         "checksumAlgorithm",
         DropdownInputWidget,
         [CHECKSUM_ALGORITHMS],
     );
-    algInput.element.classList.add("cean-chk-alg");
+    algInput.container.classList.add("cean-chk-alg");
     container.appendChild(algLabel);
-    container.appendChild(algInput.element);
+    container.appendChild(algInput.container);
 
     return [container, sourceFolderInput, algInput];
 }

@@ -4,7 +4,7 @@ import { iconButton } from "../widgets/iconButton";
 import { Techniques } from "../models.ts";
 
 export class TechniquesInputWidget extends InputWidget<string[]> {
-    readonly element: HTMLDivElement;
+    readonly container: HTMLDivElement;
     private readonly itemsContainer: HTMLDivElement;
     private readonly combobox: ComboboxInputWidget;
     private items: string[] = [];
@@ -20,8 +20,8 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
             })
             .sort((a, b) => a.key.localeCompare(b.key));
 
-        this.element = document.createElement("div");
-        this.element.classList.add("cean-techniques-widget");
+        this.container = document.createElement("div");
+        this.container.classList.add("cean-techniques-widget");
 
         const choicesKey = `${this.key}_choices`;
         this.combobox = new ComboboxInputWidget(
@@ -30,7 +30,7 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
             renderChoice,
             false,
         );
-        this.combobox.element.addEventListener("input-updated", (e) => {
+        this.combobox.container.addEventListener("input-updated", (e) => {
             const event = e as UpdateEvent;
             if (event.key === choicesKey && event.value !== null) {
                 this.addItem();
@@ -40,8 +40,8 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
         this.itemsContainer = document.createElement("div");
         this.itemsContainer.classList.add("cean-techniques-items");
 
-        this.element.appendChild(this.combobox.element);
-        this.element.appendChild(this.itemsContainer);
+        this.container.appendChild(this.combobox.container);
+        this.container.appendChild(this.itemsContainer);
 
         this.renderItems();
     }

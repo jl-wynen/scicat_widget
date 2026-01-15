@@ -8,7 +8,7 @@ export type Choice = {
 };
 
 export class ComboboxInputWidget extends InputWidget<string> {
-    element: HTMLElement;
+    container: HTMLElement;
     private readonly searchInput: HTMLInputElement;
     private readonly displayElement: HTMLElement;
     private readonly dropdownList: HTMLElement;
@@ -32,24 +32,24 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.allowArbitrary = allowArbitrary;
         this.filter = filter;
 
-        this.element = createFormElement("div");
-        this.element.classList.add("cean-combox-dropdown");
+        this.container = createFormElement("div");
+        this.container.classList.add("cean-combox-dropdown");
 
         this.searchInput = document.createElement("input");
         this.searchInput.type = "text";
         this.searchInput.placeholder = "Search...";
         this.searchInput.classList.add("cean-combox-search");
         this.searchInput.style.display = "none";
-        this.element.appendChild(this.searchInput);
+        this.container.appendChild(this.searchInput);
 
         this.displayElement = document.createElement("div");
         this.displayElement.classList.add("cean-combox-display");
-        this.element.appendChild(this.displayElement);
+        this.container.appendChild(this.displayElement);
         this.showPlaceholder();
 
         const arrowIcon = document.createElement("i");
         arrowIcon.className = "fa fa-chevron-down cean-combox-arrow";
-        this.element.appendChild(arrowIcon);
+        this.container.appendChild(arrowIcon);
         arrowIcon.addEventListener("click", (e) => {
             e.stopPropagation();
             this.enterEditMode();
@@ -58,7 +58,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.dropdownList = document.createElement("div");
         this.dropdownList.classList.add("cean-combox-list");
         this.dropdownList.style.display = "none";
-        this.element.appendChild(this.dropdownList);
+        this.container.appendChild(this.dropdownList);
 
         this.renderChoices();
 
@@ -97,7 +97,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
         // Close when clicking outside
         document.addEventListener("click", (e) => {
-            if (!this.element.contains(e.target as Node)) {
+            if (!this.container.contains(e.target as Node)) {
                 this.closeDropdown();
             }
         });

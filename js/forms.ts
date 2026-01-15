@@ -43,7 +43,7 @@ export function createInputWithLabel<T, A extends unknown[]>(
 
     const info = fieldInfo(key);
     const labelElement = createLabelFor(
-        inputWidget.element,
+        inputWidget.container,
         label ?? (info === null ? key : info.label),
     );
     labelElement.title = info?.description ?? "";

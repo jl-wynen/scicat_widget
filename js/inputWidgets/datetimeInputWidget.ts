@@ -4,7 +4,7 @@ import { createFormElement } from "../forms";
 export class DatetimeInputWidget extends InputWidget<Date> {
     dateElement: HTMLInputElement;
     timeElement: HTMLInputElement;
-    element: HTMLDivElement;
+    container: HTMLDivElement;
 
     constructor(key: string) {
         super(key);
@@ -34,7 +34,7 @@ export class DatetimeInputWidget extends InputWidget<Date> {
 
         this.dateElement = dateElement;
         this.timeElement = timeElement;
-        this.element = container;
+        this.container = container;
     }
 
     get value(): Date | null {

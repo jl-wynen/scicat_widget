@@ -10,7 +10,7 @@ type PersonWidgets = {
 };
 
 export class PersonInputWidget extends InputWidget<Person> {
-    element: HTMLDivElement;
+    container: HTMLDivElement;
     widgets: PersonWidgets;
 
     constructor(key: string, hasOrcid: boolean) {
@@ -18,9 +18,9 @@ export class PersonInputWidget extends InputWidget<Person> {
         const [container, widgets] = createPersonWidget(key, hasOrcid);
 
         const emit = () => this.emitUpdated();
-        this.element = container;
-        this.element.addEventListener("blur", emit, true);
-        this.element.addEventListener("keydown", (e) => {
+        this.container = container;
+        this.container.addEventListener("blur", emit, true);
+        this.container.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
@@ -57,15 +57,15 @@ export class PersonInputWidget extends InputWidget<Person> {
     }
 
     disable() {
-        this.widgets.name.element.setAttribute("disabled", "true");
-        this.widgets.email.element.setAttribute("disabled", "true");
-        this.widgets.orcid?.element.setAttribute("disabled", "true");
+        this.widgets.name.container.setAttribute("disabled", "true");
+        this.widgets.email.container.setAttribute("disabled", "true");
+        this.widgets.orcid?.container.setAttribute("disabled", "true");
     }
 
     enable() {
-        this.widgets.name.element.removeAttribute("disabled");
-        this.widgets.email.element.removeAttribute("disabled");
-        this.widgets.orcid?.element.removeAttribute("disabled");
+        this.widgets.name.container.removeAttribute("disabled");
+        this.widgets.email.container.removeAttribute("disabled");
+        this.widgets.orcid?.container.removeAttribute("disabled");
     }
 }
 
@@ -84,7 +84,7 @@ function createPersonWidget(
         "Name",
     );
     container.appendChild(nameLabel);
-    container.appendChild(nameInput.element);
+    container.appendChild(nameInput.container);
 
     const [emailLabel, emailInput] = createInputWithLabel(
         `${personKey}_email`,
@@ -93,7 +93,7 @@ function createPersonWidget(
         "Email",
     );
     container.appendChild(emailLabel);
-    container.appendChild(emailInput.element);
+    container.appendChild(emailInput.container);
 
     const widgets: PersonWidgets = {
         name: nameInput,
@@ -108,7 +108,7 @@ function createPersonWidget(
             "ORCID",
         );
         container.appendChild(orcidLabel);
-        container.appendChild(orcidInput.element);
+        container.appendChild(orcidInput.container);
         widgets.orcid = orcidInput;
     }
 

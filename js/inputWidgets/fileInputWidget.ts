@@ -10,7 +10,7 @@ export class FileInputWidget extends InputWidget<string> {
         super(key);
         this.stringInput = new StringInputWidget(`${key}_path`);
 
-        const el = this.stringInput.element;
+        const el = this.stringInput.container;
         el.addEventListener("input", () => {
             if (this.debounceTimer !== null) {
                 clearTimeout(this.debounceTimer);
@@ -34,8 +34,8 @@ export class FileInputWidget extends InputWidget<string> {
         this.stringInput.value = v;
     }
 
-    get element(): HTMLElement {
-        return this.stringInput.element;
+    get container(): HTMLElement {
+        return this.stringInput.container;
     }
 
     private handleChanged() {

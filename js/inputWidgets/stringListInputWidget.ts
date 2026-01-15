@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { iconButton } from "../widgets/iconButton";
 
 export class StringListInputWidget extends InputWidget<string[]> {
-    readonly element: HTMLDivElement;
+    readonly container: HTMLDivElement;
     private readonly itemsContainer: HTMLDivElement;
     private readonly input: HTMLInputElement;
     private items: string[] = [];
@@ -10,8 +10,8 @@ export class StringListInputWidget extends InputWidget<string[]> {
     constructor(key: string) {
         super(key);
         // TODO datasetWidget needs to add label to the search box, not `element`
-        this.element = document.createElement("div");
-        this.element.classList.add("cean-string-list-widget");
+        this.container = document.createElement("div");
+        this.container.classList.add("cean-string-list-widget");
 
         const inputRow = document.createElement("div");
         inputRow.classList.add("cean-string-list-input-row");
@@ -37,8 +37,8 @@ export class StringListInputWidget extends InputWidget<string[]> {
         this.itemsContainer = document.createElement("div");
         this.itemsContainer.classList.add("cean-string-list-items");
 
-        this.element.appendChild(inputRow);
-        this.element.appendChild(this.itemsContainer);
+        this.container.appendChild(inputRow);
+        this.container.appendChild(this.itemsContainer);
 
         this.updateItems();
     }

@@ -11,14 +11,14 @@ export type ScientificMetadataItem = {
 export class ScientificMetadataInputWidget extends InputWidget<
     ScientificMetadataItem[]
 > {
-    readonly element: HTMLDivElement;
+    readonly container: HTMLDivElement;
     private readonly tableBody: HTMLTableSectionElement;
     private items: ScientificMetadataItem[] = [];
 
     constructor(key: string) {
         super(key);
-        this.element = createFormElement("div") as HTMLDivElement;
-        this.element.classList.add("cean-scientific-metadata-widget");
+        this.container = createFormElement("div") as HTMLDivElement;
+        this.container.classList.add("cean-scientific-metadata-widget");
 
         const table = document.createElement("table");
         table.classList.add("cean-scientific-metadata-table");
@@ -35,7 +35,7 @@ export class ScientificMetadataInputWidget extends InputWidget<
 
         this.tableBody = document.createElement("tbody");
         table.appendChild(this.tableBody);
-        this.element.appendChild(table);
+        this.container.appendChild(table);
 
         const addButton = document.createElement("button");
         addButton.type = "button";
@@ -44,7 +44,7 @@ export class ScientificMetadataInputWidget extends InputWidget<
         addButton.addEventListener("click", () => {
             this.addNewRow();
         });
-        this.element.appendChild(addButton);
+        this.container.appendChild(addButton);
 
         // Initial row
         this.addNewRow();

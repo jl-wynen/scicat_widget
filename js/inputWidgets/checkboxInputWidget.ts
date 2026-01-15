@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
 
 export class CheckboxInputWidget extends InputWidget<boolean> {
-    element: HTMLInputElement;
+    container: HTMLInputElement;
 
     constructor(key: string) {
         super(key);
@@ -12,14 +12,14 @@ export class CheckboxInputWidget extends InputWidget<boolean> {
         element.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") this.emitUpdated();
         });
-        this.element = element;
+        this.container = element;
     }
 
     get value(): boolean {
-        return this.element.checked;
+        return this.container.checked;
     }
 
     set value(v: boolean | null) {
-        this.element.checked = Boolean(v);
+        this.container.checked = Boolean(v);
     }
 }

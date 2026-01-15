@@ -70,7 +70,7 @@ function createTabs(
         [
             { label: datasetLabel, element: datasetWidget.element },
             { label: filesLabel, element: filesWidget.element },
-            { label: attachmentsLabel, element: attachmentsWidget.element },
+            { label: attachmentsLabel, element: attachmentsWidget.container },
         ],
         [makeSciCatLinkDiv(scicatUrl), uploadButton],
         scicatUrl,

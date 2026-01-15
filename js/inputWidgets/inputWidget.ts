@@ -16,7 +16,7 @@ export abstract class InputWidget<T> {
         if (this.key === undefined) {
             return;
         }
-        this.element.dispatchEvent(
+        this.container.dispatchEvent(
             new UpdateEvent(this.key, this.value, { bubbles: true }),
         );
     }
@@ -60,7 +60,7 @@ export abstract class InputWidget<T> {
     abstract get value(): T | null;
     abstract set value(v: T | null);
 
-    abstract get element(): HTMLElement;
+    abstract get container(): HTMLElement;
 }
 
 export class UpdateEvent extends Event {

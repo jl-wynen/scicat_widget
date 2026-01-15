@@ -5,7 +5,7 @@ import { PersonInputWidget } from "./personInputWidget.ts";
 import { iconButton } from "../widgets/iconButton.ts";
 
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
-    element: HTMLDivElement;
+    container: HTMLDivElement;
     ownerWidgets: Map<string, PersonInputWidget>;
 
     constructor(key: string) {
@@ -19,7 +19,7 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
             if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
-        this.element = element;
+        this.container = element;
         this.ownerWidgets = ownerWidgets;
     }
 
@@ -38,7 +38,7 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
         if (!v) return;
 
         this.clearOwners();
-        let container = this.element.querySelector(".cean-owners-container");
+        let container = this.container.querySelector(".cean-owners-container");
         v.forEach((person) => {
             let owner = addOwner(this.ownerWidgets, container as HTMLElement);
             owner.value = person;
@@ -52,7 +52,7 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
 
     private clearOwners() {
         this.ownerWidgets.clear();
-        this.element.querySelector(".cean-owners-container")?.replaceChildren();
+        this.container.querySelector(".cean-owners-container")?.replaceChildren();
     }
 }
 
@@ -108,7 +108,7 @@ function createSingleOwnerWidget(
     container.classList.add("cean-single-owner");
 
     const widget = new PersonInputWidget(ownerId, true);
-    container.appendChild(widget.element);
+    container.appendChild(widget.container);
 
     const trashButton = iconButton("trash", () => {
         // dispatch before removing the element so the element actually gets emitted:

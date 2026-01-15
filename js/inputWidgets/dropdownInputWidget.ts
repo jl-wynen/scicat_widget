@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
 
 export class DropdownInputWidget extends InputWidget<string> {
-    element: HTMLSelectElement;
+    container: HTMLSelectElement;
 
     constructor(key: string, options: Array<string>) {
         super(key);
@@ -12,35 +12,35 @@ export class DropdownInputWidget extends InputWidget<string> {
         element.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") this.emitUpdated();
         });
-        this.element = element;
+        this.container = element;
         this.buildOptions(options);
     }
 
     get value(): string | null {
-        if (this.element.value === "") return null;
-        else return this.element.value;
+        if (this.container.value === "") return null;
+        else return this.container.value;
     }
 
     set value(v: string | null) {
         // TODO this should fully override, regardless of prior content
         const val = v ?? "";
         // Only set to known options to avoid inconsistent UI
-        const has = Array.from(this.element.options).some((o) => o.value === val);
-        if (has) this.element.value = val;
-        else this.element.value = "";
+        const has = Array.from(this.container.options).some((o) => o.value === val);
+        if (has) this.container.value = val;
+        else this.container.value = "";
     }
 
     set options(options: Array<string>) {
-        this.element.replaceChildren();
+        this.container.replaceChildren();
         this.buildOptions(options);
     }
 
     disable() {
-        this.element.setAttribute("disabled", "true");
+        this.container.setAttribute("disabled", "true");
     }
 
     enable() {
-        this.element.removeAttribute("disabled");
+        this.container.removeAttribute("disabled");
     }
 
     private buildOptions(options: Array<string>) {
@@ -48,7 +48,7 @@ export class DropdownInputWidget extends InputWidget<string> {
             const item = document.createElement("option");
             item.value = option;
             item.textContent = option;
-            this.element.appendChild(item);
+            this.container.appendChild(item);
         });
     }
 }

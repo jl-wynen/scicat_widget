@@ -65,13 +65,13 @@ function createGeneralInfoPanel(
     columns.classList.add("cean-ds-general-info");
 
     const nameInput = create(columns, "datasetName", StringInputWidget);
-    nameInput.element.classList.add("cean-span-3");
+    nameInput.container.classList.add("cean-span-3");
 
     const descriptionInput = create(columns, "description", StringInputWidget, [true]);
-    descriptionInput.element.classList.add("cean-span-3");
+    descriptionInput.container.classList.add("cean-span-3");
 
     const proposalInput = createProposalsWidget(inputWidgets, columns, proposals);
-    proposalInput.element.classList.add("cean-span-3");
+    proposalInput.container.classList.add("cean-span-3");
 
     createInstrumentsWidget(inputWidgets, columns, instruments);
 
@@ -97,7 +97,7 @@ function createGeneralInfoPanel(
         [],
     );
     inputWidgets.set("runNumber", runNumberInput);
-    runRow.appendChild(runNumberInput.element);
+    runRow.appendChild(runNumberInput.container);
 
     create(runRow, "startTime", DatetimeInputWidget);
     create(runRow, "endTime", DatetimeInputWidget);
@@ -312,7 +312,7 @@ function createAndAppend(
 ): InputWidget<any> {
     const [labelElement, inputWidget] = createInputWithLabel(varName, widgetType, args);
     parent.appendChild(labelElement);
-    parent.appendChild(inputWidget.element);
+    parent.appendChild(inputWidget.container);
     widgetsMap.set(varName, inputWidget);
     return inputWidget;
 }
