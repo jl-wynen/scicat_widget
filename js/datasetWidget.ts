@@ -77,8 +77,14 @@ function createGeneralInfoPanel(
 
     let creationLocation = create(columns, "creationLocation", StringInputWidget);
     creationLocation.listenToWidget("instrumentId", (widget, instrumentId) => {
-        // TODO construct location based on input pattern (python)
-        widget.value = `ESS:${instrumentId}`;
+        const instrument = instruments.find(
+            (instrument) => instrument.id == instrumentId,
+        );
+        if (!instrument) {
+            widget.value = "";
+        } else {
+            widget.value = `ESS:${instrument.name}`;
+        }
     });
 
     const runRow = document.createElement("div");
