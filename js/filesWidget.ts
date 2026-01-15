@@ -162,6 +162,7 @@ class SingleFileWidget {
         });
         this.removeButton.title = "Remove item";
         this.removeButton.setAttribute("disabled", "true");
+        this.removeButton.setAttribute("tabindex", "-1");
         this.removeButton.classList.add("cean-remove-item");
         this.element.appendChild(this.removeButton);
 
