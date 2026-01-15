@@ -79,16 +79,18 @@ function createPersonWidget(
 
     const [nameLabel, nameInput] = createInputWithLabel(
         `${personKey}_name`,
-        "Name",
         StringInputWidget,
+        [],
+        "Name",
     );
     container.appendChild(nameLabel);
     container.appendChild(nameInput.element);
 
     const [emailLabel, emailInput] = createInputWithLabel(
         `${personKey}_email`,
-        "Email",
         StringInputWidget,
+        [],
+        "Email",
     );
     container.appendChild(emailLabel);
     container.appendChild(emailInput.element);
@@ -101,8 +103,9 @@ function createPersonWidget(
     if (hasOrcid) {
         const [orcidLabel, orcidInput] = createInputWithLabel(
             `${personKey}_orcid`,
-            "ORCID",
             StringInputWidget,
+            [],
+            "ORCID",
         );
         container.appendChild(orcidLabel);
         container.appendChild(orcidInput.element);

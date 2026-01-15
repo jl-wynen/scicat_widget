@@ -64,16 +64,10 @@ function createGeneralInfoPanel(
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-general-info");
 
-    const nameInput = create(columns, "Name", "name", StringInputWidget);
+    const nameInput = create(columns, "datasetName", StringInputWidget);
     nameInput.element.classList.add("cean-span-3");
 
-    const descriptionInput = create(
-        columns,
-        "Description",
-        "description",
-        StringInputWidget,
-        true,
-    );
+    const descriptionInput = create(columns, "description", StringInputWidget, [true]);
     descriptionInput.element.classList.add("cean-span-3");
 
     const proposalInput = createProposalsWidget(inputWidgets, columns, proposals);
@@ -81,13 +75,8 @@ function createGeneralInfoPanel(
 
     createInstrumentsWidget(inputWidgets, columns, instruments);
 
-    let creationLocation = create(
-        columns,
-        "Creation location",
-        "creation_location",
-        StringInputWidget,
-    );
-    creationLocation.listenToWidget("instrument_id", (widget, instrumentId) => {
+    let creationLocation = create(columns, "creationLocation", StringInputWidget);
+    creationLocation.listenToWidget("instrumentId", (widget, instrumentId) => {
         // TODO construct location based on input pattern (python)
         widget.value = `ESS:${instrumentId}`;
     });
@@ -97,15 +86,15 @@ function createGeneralInfoPanel(
     runRow.classList.add("cean-span-3");
 
     const [runNumberLabel, runNumberInput] = createInputWithLabel(
-        "run_number",
-        "Run number",
+        "runNumber",
         StringInputWidget,
+        [],
     );
-    inputWidgets.set("run_number", runNumberInput);
+    inputWidgets.set("runNumber", runNumberInput);
     runRow.appendChild(runNumberInput.element);
 
-    create(runRow, "Start", "start_time", DatetimeInputWidget);
-    create(runRow, "End", "end_time", DatetimeInputWidget);
+    create(runRow, "startTime", DatetimeInputWidget);
+    create(runRow, "endTime", DatetimeInputWidget);
 
     columns.appendChild(runNumberLabel);
     columns.appendChild(runRow);
@@ -132,17 +121,15 @@ function createHumanOwnerPanel(
     const ownersInput = createAndAppend(
         inputWidgets,
         columns,
-        "Owners",
         "owners",
         OwnersInputWidget,
     ) as OwnersInputWidget;
     createAndAppend(
         inputWidgets,
         columns,
-        "Principal investigator",
-        "pi",
+        "principalInvestigator",
         PrincipalInvestigatorInputWidget,
-        ownersInput,
+        [ownersInput],
     );
     return columns;
 }
@@ -157,9 +144,9 @@ function createTechnicalOwnerPanel(
     const create = createAndAppend.bind(null, inputWidgets, columns);
 
     createOwnerGroupWidget(inputWidgets, columns, accessGroups);
-    create("Access groups", "access_groups", StringInputWidget);
-    create("License", "license", StringInputWidget);
-    create("Publish", "is_published", CheckboxInputWidget);
+    create("accessGroups", StringInputWidget);
+    create("license", StringInputWidget);
+    create("isPublished", CheckboxInputWidget);
 
     return columns;
 }
@@ -176,14 +163,14 @@ function createMiscPanel(
     right.classList.add("cean-ds-misc-right");
 
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
-    createLeft("Techniques", "techniques", TechniquesInputWidget, techniques);
-    createLeft("Software", "used_software", StringInputWidget);
-    createLeft("Sample ID", "sample_id", StringInputWidget);
+    createLeft("techniques", TechniquesInputWidget, [techniques]);
+    createLeft("usedSoftware", StringInputWidget);
+    createLeft("sampleId", StringInputWidget);
 
     const createRight = createAndAppend.bind(null, inputWidgets, right);
     createTypeWidget(inputWidgets, right);
-    createRight("Keywords", "keywords", StringListInputWidget);
-    createRight("Relationships", "relationships", StringInputWidget);
+    createRight("keywords", StringListInputWidget);
+    createRight("relationships", StringInputWidget);
 
     columns.appendChild(left);
     columns.appendChild(right);
@@ -199,8 +186,7 @@ function createScientificMetadataPanel(
     createAndAppend(
         inputWidgets,
         container,
-        "Scientific metadata",
-        "scientific_metadata",
+        "scientificMetadata",
         ScientificMetadataInputWidget,
     );
 
@@ -222,12 +208,7 @@ function createInstrumentsWidget(
         })
         .sort((a, b) => a.text.localeCompare(b.text));
 
-    createAndAppend(
-        inputWidgets,
-        parent,
-        "Instrument",
-        "instrument_id",
-        ComboboxInputWidget,
+    createAndAppend(inputWidgets, parent, "instrumentId", ComboboxInputWidget, [
         instrumentChoices,
         (choice: Choice) => {
             const el = document.createElement("div");
@@ -235,7 +216,7 @@ function createInstrumentsWidget(
             return el;
         },
         false,
-    );
+    ]);
 }
 
 function createProposalsWidget(
@@ -253,12 +234,7 @@ function createProposalsWidget(
         })
         .sort((a, b) => a.text.localeCompare(b.text));
 
-    return createAndAppend(
-        inputWidgets,
-        parent,
-        "Proposal",
-        "proposal_id",
-        ComboboxInputWidget,
+    return createAndAppend(inputWidgets, parent, "proposalId", ComboboxInputWidget, [
         proposalChoices,
         (choice: Choice) => {
             const el = document.createElement("div");
@@ -275,7 +251,7 @@ function createProposalsWidget(
             return el;
         },
         true,
-    );
+    ]);
 }
 
 function createOwnerGroupWidget(
@@ -287,12 +263,7 @@ function createOwnerGroupWidget(
         return { key: group, text: group, data: {} };
     });
 
-    return createAndAppend(
-        inputWidgets,
-        parent,
-        "Owner group",
-        "owner_group",
-        ComboboxInputWidget,
+    return createAndAppend(inputWidgets, parent, "ownerGroup", ComboboxInputWidget, [
         ownerChoices,
         (choice: Choice) => {
             const el = document.createElement("div");
@@ -300,7 +271,7 @@ function createOwnerGroupWidget(
             return el;
         },
         true,
-    );
+    ]);
 }
 
 function createTypeWidget(
@@ -312,12 +283,7 @@ function createTypeWidget(
         { key: "raw", text: "raw", data: {} },
     ];
 
-    const widget = createAndAppend(
-        inputWidgets,
-        parent,
-        "Type",
-        "type",
-        ComboboxInputWidget,
+    const widget = createAndAppend(inputWidgets, parent, "type", ComboboxInputWidget, [
         typeChoices,
         (choice: Choice) => {
             const el = document.createElement("div");
@@ -326,7 +292,7 @@ function createTypeWidget(
         },
         true,
         false,
-    );
+    ]);
     widget.value = "derived";
     return widget;
 }
@@ -334,17 +300,11 @@ function createTypeWidget(
 function createAndAppend(
     widgetsMap: Map<string, InputWidget<any>>,
     parent: HTMLElement,
-    label: string,
     varName: string,
-    widgetType: new (...args: any[]) => InputWidget<any>,
-    ...args: any[]
+    widgetType: new (key: string, ...args: any[]) => InputWidget<any>,
+    args: unknown[] = [],
 ): InputWidget<any> {
-    const [labelElement, inputWidget] = createInputWithLabel(
-        varName,
-        label,
-        widgetType,
-        ...args,
-    );
+    const [labelElement, inputWidget] = createInputWithLabel(varName, widgetType, args);
     parent.appendChild(labelElement);
     parent.appendChild(inputWidget.element);
     widgetsMap.set(varName, inputWidget);

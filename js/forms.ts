@@ -1,4 +1,5 @@
 import { InputWidget } from "./inputWidgets/inputWidget";
+import { fieldInfo } from "./assets.ts";
 
 /**
  * Create an element for a form.
@@ -30,14 +31,21 @@ export function createLabelFor(target: HTMLElement, label: string): HTMLLabelEle
  * @param key Unique identifier (within the parent dataset) for the input widget.
  * @param widgetType Type of the input widget.
  * @param args Arguments to pass to the constructor of the widget.
+ * @param label Optional label text. If not provided, the label will be derived from the field's metadata.
  */
 export function createInputWithLabel<T, A extends unknown[]>(
     key: string,
-    label: string,
     widgetType: new (key: string, ...args: A) => InputWidget<T>,
-    ...args: A
+    args?: A,
+    label?: string,
 ): [HTMLLabelElement, InputWidget<T>] {
-    const inputWidget = new widgetType(key, ...args);
-    const labelElement = createLabelFor(inputWidget.element, `${label}:`);
+    const inputWidget = new widgetType(key, ...(args ?? ([] as unknown as A)));
+
+    const info = fieldInfo(key);
+    const labelElement = createLabelFor(
+        inputWidget.element,
+        label ?? (info === null ? key : info.label),
+    );
+
     return [labelElement, inputWidget];
 }

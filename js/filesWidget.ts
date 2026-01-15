@@ -1,5 +1,10 @@
 import type { AnyModel } from "@anywidget/types";
-import { DropdownInputWidget, FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
+import {
+    DropdownInputWidget,
+    FileInputWidget,
+    InputWidget,
+    StringInputWidget,
+} from "./inputWidgets.ts";
 import { iconButton } from "./widgets/iconButton.ts";
 import { createInputWithLabel } from "./forms.ts";
 
@@ -33,8 +38,8 @@ export class FilesWidget {
 
     gatherData(): Record<string, any> {
         return {
-            source_folder: this.sourceFolderInput.value,
-            checksum_algorithm: this.algInput.value,
+            sourceFolder: this.sourceFolderInput.value,
+            checksumAlgorithm: this.algInput.value,
             files: this.fileWidgets
                 .filter((widget) => widget.fileExists())
                 .map((widget) => widget.value)
@@ -264,7 +269,6 @@ function createGeneralInputs(): [
     container.classList.add("cean-input-grid");
 
     const [sourceFolderLabel, sourceFolderInput] = createInputWithLabel(
-        "sourceFolder",
         "Source folder",
         StringInputWidget,
     );
@@ -273,9 +277,8 @@ function createGeneralInputs(): [
 
     const [algLabel, algInput] = createInputWithLabel(
         "checksumAlgorithm",
-        "Checksum algorithm",
         DropdownInputWidget,
-        CHECKSUM_ALGORITHMS,
+        [CHECKSUM_ALGORITHMS],
     );
     algInput.element.classList.add("cean-chk-alg");
     container.appendChild(algLabel);

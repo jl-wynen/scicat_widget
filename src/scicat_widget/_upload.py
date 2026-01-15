@@ -5,21 +5,24 @@ from scitacean import Client, Dataset, File
 
 def upload_dataset(client: Client, widget_data: dict[str, object]) -> None:
     dataset = make_dataset_from_widget_data(widget_data)
-    print("Uploading", dataset)
+    print("Converted dataset:", dataset)
 
 
 def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     """Construct a Scitacean dataset from widget data."""
-    converted = dict(data)
-    converted["meta"] = converted.pop("scientific_metadata", {})
+    converted = _convert_field_names(data)
 
-    converted.update(_convert_owners(converted.pop("owners", [])))
-    converted.update(_convert_pi(converted.pop("pi", {})))
+    converted.update(_convert_owners(data.get("owners", [])))
+    converted.update(_convert_pi(data.get("principalInvestigator", {})))
 
-    [file_meta, files] = _convert_files(converted.pop("files"))
+    [file_meta, files] = _convert_files(data.get("files"))
     converted.update(file_meta)
-    attachments = _convert_attachments(converted.pop("attachments"))
 
+    # TODO
+    attachments = _convert_attachments(data.get("attachments"))
+    _ = data.get("relationships")
+
+    print("Converted dataset:", converted)
     dataset = Dataset(**converted)
     dataset.add_files(*files)
     return dataset
@@ -54,8 +57,8 @@ def _convert_pi(pi: dict[str, str] | None) -> dict[str, str]:
 
 def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
     fields = {
-        "source_folder": files.pop("source_folder", ""),
-        "checksum_algorithm": files.pop("checksum_algorithm", ""),
+        "source_folder": files.pop("sourceFolder", ""),
+        "checksum_algorithm": files.pop("checksumAlgorithm", ""),
     }
     files = [File.from_local(path) for path in files.get("files", [])]
     return fields, files
@@ -64,3 +67,14 @@ def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
 def _convert_attachments(attachments: list[dict[str, str]] | None) -> None:
     # TODO implement
     return
+
+
+def _convert_field_names(widget_data: dict[str, Any]) -> dict[str, Any]:
+    converted = {
+        field.name: value
+        for field in Dataset.fields()
+        if (value := widget_data.get(field.scicat_name)) is not None
+    }
+    # Not handled by Dataset.fields:
+    converted["meta"] = widget_data.get("scientificMetadata", {})
+    return converted

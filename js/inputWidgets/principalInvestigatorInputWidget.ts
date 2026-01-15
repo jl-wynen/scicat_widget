@@ -71,7 +71,6 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
 
         const [sameAsLabel, sameAsCheckbox] = createInputWithLabel(
             `${this.key}_same_as_checkbox`,
-            "",
             CheckboxInputWidget,
         );
         sameAsLabel.textContent = "same as";

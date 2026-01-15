@@ -137,7 +137,7 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
 
 def _upload_dataset(widget: DatasetUploadWidget, payload: dict[str, object]) -> None:
     print("Uploading")
-    print(payload)
+    print("raw payload:", payload)
     dataset = upload_dataset(widget.client, payload)
 
 

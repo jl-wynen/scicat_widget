@@ -1,0 +1,94 @@
+{
+    "accessGroups": {
+        "label": "Access groups",
+        "description": "Groups with access to the dataset."
+    },
+    "checksumAlgorithm": {
+        "label": "Checksum algorithm",
+        "description": "Algorithm for computing checksums of files. The default is a good choice for most cases."
+    },
+    "creationLocation": {
+        "label": "Creation location",
+        "description": "Identifier for the place where data was taken, usually of the form ':site:facility:instrument.'"
+    },
+    "datasetName": {
+        "label": "Name",
+        "description": "The name of the dataset."
+    },
+    "description": {
+        "label": "Description",
+        "description": "Free text explanation of the contents of the dataset."
+    },
+    "endTime": {
+        "label": "End",
+        "description": "End time of data acquisition for the dataset."
+    },
+    "instrumentId": {
+        "label": "Instrument",
+        "description": "The instrument where the data was taken."
+    },
+    "isPublished": {
+        "label": "Published",
+        "description": "Check to make the dataset publicly available immediately."
+    },
+    "keywords": {
+        "label": "Keywords",
+        "description": "Tags associated with the dataset for search and categorization. Values should ideally come from defined vocabularies, taxonomies, ontologies or knowledge graphs."
+    },
+    "license": {
+        "label": "License",
+        "description": "Name of the license under which the data can be used."
+    },
+    "owners": {
+        "label": "Owners",
+        "description": "People who own the dataset and its data. The owners typically have full access to the data and decide who can use it and how."
+    },
+    "ownerGroup": {
+        "label": "Owner group",
+        "description": "The group that owns the dataset in SciCat and the data on disk. As uploader, you need to be a member of this group."
+    },
+    "principalInvestigator": {
+        "label": "PI",
+        "description": "Principal investigator and contact person for the dataset."
+    },
+    "proposalId": {
+        "label": "Proposal",
+        "description": "The proposal, if any, under which this data was recorded or computed."
+    },
+    "relationships": {
+        "label": "Relationships",
+        "description": "Relationships with other datasets. In particular the 'input' relationship indicates datasets that were processed to obtain the dataset you are uploading."
+    },
+    "runNumber": {
+        "label": "Run number",
+        "description": "Facility or instrument run number that this data belongs to."
+    },
+    "sampleId": {
+        "label": "Sample ID",
+        "description": "SciCat identifier for the sample that was used to record the data."
+    },
+    "scientificMetadata": {
+        "label": "Scientific metadata",
+        "description": "Arbitrary metadata describing the dataset. Choose what to include based on how you want to search for and identify the dataset later. The unit can be omitted if it does not apply."
+    },
+    "sourceFolder": {
+        "label": "Source folder",
+        "description": "Absolute file path on the file server for a folder where the data files will be uploaded."
+    },
+    "startTime": {
+        "label": "Start",
+        "description": "Start time of data acquisition for the dataset."
+    },
+    "techniques": {
+        "label": "Techniques",
+        "description": "Techniques (experimental, analysis) used to produce the dataset."
+    },
+    "type": {
+        "label": "Type",
+        "description": "Characterize the type of the dataset."
+    },
+    "usedSoftware": {
+        "label": "Used software",
+        "description": "Software used to produce the dataset."
+    }
+}
