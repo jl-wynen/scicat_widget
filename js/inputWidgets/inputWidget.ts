@@ -3,9 +3,53 @@
  */
 export abstract class InputWidget<T> {
     protected readonly key: string;
+    // The actual <input> element or a wrapper around it.
+    // This element has an ID that can be used by a <label> and emits change events.
+    private readonly inputElement_: HTMLElement;
+    // A <div> element holding status / error messages for the input.
+    protected readonly statusElement: HTMLDivElement;
+    // A <div> holding `inputElement` and `statusElement`.
+    private readonly container_: HTMLDivElement;
 
-    protected constructor(key: string) {
+    protected constructor(key: string, input: HTMLElement) {
         this.key = key;
+
+        this.inputElement_ = input;
+        this.inputElement_.id = crypto.randomUUID();
+
+        [this.container_, this.statusElement] = wrapInputElement(input);
+    }
+
+    /**
+     * Get the value of the input element if it has any.
+     */
+    abstract get value(): T | null;
+
+    /**
+     * Set the value of the input element.
+     * @param v Value to set. If `null`, the input element will be cleared.
+     */
+    abstract set value(v: T | null);
+
+    /**
+     * This input element cast to the given type.
+     */
+    protected inputElement<E = HTMLInputElement>(): E {
+        return this.inputElement_ as E;
+    }
+
+    /**
+     * The wrapper element containing the input and status elements.
+     */
+    get container(): HTMLElement {
+        return this.container_;
+    }
+
+    /**
+     * The ID of the input element.
+     */
+    get id(): string {
+        return this.inputElement_.id;
     }
 
     /**
@@ -56,11 +100,18 @@ export abstract class InputWidget<T> {
             }
         };
     }
+}
 
-    abstract get value(): T | null;
-    abstract set value(v: T | null);
+function wrapInputElement(input: HTMLElement): [HTMLDivElement, HTMLDivElement] {
+    const statusElement = document.createElement("div");
+    statusElement.classList.add("cean-input-status");
+    statusElement.style.display = "none";
 
-    abstract get container(): HTMLElement;
+    const container = document.createElement("div");
+    container.classList.add("cean-input-container");
+    container.replaceChildren(input, statusElement);
+
+    return [container, statusElement];
 }
 
 export class UpdateEvent extends Event {

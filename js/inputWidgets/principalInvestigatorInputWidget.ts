@@ -7,25 +7,28 @@ import { PersonInputWidget } from "./personInputWidget.ts";
 import { OwnersInputWidget } from "./ownersInputWidget.ts";
 
 export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
-    container: HTMLDivElement;
     personWidget: PersonInputWidget;
     ownersInput: OwnersInputWidget;
     sameAsCheckbox: CheckboxInputWidget;
     sameAsDropdown: DropdownInputWidget;
 
     constructor(key: string, ownersInput: OwnersInputWidget) {
-        super(key);
-        this.ownersInput = ownersInput;
-        const [container, personWidget, sameAsCheckbox, sameAsDropdown] =
+        // Order of calls such that we can use `this` in `createPiWidget` to create
+        // event handlers.
+        const wrap = document.createElement("div");
+        super(key, wrap);
+
+        const [sameAsContainer, personWidget, sameAsCheckbox, sameAsDropdown] =
             this.createPiWidget();
+        wrap.replaceChildren(sameAsContainer, personWidget.container);
+        this.ownersInput = ownersInput;
 
         const emit = () => this.emitUpdated();
-        container.addEventListener("blur", emit, true);
-        container.addEventListener("keydown", (e) => {
+        wrap.addEventListener("blur", emit, true);
+        wrap.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
-        this.container = container;
         this.personWidget = personWidget;
         this.sameAsCheckbox = sameAsCheckbox;
         this.sameAsDropdown = sameAsDropdown;
@@ -67,8 +70,6 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
         CheckboxInputWidget,
         DropdownInputWidget,
     ] {
-        const container = document.createElement("div");
-
         const [sameAsLabel, sameAsCheckbox] = createInputWithLabel(
             `${this.key}_same_as_checkbox`,
             CheckboxInputWidget,
@@ -103,10 +104,8 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
             }
         });
 
-        container.appendChild(sameAsContainer);
-        container.appendChild(personWidget.container);
         return [
-            container,
+            sameAsContainer,
             personWidget,
             sameAsCheckbox as CheckboxInputWidget,
             sameAsDropdown,

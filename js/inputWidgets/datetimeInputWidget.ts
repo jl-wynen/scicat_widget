@@ -4,13 +4,10 @@ import { createFormElement } from "../forms";
 export class DatetimeInputWidget extends InputWidget<Date> {
     dateElement: HTMLInputElement;
     timeElement: HTMLInputElement;
-    container: HTMLDivElement;
 
     constructor(key: string) {
-        super(key);
-
-        const container = document.createElement("div");
-        container.classList.add("cean-datetime-input");
+        const wrap = document.createElement("div");
+        wrap.classList.add("cean-datetime-input");
 
         const dateElement = createFormElement("input") as HTMLInputElement;
         dateElement.type = "date";
@@ -19,8 +16,8 @@ export class DatetimeInputWidget extends InputWidget<Date> {
         timeElement.type = "time";
         timeElement.step = "1";
 
-        container.appendChild(dateElement);
-        container.appendChild(timeElement);
+        wrap.appendChild(dateElement);
+        wrap.appendChild(timeElement);
 
         const emit = () => this.emitUpdated();
         dateElement.addEventListener("blur", emit, true);
@@ -32,9 +29,9 @@ export class DatetimeInputWidget extends InputWidget<Date> {
             if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
+        super(key, wrap);
         this.dateElement = dateElement;
         this.timeElement = timeElement;
-        this.container = container;
     }
 
     get value(): Date | null {
@@ -55,5 +52,9 @@ export class DatetimeInputWidget extends InputWidget<Date> {
         const dateString = localDate.toISOString();
         this.dateElement.value = dateString.slice(0, 10);
         this.timeElement.value = dateString.slice(11, 19);
+    }
+
+    get id(): string {
+        return this.dateElement.id;
     }
 }

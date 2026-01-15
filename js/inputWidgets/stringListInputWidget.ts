@@ -2,21 +2,21 @@ import { InputWidget } from "./inputWidget";
 import { iconButton } from "../widgets/iconButton";
 
 export class StringListInputWidget extends InputWidget<string[]> {
-    readonly container: HTMLDivElement;
     private readonly itemsContainer: HTMLDivElement;
     private readonly input: HTMLInputElement;
     private items: string[] = [];
 
     constructor(key: string) {
-        super(key);
-        // TODO datasetWidget needs to add label to the search box, not `element`
-        this.container = document.createElement("div");
-        this.container.classList.add("cean-string-list-widget");
+        const wrap = document.createElement("div");
+        wrap.classList.add("cean-string-list-widget");
+
+        super(key, wrap);
 
         const inputRow = document.createElement("div");
         inputRow.classList.add("cean-string-list-input-row");
 
         this.input = document.createElement("input");
+        this.input.id = crypto.randomUUID();
         this.input.type = "text";
         this.input.classList.add("cean-combox-search"); // TODO rename class?
         this.input.placeholder = "Add new item...";
@@ -37,8 +37,8 @@ export class StringListInputWidget extends InputWidget<string[]> {
         this.itemsContainer = document.createElement("div");
         this.itemsContainer.classList.add("cean-string-list-items");
 
-        this.container.appendChild(inputRow);
-        this.container.appendChild(this.itemsContainer);
+        wrap.appendChild(inputRow);
+        wrap.appendChild(this.itemsContainer);
 
         this.updateItems();
     }
@@ -89,5 +89,9 @@ export class StringListInputWidget extends InputWidget<string[]> {
     set value(v: string[] | null) {
         this.items = v ?? [];
         this.updateItems();
+    }
+
+    get id(): string {
+        return this.input.id;
     }
 }

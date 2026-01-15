@@ -15,13 +15,13 @@ export function createFormElement(tagName: string): HTMLElement {
 /**
  * Create a label for a form element.
  *
- * @param target The form element the label is for. Must have an `id`.
+ * @param id The id of the element to target with this label.
  * @param label The label text.
  */
-export function createLabelFor(target: HTMLElement, label: string): HTMLLabelElement {
+function createLabelFor(id: string, label: string): HTMLLabelElement {
     const el = document.createElement("label");
     el.textContent = label;
-    el.setAttribute("for", target.id);
+    el.setAttribute("for", id);
     return el;
 }
 
@@ -43,7 +43,7 @@ export function createInputWithLabel<T, A extends unknown[]>(
 
     const info = fieldInfo(key);
     const labelElement = createLabelFor(
-        inputWidget.container,
+        inputWidget.id,
         label ?? (info === null ? key : info.label),
     );
     labelElement.title = info?.description ?? "";

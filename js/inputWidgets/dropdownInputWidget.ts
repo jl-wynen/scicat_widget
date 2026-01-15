@@ -2,36 +2,36 @@ import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
 
 export class DropdownInputWidget extends InputWidget<string> {
-    container: HTMLSelectElement;
-
     constructor(key: string, options: Array<string>) {
-        super(key);
         const element = createFormElement("select") as HTMLSelectElement;
         element.classList.add("cean-dropdown");
         element.addEventListener("blur", () => this.emitUpdated(), true);
         element.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") this.emitUpdated();
         });
-        this.container = element;
+
+        super(key, element);
         this.buildOptions(options);
     }
 
     get value(): string | null {
-        if (this.container.value === "") return null;
-        else return this.container.value;
+        const el = this.inputElement<HTMLSelectElement>();
+        if (el.value === "") return null;
+        else return el.value;
     }
 
     set value(v: string | null) {
         // TODO this should fully override, regardless of prior content
+        const el = this.inputElement<HTMLSelectElement>();
         const val = v ?? "";
         // Only set to known options to avoid inconsistent UI
-        const has = Array.from(this.container.options).some((o) => o.value === val);
-        if (has) this.container.value = val;
-        else this.container.value = "";
+        const has = Array.from(el.options).some((o) => o.value === val);
+        if (has) el.value = val;
+        else el.value = "";
     }
 
     set options(options: Array<string>) {
-        this.container.replaceChildren();
+        this.inputElement().replaceChildren();
         this.buildOptions(options);
     }
 
@@ -44,11 +44,12 @@ export class DropdownInputWidget extends InputWidget<string> {
     }
 
     private buildOptions(options: Array<string>) {
+        const input = this.inputElement<HTMLSelectElement>();
         options.forEach((option) => {
             const item = document.createElement("option");
             item.value = option;
             item.textContent = option;
-            this.container.appendChild(item);
+            input.appendChild(item);
         });
     }
 }

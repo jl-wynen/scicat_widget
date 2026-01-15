@@ -5,11 +5,9 @@ import { PersonInputWidget } from "./personInputWidget.ts";
 import { iconButton } from "../widgets/iconButton.ts";
 
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
-    container: HTMLDivElement;
     ownerWidgets: Map<string, PersonInputWidget>;
 
     constructor(key: string) {
-        super(key);
         const ownerWidgets = new Map();
         const element = createOwnersElement(ownerWidgets) as HTMLDivElement;
 
@@ -19,7 +17,7 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
             if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
-        this.container = element;
+        super(key, element);
         this.ownerWidgets = ownerWidgets;
     }
 

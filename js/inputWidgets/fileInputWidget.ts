@@ -7,11 +7,9 @@ export class FileInputWidget extends InputWidget<string> {
     private previousValue: string | null = null;
 
     constructor(key: string) {
-        super(key);
-        this.stringInput = new StringInputWidget(`${key}_path`);
-
-        const el = this.stringInput.container;
-        el.addEventListener("input", () => {
+        const input = new StringInputWidget(`${key}_path`);
+        const elememt = input.container;
+        elememt.addEventListener("input", () => {
             if (this.debounceTimer !== null) {
                 clearTimeout(this.debounceTimer);
             }
@@ -20,10 +18,13 @@ export class FileInputWidget extends InputWidget<string> {
                 this.debounceTimer = null;
             }, 500);
         });
-        el.addEventListener("blur", () => this.handleChanged(), true);
-        el.addEventListener("keydown", (e) => {
+        elememt.addEventListener("blur", () => this.handleChanged(), true);
+        elememt.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") this.handleChanged();
         });
+
+        super(key, elememt);
+        this.stringInput = input;
     }
 
     get value(): string | null {

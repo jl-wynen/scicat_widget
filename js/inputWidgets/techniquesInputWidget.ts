@@ -4,7 +4,6 @@ import { iconButton } from "../widgets/iconButton";
 import { Techniques } from "../models.ts";
 
 export class TechniquesInputWidget extends InputWidget<string[]> {
-    readonly container: HTMLDivElement;
     private readonly itemsContainer: HTMLDivElement;
     private readonly combobox: ComboboxInputWidget;
     private items: string[] = [];
@@ -12,16 +11,17 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
     private readonly choices: Choice[];
 
     constructor(key: string, techniques: Techniques) {
-        super(key);
+        const wrap = document.createElement("div");
+        wrap.classList.add("cean-techniques-widget");
+
+        super(key, wrap);
+
         this.idPrefix = techniques.prefix;
         this.choices = techniques.techniques
             .map((technique) => {
                 return { key: technique.id, text: technique.name, data: {} };
             })
             .sort((a, b) => a.key.localeCompare(b.key));
-
-        this.container = document.createElement("div");
-        this.container.classList.add("cean-techniques-widget");
 
         const choicesKey = `${this.key}_choices`;
         this.combobox = new ComboboxInputWidget(
@@ -40,8 +40,8 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
         this.itemsContainer = document.createElement("div");
         this.itemsContainer.classList.add("cean-techniques-items");
 
-        this.container.appendChild(this.combobox.container);
-        this.container.appendChild(this.itemsContainer);
+        wrap.appendChild(this.combobox.container);
+        wrap.appendChild(this.itemsContainer);
 
         this.renderItems();
     }

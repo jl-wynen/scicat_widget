@@ -10,20 +10,18 @@ type PersonWidgets = {
 };
 
 export class PersonInputWidget extends InputWidget<Person> {
-    container: HTMLDivElement;
     widgets: PersonWidgets;
 
     constructor(key: string, hasOrcid: boolean) {
-        super(key);
-        const [container, widgets] = createPersonWidget(key, hasOrcid);
+        const [wrap, widgets] = createPersonWidget(key, hasOrcid);
 
         const emit = () => this.emitUpdated();
-        this.container = container;
-        this.container.addEventListener("blur", emit, true);
-        this.container.addEventListener("keydown", (e) => {
+        wrap.addEventListener("blur", emit, true);
+        wrap.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") emit();
         });
 
+        super(key, wrap);
         this.widgets = widgets;
     }
 

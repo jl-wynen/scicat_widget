@@ -1,5 +1,4 @@
 import { InputWidget } from "./inputWidget";
-import { createFormElement } from "../forms";
 
 export type Choice = {
     key: string;
@@ -8,7 +7,6 @@ export type Choice = {
 };
 
 export class ComboboxInputWidget extends InputWidget<string> {
-    container: HTMLElement;
     private readonly searchInput: HTMLInputElement;
     private readonly displayElement: HTMLElement;
     private readonly dropdownList: HTMLElement;
@@ -26,30 +24,31 @@ export class ComboboxInputWidget extends InputWidget<string> {
         allowArbitrary: boolean = true,
         filter: boolean = true,
     ) {
-        super(key);
+        const wrap = document.createElement("div");
+        wrap.classList.add("cean-combox-dropdown");
+
+        super(key, wrap);
         this.choices = choices;
         this.renderChoice = renderChoice;
         this.allowArbitrary = allowArbitrary;
         this.filter = filter;
 
-        this.container = createFormElement("div");
-        this.container.classList.add("cean-combox-dropdown");
-
         this.searchInput = document.createElement("input");
+        this.searchInput.id = crypto.randomUUID();
         this.searchInput.type = "text";
         this.searchInput.placeholder = "Search...";
         this.searchInput.classList.add("cean-combox-search");
         this.searchInput.style.display = "none";
-        this.container.appendChild(this.searchInput);
+        wrap.appendChild(this.searchInput);
 
         this.displayElement = document.createElement("div");
         this.displayElement.classList.add("cean-combox-display");
-        this.container.appendChild(this.displayElement);
+        wrap.appendChild(this.displayElement);
         this.showPlaceholder();
 
         const arrowIcon = document.createElement("i");
         arrowIcon.className = "fa fa-chevron-down cean-combox-arrow";
-        this.container.appendChild(arrowIcon);
+        wrap.appendChild(arrowIcon);
         arrowIcon.addEventListener("click", (e) => {
             e.stopPropagation();
             this.enterEditMode();
@@ -58,7 +57,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.dropdownList = document.createElement("div");
         this.dropdownList.classList.add("cean-combox-list");
         this.dropdownList.style.display = "none";
-        this.container.appendChild(this.dropdownList);
+        wrap.appendChild(this.dropdownList);
 
         this.renderChoices();
 
@@ -127,6 +126,10 @@ export class ComboboxInputWidget extends InputWidget<string> {
             }
         }
         this.updateDisplay();
+    }
+
+    get id(): string {
+        return this.searchInput.id;
     }
 
     private enterEditMode() {
