@@ -130,7 +130,7 @@ table.cean-scientific-metadata-table {
         padding: 0;
     }
 
-    & td {
+    & td:not(:last-child) {
         border: 1px solid var(--jp-border-color1);
 
         &:hover {
@@ -481,10 +481,6 @@ body[data-jp-theme-light="false"] {
 
 .cean-single-file-widget {
     grid-template-columns: 1fr max-content;
-
-    & button.cean-remove-item[disabled="true"] {
-        visibility: hidden;
-    }
 }
 
 .cean-file-stats {
@@ -557,10 +553,6 @@ select.cean-dropdown {
     font-size: 0.8em;
 }
 
-.cean-string-list-item .cean-button:hover {
-    color: var(--jp-error-color1);
-}
-
 .cean-techniques-widget {
     display: flex;
     flex-direction: column;
@@ -592,10 +584,6 @@ select.cean-dropdown {
     font-size: 0.8em;
 }
 
-.cean-techniques-item .cean-button:hover {
-    color: var(--jp-error-color1);
-}
-
 .cean-techniques-selected-item {
     display: flex;
     flex-direction: column;
@@ -608,5 +596,18 @@ select.cean-dropdown {
     & .cean-item-id:hover {
         color: var(--jp-content-link-color);
         text-decoration: underline;
+    }
+}
+
+button.cean-button-remove {
+    background: none;
+
+    &:hover {
+        color: var(--jp-error-color1);
+        background: none;
+    }
+
+    &[disabled="true"] {
+        visibility: hidden;
     }
 }

@@ -5,7 +5,7 @@ import {
     InputWidget,
     StringInputWidget,
 } from "./inputWidgets.ts";
-import { iconButton } from "./widgets/iconButton.ts";
+import { removeButton } from "./widgets/iconButton.ts";
 import { createInputWithLabel } from "./forms.ts";
 
 export class FilesWidget {
@@ -156,14 +156,11 @@ class SingleFileWidget {
         this.input.container.classList.add("cean-file-input");
         this.element.appendChild(this.input.container);
 
-        this.removeButton = iconButton("trash", () => {
+        this.removeButton = removeButton(() => {
             this.remove(model);
             onRemove();
         });
-        this.removeButton.title = "Remove item";
         this.removeButton.setAttribute("disabled", "true");
-        this.removeButton.setAttribute("tabindex", "-1");
-        this.removeButton.classList.add("cean-remove-item");
         this.element.appendChild(this.removeButton);
 
         const stats = document.createElement("div");

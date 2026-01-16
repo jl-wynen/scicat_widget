@@ -1,6 +1,7 @@
 /**
  * Create a button with an icon.
  * @param icon Name of a Fontawesome icon.
+ * @param callback Callback to be invoked when the button is clicked.
  */
 export function iconButton(icon: string, callback: () => void): HTMLButtonElement {
     const iconElement = document.createElement("i");
@@ -11,5 +12,13 @@ export function iconButton(icon: string, callback: () => void): HTMLButtonElemen
     button.appendChild(iconElement);
     button.addEventListener("click", callback);
 
+    return button;
+}
+
+export function removeButton(callback: () => void): HTMLButtonElement {
+    const button = iconButton("trash", callback);
+    button.classList.add("cean-button-remove");
+    button.title = "Remove item";
+    button.setAttribute("tabindex", "-1");
     return button;
 }

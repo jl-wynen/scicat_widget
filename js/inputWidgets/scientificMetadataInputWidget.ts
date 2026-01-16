@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidget";
-import { iconButton } from "../widgets/iconButton";
+import { removeButton } from "../widgets/iconButton";
 import { createFormElement } from "../forms";
 
 export type ScientificMetadataItem = {
@@ -95,11 +95,7 @@ export class ScientificMetadataInputWidget extends InputWidget<
         });
 
         const actionsTd = document.createElement("td");
-        const removeBtn = iconButton("trash", () => this.removeItem(index));
-        removeBtn.title = "Remove item";
-        removeBtn.classList.add("cean-remove-item");
-        removeBtn.setAttribute("tabindex", "-1");
-        actionsTd.appendChild(removeBtn);
+        actionsTd.appendChild(removeButton(() => this.removeItem(index)));
         tr.appendChild(actionsTd);
 
         return tr;

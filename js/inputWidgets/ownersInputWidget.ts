@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
 import { createFormElement } from "../forms";
 import { PersonInputWidget } from "./personInputWidget.ts";
-import { iconButton } from "../widgets/iconButton.ts";
+import { removeButton } from "../widgets/iconButton.ts";
 
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
     ownerWidgets: Map<string, PersonInputWidget>;
@@ -108,23 +108,22 @@ function createSingleOwnerWidget(
     const widget = new PersonInputWidget(ownerId, true);
     container.appendChild(widget.container);
 
-    const trashButton = iconButton("trash", () => {
-        // dispatch before removing the element so the element actually gets emitted:
-        container.dispatchEvent(
-            new CustomEvent("owner-removed", {
-                bubbles: true,
-                detail: { ownerId },
-            }),
-        );
+    container.appendChild(
+        removeButton(() => {
+            // dispatch before removing the element so the element actually gets emitted:
+            container.dispatchEvent(
+                new CustomEvent("owner-removed", {
+                    bubbles: true,
+                    detail: { ownerId },
+                }),
+            );
 
-        parent.removeChild(container);
-        if (ownerWidgets.size === 0) {
-            addOwner(ownerWidgets, parent);
-        }
-    });
-    trashButton.title = "Remove item";
-    trashButton.classList.add("cean-remove-item");
-    container.appendChild(trashButton);
+            parent.removeChild(container);
+            if (ownerWidgets.size === 0) {
+                addOwner(ownerWidgets, parent);
+            }
+        }),
+    );
 
     parent.appendChild(container);
     return widget;

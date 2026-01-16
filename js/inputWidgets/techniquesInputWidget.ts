@@ -1,6 +1,6 @@
 import { InputWidget, UpdateEvent } from "./inputWidget";
 import { Choice, ComboboxInputWidget } from "./comboboxInputWidget";
-import { iconButton } from "../widgets/iconButton";
+import { removeButton } from "../widgets/iconButton";
 import { Techniques } from "../models.ts";
 
 export class TechniquesInputWidget extends InputWidget<string[]> {
@@ -83,10 +83,7 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
         label.classList.add("cean-techniques-item-content");
         box.appendChild(label);
 
-        const removeBtn = iconButton("trash", () => this.removeItem(index));
-        removeBtn.title = "Remove item";
-        removeBtn.classList.add("cean-remove-item");
-        removeBtn.setAttribute("tabindex", "-1");
+        const removeBtn = removeButton(() => this.removeItem(index));
         box.appendChild(removeBtn);
 
         return box;
