@@ -282,11 +282,22 @@ body[data-jp-theme-light="false"] {
     }
 }
 
+.cean-tab-content {
+    /* use a grid to place all panes in the same location */
+    display: grid;
+}
+
 .cean-tab-pane {
+    grid-column: 1;
+    grid-row: 1;
+    /* control with `visibility`, *not* `display` so all panes use the same amount of space */
+    visibility: hidden;
+
     padding: 10px 0;
     background: radial-gradient(at 70% 5%, var(--cean-background-gradient-color0), 35%, transparent),
     radial-gradient(at 50% 130%, var(--cean-background-gradient-color0), 20%, transparent),
     linear-gradient(to top, var(--cean-background-gradient-color1), var(--cean-background-gradient-color1));
+
 }
 
 .cean-input-panel {

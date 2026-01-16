@@ -37,9 +37,9 @@ export class Tabs {
 
         this.tabs.forEach((tab, i) => {
             if (i === index) {
-                tab.element.style.display = "";
+                tab.element.style.visibility = "visible";
             } else {
-                tab.element.style.display = "none";
+                tab.element.style.visibility = "hidden";
             }
         });
     }
