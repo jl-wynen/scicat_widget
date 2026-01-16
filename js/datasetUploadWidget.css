@@ -106,7 +106,7 @@
 
     background-color: var(--jp-layout-color1);
     margin: 0.3rem;
-    
+
     & input {
         width: 100%;
         box-sizing: border-box;
@@ -259,8 +259,47 @@ table.cean-scientific-metadata-table {
     font-weight: bold;
 }
 
-.cean-tab-content {
+
+body[data-jp-theme-light="true"] {
+    & .cean-tab-pane {
+        --cean-background-gradient-color0: #ed9f9f;
+        --cean-background-gradient-color1: #aba0ba;
+    }
+
+    & .cean-input-panel {
+        --cean-layout-color0: rgba(255, 255, 255, 0.5); /* TODO adapt JP color */
+    }
+}
+
+body[data-jp-theme-light="false"] {
+    & .cean-tab-pane {
+        --cean-background-gradient-color0: #662d2d;
+        --cean-background-gradient-color1: rgb(20, 15, 26);
+    }
+
+    & .cean-input-panel {
+        --cean-layout-color0: rgba(0, 0, 0, 0.5); /* TODO adapt JP color */
+    }
+}
+
+.cean-tab-pane {
     padding: 10px 0;
+    background: radial-gradient(at 70% 5%, var(--cean-background-gradient-color0), 35%, transparent),
+    radial-gradient(at 50% 130%, var(--cean-background-gradient-color0), 20%, transparent),
+    linear-gradient(to top, var(--cean-background-gradient-color1), var(--cean-background-gradient-color1));
+}
+
+.cean-input-panel {
+    background: var(--cean-layout-color0);
+
+    border: 1px solid rgb(0, 0, 0, 0.2);
+    border-radius: 6px;
+    padding: 6px;
+
+    & input, & textarea {
+        /* TODO use dedicated class for input fields */
+        background: rgb(0, 0, 0, 0.5);
+    }
 }
 
 .cean-upload-button {

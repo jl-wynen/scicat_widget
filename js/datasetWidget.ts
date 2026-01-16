@@ -62,7 +62,7 @@ function createGeneralInfoPanel(
     const create = createAndAppend.bind(null, inputWidgets);
 
     const columns = document.createElement("section");
-    columns.classList.add("cean-ds-general-info");
+    columns.classList.add("cean-ds-general-info", "cean-input-panel");
 
     const nameInput = create(columns, "datasetName", StringInputWidget);
     nameInput.container.classList.add("cean-span-3");
@@ -123,7 +123,7 @@ function createHumanOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
 ): HTMLDivElement {
     const columns = document.createElement("div");
-    columns.classList.add("cean-ds-human-owners");
+    columns.classList.add("cean-ds-human-owners", "cean-input-panel");
     const ownersInput = createAndAppend(
         inputWidgets,
         columns,
@@ -145,7 +145,7 @@ function createTechnicalOwnerPanel(
     accessGroups: [string],
 ): HTMLDivElement {
     const columns = document.createElement("div");
-    columns.classList.add("cean-ds-technical-owners");
+    columns.classList.add("cean-ds-technical-owners", "cean-input-panel");
 
     const create = createAndAppend.bind(null, inputWidgets, columns);
 
@@ -164,9 +164,9 @@ function createMiscPanel(
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-misc-columns");
     const left = document.createElement("div");
-    left.classList.add("cean-ds-misc-left");
+    left.classList.add("cean-ds-misc-left", "cean-input-panel");
     const right = document.createElement("div");
-    right.classList.add("cean-ds-misc-right");
+    right.classList.add("cean-ds-misc-right", "cean-input-panel");
 
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
     createLeft("techniques", TechniquesInputWidget, [techniques]);
@@ -187,7 +187,7 @@ function createScientificMetadataPanel(
     inputWidgets: Map<string, InputWidget<any>>,
 ): HTMLElement {
     const container = document.createElement("section");
-    container.classList.add("cean-ds-scientific-metadata");
+    container.classList.add("cean-ds-scientific-metadata", "cean-input-panel");
 
     createAndAppend(
         inputWidgets,
