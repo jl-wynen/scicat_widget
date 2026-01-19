@@ -27,6 +27,7 @@ export abstract class InputWidget<T> {
         this.inputElement_ = input;
         this.inputElement_.id = crypto.randomUUID();
 
+        input.addEventListener("input", () => this.rawUpdate());
         [this.container_, this.statusElement] = wrapInputElement(input);
 
         this.validator = makeValidator<T>(required, validator);
@@ -70,15 +71,29 @@ export abstract class InputWidget<T> {
      * Consumers may listen to any ancestor (the event bubbles).
      */
     protected updated(): void {
+        if (this.validate()) {
+            this.container.dispatchEvent(
+                new UpdateEvent(this.key, this.value, { bubbles: true }),
+            );
+        }
+    }
+
+    /** Callback for every input event.
+     * Validates the input.
+     */
+    private rawUpdate(): void {
+        this.validate();
+    }
+
+    private validate(): boolean {
         const validation = this.validator(this.value);
         if (validation !== null) {
             this.statusElement.textContent = validation;
             this.inputElement_.dataset.valid = "false";
+            return false;
         } else {
             this.inputElement_.dataset.valid = "true";
-            this.container.dispatchEvent(
-                new UpdateEvent(this.key, this.value, { bubbles: true }),
-            );
+            return true;
         }
     }
 
@@ -120,7 +135,6 @@ export abstract class InputWidget<T> {
 }
 
 function wrapInputElement(input: HTMLElement): [HTMLDivElement, HTMLDivElement] {
-    console.log("wrapping", input);
     input.classList.add("cean-input");
 
     const statusElement = document.createElement("div");
