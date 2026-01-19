@@ -1,3 +1,5 @@
+import { Validator } from "../validation.ts";
+
 /**
  * Base class for input widgets.
  */
@@ -169,14 +171,6 @@ export class UpdateEvent extends Event {
         return this.value as T | null;
     }
 }
-
-/**
- * Function to validate input values.
- *
- * @param value The value to validate.
- * @returns An error message if the value is invalid, or `null` if it's valid.
- */
-export type Validator<T> = (value: T) => string | null;
 
 /** Like `Validator`, but can handle `null` values. */
 type OptionalValidator<T> = (value: T | null) => string | null;

@@ -1,5 +1,6 @@
-import { InputWidget, Validator } from "./inputWidget";
+import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
+import { Validator } from "../validation";
 
 export type Args = {
     multiLine?: boolean;

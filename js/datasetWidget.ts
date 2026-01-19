@@ -13,6 +13,8 @@ import {
 import { createInputWithLabel } from "./forms.ts";
 import { Instrument, Proposal, Techniques } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
+// TODO
+import { validateOrcid } from "./validation.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;
@@ -25,6 +27,7 @@ export class DatasetWidget {
         accessGroups: [string],
         techniques: Techniques,
     ) {
+        validateOrcid("");
         const container = document.createElement("div");
         container.classList.add("cean-ds");
 
