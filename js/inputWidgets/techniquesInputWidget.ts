@@ -54,14 +54,14 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
             this.itemsContainer.appendChild(
                 this.createItemBox(selectedKey, this.items.length - 1),
             );
-            this.emitUpdated();
+            this.updated();
         }
     }
 
     private removeItem(index: number) {
         this.items.splice(index, 1);
         this.renderItems();
-        this.emitUpdated();
+        this.updated();
     }
 
     private renderItems() {

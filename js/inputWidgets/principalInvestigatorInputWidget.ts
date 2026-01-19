@@ -23,7 +23,7 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
         wrap.replaceChildren(sameAsContainer, personWidget.container);
         this.ownersInput = ownersInput;
 
-        const emit = () => this.emitUpdated();
+        const emit = () => this.updated();
         wrap.addEventListener("blur", emit, true);
         wrap.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") emit();

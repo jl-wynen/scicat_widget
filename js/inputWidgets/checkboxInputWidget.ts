@@ -5,9 +5,9 @@ export class CheckboxInputWidget extends InputWidget<boolean> {
     constructor(key: string) {
         const element = createFormElement("input") as HTMLInputElement;
         element.type = "checkbox";
-        element.addEventListener("blur", () => this.emitUpdated(), true);
+        element.addEventListener("blur", () => this.updated(), true);
         element.addEventListener("keydown", (e) => {
-            if ((e as KeyboardEvent).key === "Enter") this.emitUpdated();
+            if ((e as KeyboardEvent).key === "Enter") this.updated();
         });
 
         super(key, element);

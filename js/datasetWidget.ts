@@ -64,10 +64,14 @@ function createGeneralInfoPanel(
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-general-info", "cean-input-panel");
 
-    const nameInput = create(columns, "datasetName", StringInputWidget);
+    const nameInput = create(columns, "datasetName", StringInputWidget, [
+        { required: true },
+    ]);
     nameInput.container.classList.add("cean-span-3");
 
-    const descriptionInput = create(columns, "description", StringInputWidget, [true]);
+    const descriptionInput = create(columns, "description", StringInputWidget, [
+        { multiLine: true },
+    ]);
     descriptionInput.container.classList.add("cean-span-3");
 
     const proposalInput = createProposalsWidget(inputWidgets, columns, proposals);

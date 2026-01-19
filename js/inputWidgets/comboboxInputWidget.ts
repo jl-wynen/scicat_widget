@@ -227,7 +227,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
         if (this._value !== choice.key) {
             this._value = choice.key;
-            this.emitUpdated();
+            this.updated();
         }
         this.searchInput.blur();
     }
@@ -238,7 +238,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
         if (text === "") {
             if (this._value !== null) {
                 this._value = null;
-                this.emitUpdated();
+                this.updated();
             }
             return;
         }
@@ -252,13 +252,13 @@ export class ComboboxInputWidget extends InputWidget<string> {
         if (this.allowArbitrary) {
             if (this._value !== text) {
                 this._value = text;
-                this.emitUpdated();
+                this.updated();
             }
             this.searchInput.blur();
         } else {
             if (this._value !== null) {
                 this._value = null;
-                this.emitUpdated();
+                this.updated();
             }
             this.updateDisplay();
         }

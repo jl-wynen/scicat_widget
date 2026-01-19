@@ -49,14 +49,14 @@ export class StringListInputWidget extends InputWidget<string[]> {
             this.items.push(val);
             this.input.value = "";
             this.updateItems();
-            this.emitUpdated();
+            this.updated();
         }
     }
 
     private removeItem(index: number) {
         this.items.splice(index, 1);
         this.updateItems();
-        this.emitUpdated();
+        this.updated();
     }
 
     private updateItems() {

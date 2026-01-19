@@ -1,16 +1,22 @@
-import { InputWidget } from "./inputWidget";
+import { InputWidget, Validator } from "./inputWidget";
 import { createFormElement } from "../forms";
 
-export class StringInputWidget extends InputWidget<string> {
-    constructor(key: string, multiLine: boolean = false) {
-        const element = makeStringElement(multiLine);
-        super(key, element);
+export type Args = {
+    multiLine?: boolean;
+    required?: boolean;
+    validator?: Validator<string>;
+};
 
-        element.addEventListener("blur", () => this.emitUpdated(), true);
+export class StringInputWidget extends InputWidget<string> {
+    constructor(key: string, args: Args = {}) {
+        const element = makeStringElement(args.multiLine ?? false);
+        super(key, element, args.required, args.validator);
+
+        element.addEventListener("blur", () => this.updated(), true);
         element.addEventListener("keydown", (ev) => {
             const kev = ev as KeyboardEvent;
             if (kev.key === "Enter" && element.tagName.toLowerCase() === "input") {
-                this.emitUpdated();
+                this.updated();
             }
         });
     }

@@ -19,7 +19,7 @@ export class DatetimeInputWidget extends InputWidget<Date> {
         wrap.appendChild(dateElement);
         wrap.appendChild(timeElement);
 
-        const emit = () => this.emitUpdated();
+        const emit = () => this.updated();
         dateElement.addEventListener("blur", emit, true);
         timeElement.addEventListener("blur", emit, true);
         dateElement.addEventListener("keydown", (e) => {

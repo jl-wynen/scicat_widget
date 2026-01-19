@@ -153,6 +153,21 @@ table.cean-scientific-metadata-table {
     }
 }
 
+.cean-input-status {
+    /* default: hide the status element */
+    display: none;
+    font-size: var(--jp-ui-font-size0);
+}
+
+.cean-input[data-invalid=""] {
+    border-color: var(--jp-error-color2);
+
+    & ~ .cean-input-status {
+        display: block; /* show status on error */
+        color: var(--jp-error-color2);
+    }
+}
+
 .cean-person-widget {
     display: grid;
     grid-template-columns: max-content 1fr;

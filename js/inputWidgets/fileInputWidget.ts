@@ -42,7 +42,7 @@ export class FileInputWidget extends InputWidget<string> {
     private handleChanged() {
         if (this.previousValue !== this.value) {
             this.previousValue = this.value;
-            this.emitUpdated();
+            this.updated();
         }
     }
 }

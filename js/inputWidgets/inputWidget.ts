@@ -3,6 +3,7 @@
  */
 export abstract class InputWidget<T> {
     protected readonly key: string;
+    readonly required: boolean;
     // The actual <input> element or a wrapper around it.
     // This element has an ID that can be used by a <label> and emits change events.
     private readonly inputElement_: HTMLElement;
@@ -10,14 +11,23 @@ export abstract class InputWidget<T> {
     protected readonly statusElement: HTMLDivElement;
     // A <div> holding `inputElement` and `statusElement`.
     private readonly container_: HTMLDivElement;
+    private readonly validator: OptionalValidator<T>;
 
-    protected constructor(key: string, input: HTMLElement) {
+    protected constructor(
+        key: string,
+        input: HTMLElement,
+        required: boolean = false,
+        validator?: Validator<T>,
+    ) {
         this.key = key;
+        this.required = required;
 
         this.inputElement_ = input;
         this.inputElement_.id = crypto.randomUUID();
 
         [this.container_, this.statusElement] = wrapInputElement(input);
+
+        this.validator = makeValidator<T>(required, validator);
     }
 
     /**
@@ -53,16 +63,21 @@ export abstract class InputWidget<T> {
     }
 
     /**
-     * Emit an `UpdateEvent` with this widget's key and current value.
+     * Validate the current value and set the status element accordingly.
+     * On success, emit an `UpdateEvent` with this widget's key and current value.
      * Consumers may listen to any ancestor (the event bubbles).
      */
-    protected emitUpdated(): void {
-        if (this.key === undefined) {
-            return;
+    protected updated(): void {
+        const validation = this.validator(this.value);
+        if (validation !== null) {
+            this.statusElement.textContent = validation;
+            this.inputElement_.dataset.invalid = "";
+        } else {
+            delete this.inputElement_.dataset.invalid;
+            this.container.dispatchEvent(
+                new UpdateEvent(this.key, this.value, { bubbles: true }),
+            );
         }
-        this.container.dispatchEvent(
-            new UpdateEvent(this.key, this.value, { bubbles: true }),
-        );
     }
 
     /**
@@ -103,9 +118,11 @@ export abstract class InputWidget<T> {
 }
 
 function wrapInputElement(input: HTMLElement): [HTMLDivElement, HTMLDivElement] {
+    console.log("wrapping", input);
+    input.classList.add("cean-input");
+
     const statusElement = document.createElement("div");
     statusElement.classList.add("cean-input-status");
-    statusElement.style.display = "none";
 
     const container = document.createElement("div");
     container.classList.add("cean-input-container");
@@ -134,5 +151,40 @@ export class UpdateEvent extends Event {
 
     value_as<T>(): T | null {
         return this.value as T | null;
+    }
+}
+
+/**
+ * Function to validate input values.
+ *
+ * @param value The value to validate.
+ * @returns An error message if the value is invalid, or `null` if it's valid.
+ */
+export type Validator<T> = (value: T) => string | null;
+
+/** Like `Validator`, but can handle `null` values. */
+type OptionalValidator<T> = (value: T | null) => string | null;
+
+function makeValidator<T>(
+    required: boolean,
+    validator?: Validator<T>,
+): OptionalValidator<T> {
+    const requiredMessage = "Required";
+
+    if (required && validator) {
+        return (value: T | null) => {
+            return value === null || value === undefined
+                ? requiredMessage
+                : validator(value);
+        };
+    } else if (validator) {
+        return (value: T | null) => {
+            return value === null || value === undefined ? null : validator(value);
+        };
+    } else if (required) {
+        return (value: T | null) =>
+            value === null || value === undefined ? requiredMessage : null;
+    } else {
+        return () => null;
     }
 }

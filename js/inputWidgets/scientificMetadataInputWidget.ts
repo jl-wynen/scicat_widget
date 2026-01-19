@@ -64,7 +64,7 @@ export class ScientificMetadataInputWidget extends InputWidget<
         } else {
             this.renderRows();
         }
-        this.emitUpdated();
+        this.updated();
     }
 
     private renderRows() {
@@ -88,7 +88,7 @@ export class ScientificMetadataInputWidget extends InputWidget<
             input.addEventListener("input", () => {
                 item[key] = input.value;
                 this.checkAutoAdd(index);
-                this.emitUpdated();
+                this.updated();
             });
             td.appendChild(input);
             tr.appendChild(td);

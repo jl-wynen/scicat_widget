@@ -2,6 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
 import { createInputWithLabel } from "../forms";
 import { StringInputWidget } from "./stringInputWidget.ts";
+import { validateEmail, validateOrcid } from "../validation";
 
 type PersonWidgets = {
     name: InputWidget<string>;
@@ -15,7 +16,7 @@ export class PersonInputWidget extends InputWidget<Person> {
     constructor(key: string, hasOrcid: boolean) {
         const [wrap, widgets] = createPersonWidget(key, hasOrcid);
 
-        const emit = () => this.emitUpdated();
+        const emit = () => this.updated();
         wrap.addEventListener("blur", emit, true);
         wrap.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") emit();
@@ -78,7 +79,7 @@ function createPersonWidget(
     const [nameLabel, nameInput] = createInputWithLabel(
         `${personKey}_name`,
         StringInputWidget,
-        [],
+        [{ required: true }],
         "Name",
     );
     container.appendChild(nameLabel);
@@ -87,7 +88,7 @@ function createPersonWidget(
     const [emailLabel, emailInput] = createInputWithLabel(
         `${personKey}_email`,
         StringInputWidget,
-        [],
+        [{ validator: validateEmail }],
         "Email",
     );
     container.appendChild(emailLabel);
@@ -102,7 +103,7 @@ function createPersonWidget(
         const [orcidLabel, orcidInput] = createInputWithLabel(
             `${personKey}_orcid`,
             StringInputWidget,
-            [],
+            [{ validator: validateOrcid }],
             "ORCID",
         );
         container.appendChild(orcidLabel);

@@ -11,7 +11,7 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
         const ownerWidgets = new Map();
         const element = createOwnersElement(ownerWidgets) as HTMLDivElement;
 
-        const emit = () => this.emitUpdated();
+        const emit = () => this.updated();
         element.addEventListener("blur", emit, true);
         element.addEventListener("keydown", (e) => {
             if ((e as KeyboardEvent).key === "Enter") emit();
@@ -45,7 +45,7 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
             addOwner(this.ownerWidgets, container as HTMLElement);
         }
         // Need this to update the PI widget.
-        this.emitUpdated();
+        this.updated();
     }
 
     private clearOwners() {
