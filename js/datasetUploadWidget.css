@@ -153,13 +153,25 @@ table.cean-scientific-metadata-table {
     }
 }
 
+label.cean-required {
+    &::after {
+        content: " *";
+        /* set the initial color (no data-valid) and invalid color, overridden below */
+        color: var(--jp-error-color2);
+    }
+
+    &:has(+ div > .cean-input[data-valid="true"])::after {
+        color: unset;
+    }
+}
+
 .cean-input-status {
     /* default: hide the status element */
     display: none;
     font-size: var(--jp-ui-font-size0);
 }
 
-.cean-input[data-invalid=""] {
+.cean-input[data-valid="false"] {
     border-color: var(--jp-error-color2);
 
     & ~ .cean-input-status {

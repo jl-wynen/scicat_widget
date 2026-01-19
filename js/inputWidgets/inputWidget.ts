@@ -6,6 +6,8 @@ export abstract class InputWidget<T> {
     readonly required: boolean;
     // The actual <input> element or a wrapper around it.
     // This element has an ID that can be used by a <label> and emits change events.
+    // This element has a `data-valid` attribute once it has been updated for the
+    // first time but not initially.
     private readonly inputElement_: HTMLElement;
     // A <div> element holding status / error messages for the input.
     protected readonly statusElement: HTMLDivElement;
@@ -71,9 +73,9 @@ export abstract class InputWidget<T> {
         const validation = this.validator(this.value);
         if (validation !== null) {
             this.statusElement.textContent = validation;
-            this.inputElement_.dataset.invalid = "";
+            this.inputElement_.dataset.valid = "false";
         } else {
-            delete this.inputElement_.dataset.invalid;
+            this.inputElement_.dataset.valid = "true";
             this.container.dispatchEvent(
                 new UpdateEvent(this.key, this.value, { bubbles: true }),
             );

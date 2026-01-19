@@ -47,6 +47,7 @@ export function createInputWithLabel<T, A extends unknown[]>(
         label ?? (info === null ? key : info.label),
     );
     labelElement.title = info?.description ?? "";
+    if (inputWidget.required) labelElement.classList.add("cean-required");
 
     return [labelElement, inputWidget];
 }
