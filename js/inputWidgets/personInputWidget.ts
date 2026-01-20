@@ -13,8 +13,8 @@ type PersonWidgets = {
 export class PersonInputWidget extends InputWidget<Person> {
     widgets: PersonWidgets;
 
-    constructor(key: string, hasOrcid: boolean) {
-        const [wrap, widgets] = createPersonWidget(key, hasOrcid);
+    constructor(key: string, hasOrcid: boolean, emailRequired: boolean) {
+        const [wrap, widgets] = createPersonWidget(key, hasOrcid, emailRequired);
 
         const emit = () => this.updated();
         wrap.addEventListener("blur", emit, true);
@@ -71,6 +71,7 @@ export class PersonInputWidget extends InputWidget<Person> {
 function createPersonWidget(
     personKey: string,
     hasOrcid: boolean,
+    emailRequired: boolean,
 ): [HTMLDivElement, PersonWidgets] {
     // TODO try fieldset
     const container = document.createElement("div");
@@ -88,7 +89,7 @@ function createPersonWidget(
     const [emailLabel, emailInput] = createInputWithLabel(
         `${personKey}_email`,
         StringInputWidget,
-        [{ validator: validateEmail }],
+        [{ validator: validateEmail, required: emailRequired }],
         "Email",
     );
     container.appendChild(emailLabel);

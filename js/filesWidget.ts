@@ -1,10 +1,5 @@
 import type { AnyModel } from "@anywidget/types";
-import {
-    DropdownInputWidget,
-    FileInputWidget,
-    InputWidget,
-    StringInputWidget,
-} from "./inputWidgets.ts";
+import { DropdownInputWidget, FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
 import { removeButton } from "./widgets/iconButton.ts";
 import { createInputWithLabel } from "./forms.ts";
 
@@ -269,6 +264,7 @@ function createGeneralInputs(): [
     const [sourceFolderLabel, sourceFolderInput] = createInputWithLabel(
         "Source folder",
         StringInputWidget,
+        [{ required: true }],
     );
     container.appendChild(sourceFolderLabel);
     container.appendChild(sourceFolderInput.container);

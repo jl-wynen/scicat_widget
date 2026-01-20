@@ -24,12 +24,13 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
             .sort((a, b) => a.key.localeCompare(b.key));
 
         const choicesKey = `${this.key}_choices`;
-        this.combobox = new ComboboxInputWidget(
-            choicesKey,
-            this.choices,
+        this.combobox = new ComboboxInputWidget(choicesKey, {
+            choices: this.choices,
             renderChoice,
-            false,
-        );
+            filter: true,
+            allowArbitrary: false,
+            required: false,
+        });
         this.combobox.container.addEventListener("input-updated", (e) => {
             const event = e as UpdateEvent;
             if (event.key === choicesKey && event.value !== null) {

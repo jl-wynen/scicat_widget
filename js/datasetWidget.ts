@@ -82,7 +82,9 @@ function createGeneralInfoPanel(
 
     createInstrumentsWidget(inputWidgets, columns, instruments);
 
-    let creationLocation = create(columns, "creationLocation", StringInputWidget);
+    let creationLocation = create(columns, "creationLocation", StringInputWidget, [
+        { required: true },
+    ]);
     creationLocation.listenToWidget("instrumentId", (widget, instrumentId) => {
         const instrument = instruments.find(
             (instrument) => instrument.id == instrumentId,
@@ -177,13 +179,13 @@ function createMiscPanel(
 
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
     createLeft("techniques", TechniquesInputWidget, [techniques]);
-    createLeft("usedSoftware", StringInputWidget);
+    createLeft("usedSoftware", StringInputWidget, [{ required: true }]);
     createLeft("sampleId", StringInputWidget);
 
     const createRight = createAndAppend.bind(null, inputWidgets, right);
     createTypeWidget(inputWidgets, right);
     createRight("keywords", StringListInputWidget);
-    createRight("relationships", StringInputWidget);
+    createRight("relationships", StringInputWidget, [{ required: true }]);
 
     columns.appendChild(left);
     columns.appendChild(right);
@@ -222,13 +224,15 @@ function createInstrumentsWidget(
         .sort((a, b) => a.text.localeCompare(b.text));
 
     createAndAppend(inputWidgets, parent, "instrumentId", ComboboxInputWidget, [
-        instrumentChoices,
-        (choice: Choice) => {
-            const el = document.createElement("div");
-            el.textContent = choice.text;
-            return el;
+        {
+            choices: instrumentChoices,
+            renderChoice: (choice: Choice) => {
+                const el = document.createElement("div");
+                el.textContent = choice.text;
+                return el;
+            },
+            allowArbitrary: false,
         },
-        false,
     ]);
 }
 
@@ -248,22 +252,23 @@ function createProposalsWidget(
         .sort((a, b) => a.text.localeCompare(b.text));
 
     return createAndAppend(inputWidgets, parent, "proposalId", ComboboxInputWidget, [
-        proposalChoices,
-        (choice: Choice) => {
-            const el = document.createElement("div");
+        {
+            choices: proposalChoices,
+            renderChoice: (choice: Choice) => {
+                const el = document.createElement("div");
 
-            const id = document.createElement("span");
-            id.textContent = choice.key;
-            id.classList.add("cean-item-id");
-            el.appendChild(id);
+                const id = document.createElement("span");
+                id.textContent = choice.key;
+                id.classList.add("cean-item-id");
+                el.appendChild(id);
 
-            const name = document.createElement("span");
-            name.textContent = choice.text;
-            el.appendChild(name);
+                const name = document.createElement("span");
+                name.textContent = choice.text;
+                el.appendChild(name);
 
-            return el;
+                return el;
+            },
         },
-        true,
     ]);
 }
 
@@ -277,13 +282,15 @@ function createOwnerGroupWidget(
     });
 
     return createAndAppend(inputWidgets, parent, "ownerGroup", ComboboxInputWidget, [
-        ownerChoices,
-        (choice: Choice) => {
-            const el = document.createElement("div");
-            el.textContent = choice.text;
-            return el;
+        {
+            choices: ownerChoices,
+            renderChoice: (choice: Choice) => {
+                const el = document.createElement("div");
+                el.textContent = choice.text;
+                return el;
+            },
+            required: true,
         },
-        true,
     ]);
 }
 
@@ -297,14 +304,15 @@ function createTypeWidget(
     ];
 
     const widget = createAndAppend(inputWidgets, parent, "type", ComboboxInputWidget, [
-        typeChoices,
-        (choice: Choice) => {
-            const el = document.createElement("div");
-            el.textContent = choice.text;
-            return el;
+        {
+            choices: typeChoices,
+            renderChoice: (choice: Choice) => {
+                const el = document.createElement("div");
+                el.textContent = choice.text;
+                return el;
+            },
+            filter: false,
         },
-        true,
-        false,
     ]);
     widget.value = "derived";
     return widget;

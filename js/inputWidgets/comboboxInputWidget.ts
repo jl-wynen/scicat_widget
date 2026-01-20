@@ -6,6 +6,14 @@ export type Choice = {
     data: any;
 };
 
+export type Args = {
+    choices: Array<Choice>;
+    renderChoice: (choice: Choice) => HTMLElement;
+    allowArbitrary: boolean;
+    filter: boolean;
+    required: boolean;
+};
+
 export class ComboboxInputWidget extends InputWidget<string> {
     private readonly searchInput: HTMLInputElement;
     private readonly displayElement: HTMLElement;
@@ -19,15 +27,18 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
     constructor(
         key: string,
-        choices: Array<Choice>,
-        renderChoice: (choice: Choice) => HTMLElement,
-        allowArbitrary: boolean = true,
-        filter: boolean = true,
+        {
+            choices,
+            renderChoice,
+            allowArbitrary = true,
+            filter = true,
+            required = false,
+        }: Args,
     ) {
         const wrap = document.createElement("div");
         wrap.classList.add("cean-combox-dropdown");
 
-        super(key, wrap);
+        super(key, wrap, required);
         this.choices = choices;
         this.renderChoice = renderChoice;
         this.allowArbitrary = allowArbitrary;

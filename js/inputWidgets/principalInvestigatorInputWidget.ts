@@ -83,7 +83,7 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
         sameAsContainer.appendChild(sameAsLabel);
         sameAsContainer.appendChild(sameAsDropdown.container);
 
-        const personWidget = new PersonInputWidget(`${this.key}_person`, false);
+        const personWidget = new PersonInputWidget(`${this.key}_person`, false, true);
 
         sameAsCheckbox.container.addEventListener("change", (e) => {
             if ((e.target as HTMLInputElement).checked) {
