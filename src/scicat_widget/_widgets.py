@@ -125,7 +125,7 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
         payload = {"success": False, "error": "File not found"}
     widget.send(
         {
-            "type": "rsp:inspect-file",
+            "type": "res:inspect-file",
             "payload": {
                 # Echo the input to identify the element that the request came from.
                 **input_payload,

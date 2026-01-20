@@ -1,7 +1,13 @@
 import type { AnyModel } from "@anywidget/types";
-import { DropdownInputWidget, FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
+import {
+    DropdownInputWidget,
+    FileInputWidget,
+    InputWidget,
+    StringInputWidget,
+} from "./inputWidgets.ts";
 import { removeButton } from "./widgets/iconButton.ts";
 import { createInputWithLabel } from "./forms.ts";
+import { humanSize } from "./widgets/output.ts";
 
 export class FilesWidget {
     element: HTMLDivElement;
@@ -53,7 +59,7 @@ export class FilesWidget {
         for (const widget of this.fileWidgets) {
             size += widget.size ?? 0;
         }
-        this.totalSizeElement.textContent = humanSize(size);
+        this.totalSizeElement.replaceChildren(humanSize(size));
     }
 
     private createSummary() {
@@ -70,7 +76,7 @@ export class FilesWidget {
         sizeLabel.textContent = "Total Size:";
         container.appendChild(sizeLabel);
         this.totalSizeElement = document.createElement("span");
-        this.totalSizeElement.textContent = humanSize(0);
+        this.totalSizeElement.replaceChildren(humanSize(0));
         container.appendChild(this.totalSizeElement);
 
         return container;
@@ -91,8 +97,8 @@ export class FilesWidget {
     private addFileWidget() {
         const widget = new SingleFileWidget(
             this.model,
-            () => this.updateSummary(),
             () => {
+                this.updateSummary();
                 if (
                     widget === this.fileWidgets[this.fileWidgets.length - 1] &&
                     widget.value !== null
@@ -128,18 +134,9 @@ class SingleFileWidget {
     readonly key: string;
     readonly element: HTMLDivElement;
     private readonly input: FileInputWidget;
-    private readonly responseHandler: (response: any) => void;
-    private size_: number | null = null;
-    private creationTime_: Date | null = null;
-
     private readonly removeButton: HTMLButtonElement;
 
-    constructor(
-        model: AnyModel<object>,
-        onChange: () => void,
-        onInput: () => void,
-        onRemove: () => void,
-    ) {
+    constructor(model: AnyModel<object>, onChange: () => void, onRemove: () => void) {
         // TODO add input of remote name
         this.key = crypto.randomUUID();
         this.element = document.createElement("div");
@@ -147,49 +144,19 @@ class SingleFileWidget {
         this.element.classList.add("cean-single-file-widget");
         this.element.classList.add("cean-input-grid");
 
-        this.input = new FileInputWidget(this.key);
+        this.input = new FileInputWidget(`${this.key}_path`, model);
         this.input.container.classList.add("cean-file-input");
         this.element.appendChild(this.input.container);
+        this.input.container.addEventListener("input-updated", () => {
+            onChange();
+        });
 
         this.removeButton = removeButton(() => {
-            this.remove(model);
+            this.remove();
             onRemove();
         });
         this.removeButton.setAttribute("disabled", "true");
         this.element.appendChild(this.removeButton);
-
-        const stats = document.createElement("div");
-        stats.classList.add("cean-file-stats");
-        this.element.appendChild(stats);
-
-        this.responseHandler = (message: any) => {
-            if (message.type !== "rsp:inspect-file") return;
-            const payload = message.payload;
-            if (payload.key !== this.key) return;
-
-            this.renderFileStats(payload, stats);
-            onChange();
-        };
-        model.on("msg:custom", this.responseHandler);
-
-        this.input.container.addEventListener("input-updated", () => {
-            onInput();
-            if (!this.value) {
-                stats.replaceChildren();
-                this.size_ = null;
-                this.creationTime_ = null;
-                onChange();
-                return;
-            } else {
-                model.send({
-                    type: "req:inspect-file",
-                    payload: {
-                        filename: this.value,
-                        key: this.key, // To identify responses for this input element.
-                    },
-                });
-            }
-        });
     }
 
     get value(): string | null {
@@ -197,15 +164,11 @@ class SingleFileWidget {
     }
 
     get size(): number | null {
-        return this.size_;
-    }
-
-    get creationTime(): Date | null {
-        return this.creationTime_;
+        return this.input.size;
     }
 
     fileExists(): boolean {
-        return this.size_ !== null;
+        return this.size !== null;
     }
 
     setRemoveDisabled(disabled: boolean) {
@@ -216,39 +179,9 @@ class SingleFileWidget {
         }
     }
 
-    private remove(model: AnyModel<object>) {
+    private remove() {
         this.element.remove();
-        model.off("msg:custom", this.responseHandler);
-    }
-
-    private renderFileStats(payload: any, stats: HTMLDivElement) {
-        if (payload.success) {
-            this.size_ = payload.size;
-            this.creationTime_ = new Date(payload.creationTime);
-
-            delete this.input.container.dataset.error;
-
-            const sizeLabel = document.createElement("span");
-            sizeLabel.textContent = "Size:";
-            const size = document.createElement("span");
-            size.textContent = humanSize(payload.size);
-
-            const createdLabel = document.createElement("span");
-            createdLabel.textContent = "Created:";
-            const created = document.createElement("span");
-            created.textContent = this.creationTime_.toLocaleString();
-
-            stats.replaceChildren(sizeLabel, size, createdLabel, created);
-        } else {
-            this.size_ = null;
-            this.creationTime_ = null;
-
-            this.input.container.dataset["error"] = "true";
-
-            const span = document.createElement("span");
-            span.textContent = payload.error;
-            stats.replaceChildren(span);
-        }
+        this.input.destroy();
     }
 }
 
@@ -279,13 +212,6 @@ function createGeneralInputs(): [
     container.appendChild(algInput.container);
 
     return [container, sourceFolderInput, algInput];
-}
-
-function humanSize(size: number): string {
-    const i = size == 0 ? 0 : Math.floor(Math.log(size) / Math.log(1024));
-    const value = (size / Math.pow(1024, i)).toFixed(2);
-    const unit = ["B", "kiB", "MiB", "GiB", "TiB"][i];
-    return `${value} ${unit}`;
 }
 
 // Checksum algorithms supported by Python (Scitacean) and SciCat.

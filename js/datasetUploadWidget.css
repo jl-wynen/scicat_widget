@@ -175,6 +175,10 @@ label.cean-required {
     }
 }
 
+.cean-file-input .cean-input-status {
+    display: block;
+}
+
 .cean-person-widget {
     display: grid;
     grid-template-columns: max-content 1fr;
