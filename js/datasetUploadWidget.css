@@ -249,6 +249,10 @@ label.cean-required {
     padding-right: 16px;
     margin-left: auto;
 
+    & a {
+        margin-right: 1em;
+    }
+
     & a:hover {
         text-decoration: underline;
     }
@@ -275,7 +279,7 @@ label.cean-required {
     position: absolute;
     bottom: 0;
     height: 2px;
-    background-color: var(--jp-info-color0);
+    background-color: #27aae1;
     transition: all 0.2s ease;
     pointer-events: none;
 }
@@ -327,11 +331,11 @@ body[data-jp-theme-light="false"] {
 }
 
 .cean-upload-button {
-    background: var(--jp-info-color1);
+    background: #27aae1;
     color: var(--jp-ui-inverse-font-color1);
 
     &:hover {
-        background: var(--jp-info-color2);
+        background: #3ec2fa;
         box-shadow: none !important;
     }
 }
