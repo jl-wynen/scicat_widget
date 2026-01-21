@@ -105,7 +105,7 @@ function createSingleOwnerWidget(
     const container = document.createElement("div");
     container.classList.add("cean-single-owner");
 
-    const widget = new PersonInputWidget(ownerId, true);
+    const widget = new PersonInputWidget(ownerId, true, false);
     container.appendChild(widget.container);
 
     container.appendChild(
