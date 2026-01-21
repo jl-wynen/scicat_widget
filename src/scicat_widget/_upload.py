@@ -1,6 +1,6 @@
 from typing import Any
 
-from scitacean import Client, Dataset, File, model, PID
+from scitacean import PID, Client, Dataset, File, model
 
 
 def upload_dataset(client: Client, widget_data: dict[str, object]) -> None:

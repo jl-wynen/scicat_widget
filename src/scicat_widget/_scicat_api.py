@@ -2,11 +2,12 @@
 # Copyright (c) 2026 SciCat Project (https://github.com/SciCatProject/scitacean)
 
 from scitacean import Client
-from ._model import UserInfo, ProposalOverview, Instrument
 
 # Not great but there is no need to reimplement this here,
 # and handling of ORCID iDs is not part of the core functionality of Scitacean.
 from scitacean._internal.orcid import parse_orcid_id
+
+from ._model import Instrument, ProposalOverview, UserInfo
 
 
 def get_user_and_scicat_info(client: Client) -> tuple[UserInfo, list[Instrument]]:

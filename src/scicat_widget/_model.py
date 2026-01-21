@@ -21,4 +21,4 @@ class UserInfo(BaseModel):
     proposals: list[ProposalOverview]
 
 
-__all__ = ["ProposalOverview", "UserInfo", "Instrument"]
+__all__ = ["Instrument", "ProposalOverview", "UserInfo"]

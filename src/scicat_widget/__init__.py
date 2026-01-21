@@ -1,4 +1,5 @@
 import importlib.metadata
+
 from ._widgets import DatasetUploadWidget, dataset_upload_widget
 
 try:
