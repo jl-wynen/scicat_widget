@@ -32,6 +32,12 @@ export class FileInputWidget extends StringInputWidget {
             const payload = message.payload as InspectionResult;
             if (payload.key !== this.key) return;
             this.applyInspectionResult(payload);
+            this.container.dispatchEvent(
+                new CustomEvent("file-inspected", {
+                    bubbles: false,
+                    detail: { payload },
+                }),
+            );
         };
         model.on("msg:custom", this.inspectionResponseHandler);
     }

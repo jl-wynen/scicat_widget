@@ -517,7 +517,7 @@ body[data-jp-theme-light="false"] {
 }
 
 .cean-single-file-widget {
-    grid-template-columns: 1fr max-content;
+    grid-template-columns: max-content 1fr max-content;
 }
 
 .cean-file-stats {

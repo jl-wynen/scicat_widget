@@ -32,6 +32,11 @@ export class StringInputWidget extends InputWidget<string> {
         const el = this.inputElement<HTMLInputElement | HTMLTextAreaElement>();
         el.value = v ?? "";
     }
+
+    set placeholder(v: string | null) {
+        const el = this.inputElement<HTMLInputElement | HTMLTextAreaElement>();
+        el.placeholder = v ?? "";
+    }
 }
 
 function makeStringElement(multiLine: boolean): HTMLInputElement | HTMLTextAreaElement {

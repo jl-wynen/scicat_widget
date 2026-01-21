@@ -1,10 +1,5 @@
 import type { AnyModel } from "@anywidget/types";
-import {
-    DropdownInputWidget,
-    FileInputWidget,
-    InputWidget,
-    StringInputWidget,
-} from "./inputWidgets.ts";
+import { DropdownInputWidget, FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
 import { removeButton } from "./widgets/iconButton.ts";
 import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
@@ -43,8 +38,13 @@ export class FilesWidget {
             checksumAlgorithm: this.algInput.value,
             files: this.fileWidgets
                 .filter((widget) => widget.fileExists())
-                .map((widget) => widget.value)
-                .filter((v) => v),
+                .map((widget) => {
+                    return {
+                        localPath: widget.localPath,
+                        remotePath: widget.remotePath,
+                    };
+                })
+                .filter((v) => v.localPath),
         };
     }
 
@@ -101,7 +101,7 @@ export class FilesWidget {
                 this.updateSummary();
                 if (
                     widget === this.fileWidgets[this.fileWidgets.length - 1] &&
-                    widget.value !== null
+                    widget.localPath !== null
                 ) {
                     this.addFileWidget();
                 }
@@ -133,23 +133,28 @@ export class FilesWidget {
 class SingleFileWidget {
     readonly key: string;
     readonly element: HTMLDivElement;
-    private readonly input: FileInputWidget;
+    private readonly localPathInput: FileInputWidget;
+    private readonly remotePathInput: StringInputWidget;
     private readonly removeButton: HTMLButtonElement;
 
     constructor(model: AnyModel<object>, onChange: () => void, onRemove: () => void) {
-        // TODO add input of remote name
         this.key = crypto.randomUUID();
         this.element = document.createElement("div");
         this.element.id = this.key;
-        this.element.classList.add("cean-single-file-widget");
-        this.element.classList.add("cean-input-grid");
+        this.element.classList.add("cean-single-file-widget", "cean-input-grid");
 
-        this.input = new FileInputWidget(`${this.key}_path`, model);
-        this.input.container.classList.add("cean-file-input");
-        this.element.appendChild(this.input.container);
-        this.input.container.addEventListener("input-updated", () => {
+        const [localPathLabel, localPathInput] = createInputWithLabel(
+            `${this.key}_localPath`,
+            FileInputWidget,
+            [model],
+            "Path",
+        );
+        this.localPathInput = localPathInput as FileInputWidget;
+        this.localPathInput.container.addEventListener("input-updated", () => {
             onChange();
         });
+        this.element.appendChild(localPathLabel);
+        this.element.appendChild(this.localPathInput.container);
 
         this.removeButton = removeButton(() => {
             this.remove();
@@ -157,14 +162,43 @@ class SingleFileWidget {
         });
         this.removeButton.setAttribute("disabled", "true");
         this.element.appendChild(this.removeButton);
+
+        const [remotePathLabel, remotePathInput] = createInputWithLabel(
+            `${this.key}_remotePath`,
+            StringInputWidget,
+            [],
+            "Remote path",
+        );
+        this.remotePathInput = remotePathInput as StringInputWidget;
+        this.element.appendChild(remotePathLabel);
+        this.element.appendChild(remotePathInput.container);
+
+        this.localPathInput.container.addEventListener("file-inspected", (e: Event) => {
+            const event = e as CustomEvent;
+            const payload = event.detail.payload;
+            if (payload.success) {
+                this.remotePathInput.placeholder = payload.remotePath;
+            } else {
+                this.remotePathInput.placeholder = null;
+            }
+        });
+        this.localPathInput.container.addEventListener("input", (e: Event) => {
+            if (!(e.target as HTMLInputElement).value) {
+                this.remotePathInput.placeholder = null;
+            }
+        });
     }
 
-    get value(): string | null {
-        return this.input.value?.trim() ?? null;
+    get localPath(): string | null {
+        return this.localPathInput.value?.trim() ?? null;
+    }
+
+    get remotePath(): string | null {
+        return this.remotePathInput.value?.trim() ?? null;
     }
 
     get size(): number | null {
-        return this.input.size;
+        return this.localPathInput.size;
     }
 
     fileExists(): boolean {
@@ -181,7 +215,7 @@ class SingleFileWidget {
 
     private remove() {
         this.element.remove();
-        this.input.destroy();
+        this.localPathInput.destroy();
     }
 }
 

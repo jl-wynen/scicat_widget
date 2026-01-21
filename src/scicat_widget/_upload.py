@@ -6,6 +6,7 @@ from scitacean import Client, Dataset, File
 def upload_dataset(client: Client, widget_data: dict[str, object]) -> None:
     dataset = make_dataset_from_widget_data(widget_data)
     print("Converted dataset:", dataset)
+    print("Files:", dataset.files)
 
 
 def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
@@ -22,7 +23,7 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     attachments = _convert_attachments(data.get("attachments"))
     _ = data.get("relationships")
 
-    print("Converted dataset:", converted)
+    print("Converted params:", converted)
     dataset = Dataset(**converted)
     dataset.add_files(*files)
     return dataset
@@ -60,7 +61,10 @@ def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
         "source_folder": files.pop("sourceFolder", ""),
         "checksum_algorithm": files.pop("checksumAlgorithm", ""),
     }
-    files = [File.from_local(path) for path in files.get("files", [])]
+    files = [
+        File.from_local(spec["localPath"], remote_path=spec.get("remotePath", None))
+        for spec in files.get("files", [])
+    ]
     return fields, files
 
 

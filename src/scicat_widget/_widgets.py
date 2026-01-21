@@ -120,6 +120,7 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
             "success": True,
             "size": file.size,
             "creationTime": file.creation_time,
+            "remotePath": file.remote_path.posix,
         }
     except FileNotFoundError:
         payload = {"success": False, "error": "File not found"}
