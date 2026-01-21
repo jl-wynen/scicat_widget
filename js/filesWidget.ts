@@ -229,7 +229,7 @@ function createGeneralInputs(): [
     container.classList.add("cean-input-grid");
 
     const [sourceFolderLabel, sourceFolderInput] = createInputWithLabel(
-        "Source folder",
+        "sourceFolder",
         StringInputWidget,
         [{ required: true }],
     );
