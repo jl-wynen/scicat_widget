@@ -519,10 +519,22 @@ body[data-jp-theme-light="false"] {
 
 .cean-single-file-widget {
     grid-template-columns: max-content 1fr max-content;
+    margin: 1em 0.5em 0.5em 0.5em;
+}
+
+.cean-single-file-widget, .cean-single-relationship-widget {
     background: rgb(from var(--jp-layout-color2) r g b / 0.8);
     border: 1px solid var(--jp-border-color2);
-    margin: 1em 0.5em 0.5em 0.5em;
     padding: 0.5em;
+}
+
+.cean-single-relationship-widget {
+    grid-template-columns: max-content 1fr max-content;
+    margin: 0.5em;
+}
+
+.cean-relationships {
+    grid-column: span 2;
 }
 
 /* TODO use throughout */

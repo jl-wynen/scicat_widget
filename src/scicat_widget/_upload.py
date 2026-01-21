@@ -1,6 +1,6 @@
 from typing import Any
 
-from scitacean import Client, Dataset, File
+from scitacean import Client, Dataset, File, model, PID
 
 
 def upload_dataset(client: Client, widget_data: dict[str, object]) -> None:
@@ -15,13 +15,13 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
 
     converted.update(_convert_owners(data.get("owners", [])))
     converted.update(_convert_pi(data.get("principalInvestigator", {})))
+    converted.update(_convert_relationships(converted.pop("relationships", None)))
 
     [file_meta, files] = _convert_files(data.get("files"))
     converted.update(file_meta)
 
     # TODO
     attachments = _convert_attachments(data.get("attachments"))
-    _ = data.get("relationships")
 
     print("Converted params:", converted)
     dataset = Dataset(**converted)
@@ -54,6 +54,34 @@ def _convert_pi(pi: dict[str, str] | None) -> dict[str, str]:
         "principal_investigator": pi.get("name", ""),
         "contact_email": pi.get("email", ""),
     }
+
+
+def _convert_relationships(
+    relationships: list[dict[str, str]] | None,
+) -> dict[str, Any]:
+    if not relationships:
+        return {}
+
+    converted = [
+        model.Relationship(
+            relationship=rel.get("relationship"),
+            pid=PID.parse(rel.get("dataset", "")),
+        )
+        for rel in relationships
+        if rel.get("relationship", "") != "input"
+    ]
+    inputs = [
+        PID.parse(rel.get("dataset", ""))
+        for rel in relationships
+        if rel.get("relationship", "") == "input"
+    ]
+
+    result = {}
+    if inputs:
+        result["input_datasets"] = inputs
+    if converted:
+        result["relationships"] = converted
+    return result
 
 
 def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:

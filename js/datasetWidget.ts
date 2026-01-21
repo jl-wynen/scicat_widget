@@ -5,6 +5,7 @@ import {
     InputWidget,
     OwnersInputWidget,
     PrincipalInvestigatorInputWidget,
+    RelationshipsInputWidget,
     ScientificMetadataInputWidget,
     StringInputWidget,
     StringListInputWidget,
@@ -185,7 +186,10 @@ function createMiscPanel(
     const createRight = createAndAppend.bind(null, inputWidgets, right);
     createTypeWidget(inputWidgets, right);
     createRight("keywords", StringListInputWidget);
-    createRight("relationships", StringInputWidget, [{ required: true }]);
+
+    const relationshipWidget = new RelationshipsInputWidget("relationships");
+    inputWidgets.set("relationships", relationshipWidget);
+    right.appendChild(relationshipWidget.container);
 
     columns.appendChild(left);
     columns.appendChild(right);

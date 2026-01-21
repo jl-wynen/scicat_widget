@@ -7,6 +7,7 @@ export { InputWidget } from "./inputWidgets/inputWidget.ts";
 export { OwnersInputWidget } from "./inputWidgets/ownersInputWidget.ts";
 export { PersonInputWidget } from "./inputWidgets/personInputWidget.ts";
 export { PrincipalInvestigatorInputWidget } from "./inputWidgets/principalInvestigatorInputWidget.ts";
+export { RelationshipsInputWidget } from "./inputWidgets/relationshipsInputWidget.ts";
 export { ScientificMetadataInputWidget } from "./inputWidgets/scientificMetadataInputWidget.ts";
 export { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 export { StringListInputWidget } from "./inputWidgets/stringListInputWidget.ts";
