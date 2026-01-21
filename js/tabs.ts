@@ -9,6 +9,7 @@ export class Tabs {
     public readonly element: HTMLElement;
     private readonly tabButtonsContainer: HTMLElement;
     private readonly tabs: Tab[];
+    private readonly indicator: HTMLElement; /* marker for active tab */
 
     constructor(tabs: Tab[], right: HTMLElement[], scicatUrl: string) {
         const [element, tabButtonsContainer, tabPanes, rightContainer] = makeTabs(
@@ -21,8 +22,28 @@ export class Tabs {
         this.tabs = tabPanes.map((tab, index) => {
             return { label: tabs[index].label, element: tab };
         });
+
+        this.indicator = document.createElement("div");
+        this.indicator.classList.add("cean-tab-indicator");
+        const middle = this.tabButtonsContainer.querySelector(
+            ".cean-tab-buttons-middle",
+        );
+        middle?.appendChild(this.indicator);
+
         insertExtraTopContent(rightContainer, right);
-        this.selectTab(1); //TODO set to 0
+
+        // Placing the indicator requires that the buttons have been positioned.
+        // Use requestAnimationFrame to delay selecting a tab until the layout has
+        // been computed.
+        requestAnimationFrame(() => {
+            // Temporarily disable transition for the initial positioning
+            this.indicator.style.transition = "none";
+            this.selectTab(0);
+
+            requestAnimationFrame(() => {
+                this.indicator.style.transition = "";
+            });
+        });
     }
 
     private selectTab(index: number) {
@@ -30,6 +51,7 @@ export class Tabs {
         buttons.forEach((btn, i) => {
             if (i === index) {
                 btn.classList.add("cean-tab-button-active");
+                this.updateIndicator(btn as HTMLElement);
             } else {
                 btn.classList.remove("cean-tab-button-active");
             }
@@ -42,6 +64,10 @@ export class Tabs {
                 tab.element.style.visibility = "hidden";
             }
         });
+    }
+    private updateIndicator(button: HTMLElement) {
+        this.indicator.style.width = `${button.offsetWidth}px`;
+        this.indicator.style.left = `${button.offsetLeft}px`;
     }
 }
 

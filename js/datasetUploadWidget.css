@@ -240,6 +240,7 @@ label.cean-required {
 
 .cean-tab-buttons-middle {
     display: flex;
+    position: relative;
 }
 
 .cean-tab-buttons-right {
@@ -259,7 +260,6 @@ label.cean-required {
     padding: 8px 16px;
     cursor: pointer;
     color: var(--jp-ui-font-color2);
-    border-bottom: 2px solid transparent;
 }
 
 .cean-tab-button:hover {
@@ -267,11 +267,18 @@ label.cean-required {
 }
 
 .cean-tab-button-active {
-    border-bottom: 2px solid var(--jp-brand-color1);
     color: var(--jp-ui-font-color1);
     font-weight: bold;
 }
 
+.cean-tab-indicator {
+    position: absolute;
+    bottom: 0;
+    height: 2px;
+    background-color: var(--jp-info-color0);
+    transition: all 0.2s ease;
+    pointer-events: none;
+}
 
 body[data-jp-theme-light="true"] {
     & .cean-tab-pane {
