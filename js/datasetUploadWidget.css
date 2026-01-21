@@ -8,9 +8,6 @@
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color1);
-    margin: 0.3rem;
-
     & > *:nth-child(2n) {
         /* Ensure input columns can shrink and inputs don't overflow */
         min-width: 0;
@@ -60,9 +57,6 @@
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color1);
-    margin: 0.3rem;
-
     & > *:nth-child(2n) {
         /* Ensure input columns can shrink and inputs don't overflow */
         min-width: 0;
@@ -104,18 +98,10 @@
     row-gap: 10px;
     align-items: start;
 
-    background-color: var(--jp-layout-color1);
-    margin: 0.3rem;
-
     & input {
         width: 100%;
         box-sizing: border-box;
     }
-}
-
-.cean-ds-scientific-metadata {
-    background-color: var(--jp-layout-color1);
-    margin: 0.3rem;
 }
 
 table.cean-scientific-metadata-table {
@@ -164,6 +150,11 @@ label.cean-required {
     /* default: hide the status element */
     display: none;
     font-size: var(--jp-ui-font-size0);
+    min-height: 1.2em;
+    line-height: 1.2em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .cean-input[data-valid="false"] {
@@ -173,10 +164,6 @@ label.cean-required {
         display: block; /* show status on error */
         color: var(--jp-error-color2);
     }
-}
-
-.cean-file-input .cean-input-status {
-    display: block;
 }
 
 .cean-person-widget {
@@ -291,20 +278,12 @@ body[data-jp-theme-light="true"] {
         --cean-background-gradient-color0: #ed9f9f;
         --cean-background-gradient-color1: #aba0ba;
     }
-
-    & .cean-input-panel {
-        --cean-layout-color0: rgba(255, 255, 255, 0.5); /* TODO adapt JP color */
-    }
 }
 
 body[data-jp-theme-light="false"] {
     & .cean-tab-pane {
         --cean-background-gradient-color0: #662d2d;
         --cean-background-gradient-color1: rgb(20, 15, 26);
-    }
-
-    & .cean-input-panel {
-        --cean-layout-color0: rgba(0, 0, 0, 0.5); /* TODO adapt JP color */
     }
 }
 
@@ -327,11 +306,12 @@ body[data-jp-theme-light="false"] {
 }
 
 .cean-input-panel {
-    background: var(--cean-layout-color0);
+    background: rgba(from var(--jp-layout-color0) r g b / 0.7);
 
     border: 1px solid rgb(0, 0, 0, 0.2);
     border-radius: 6px;
     padding: 6px;
+    margin: 0.25em 0.5em 0.25em 0.5em;
 
     & input, & textarea {
         /* TODO use dedicated class for input fields */
@@ -506,27 +486,32 @@ body[data-jp-theme-light="false"] {
         width: 100%;
         box-sizing: border-box;
     }
+
+    & .cean-input-panel {
+        margin-top: 0.5em;
+    }
 }
 
-.cean-file-input[data-error="true"] {
-    border-color: var(--jp-error-color2) !important;
-}
+.cean-files-summary {
+    margin: 0 0.5em;
+    padding: 6px;
+    font-size: 0.85rem;
 
-.cean-file-input[data-error="true"] + .cean-file-stats {
-    color: var(--jp-error-color2);
+    & span {
+        margin-right: 0.5em;
+    }
+
+    & span:nth-child(2) {
+        margin-right: 2em;
+    }
 }
 
 .cean-single-file-widget {
     grid-template-columns: max-content 1fr max-content;
-}
-
-.cean-file-stats {
-    /* make sure this element always has the same height */
-    min-height: 1.2em;
-    line-height: 1.2em;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+    background: rgb(from var(--jp-layout-color2) r g b / 0.8);
+    border: 1px solid var(--jp-border-color2);
+    margin: 1em 0.5em 0.5em 0.5em;
+    padding: 0.5em;
 }
 
 /* TODO use throughout */

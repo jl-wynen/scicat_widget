@@ -22,7 +22,7 @@ export class Tabs {
             return { label: tabs[index].label, element: tab };
         });
         insertExtraTopContent(rightContainer, right);
-        this.selectTab(0);
+        this.selectTab(1); //TODO set to 0
     }
 
     private selectTab(index: number) {

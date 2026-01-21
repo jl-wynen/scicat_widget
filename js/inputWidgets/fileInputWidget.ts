@@ -116,7 +116,7 @@ function renderFileStats(
     creationTime: Date | null,
 ) {
     const sizeSpan = humanSize(size);
-    // Should not be null but that depends on the Python code sending the messages
+    // Should not be null, but that depends on the Python code sending the messages
     const dateStr = creationTime !== null ? creationTime.toLocaleString() : "ERROR";
     parent.innerHTML = `<span>Size:</span>${sizeSpan.outerHTML}<span>Creation time:</span><span>${dateStr}</span>`;
 }

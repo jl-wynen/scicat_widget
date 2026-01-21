@@ -1,5 +1,10 @@
 import type { AnyModel } from "@anywidget/types";
-import { DropdownInputWidget, FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
+import {
+    DropdownInputWidget,
+    FileInputWidget,
+    InputWidget,
+    StringInputWidget,
+} from "./inputWidgets.ts";
 import { removeButton } from "./widgets/iconButton.ts";
 import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
@@ -13,7 +18,7 @@ export class FilesWidget {
     private nFilesTabElement: HTMLSpanElement;
     private nFilesElement!: HTMLSpanElement;
     private totalSizeElement!: HTMLSpanElement;
-    private widgetsContainer!: HTMLDivElement;
+    private widgetsContainer!: HTMLElement;
 
     constructor(model: AnyModel<object>, nFilesTabElement: HTMLSpanElement) {
         this.model = model;
@@ -63,7 +68,8 @@ export class FilesWidget {
     }
 
     private createSummary() {
-        const container = document.createElement("div");
+        const container = document.createElement("section");
+        container.classList.add("cean-files-summary");
 
         this.nFilesElement = document.createElement("span");
         this.nFilesElement.textContent = "0";
@@ -83,7 +89,8 @@ export class FilesWidget {
     }
 
     private createFileWidgets() {
-        this.widgetsContainer = document.createElement("div");
+        this.widgetsContainer = document.createElement("section");
+        this.widgetsContainer.classList.add("cean-files-container", "cean-input-panel");
 
         const label = document.createElement("div");
         label.textContent = "Files";
@@ -224,9 +231,9 @@ function createGeneralInputs(): [
     InputWidget<string>,
     InputWidget<string>,
 ] {
-    const container = document.createElement("div");
+    const container = document.createElement("section");
     container.style.gridTemplateColumns = "max-content 1fr";
-    container.classList.add("cean-input-grid");
+    container.classList.add("cean-input-grid", "cean-input-panel");
 
     const [sourceFolderLabel, sourceFolderInput] = createInputWithLabel(
         "sourceFolder",
