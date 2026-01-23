@@ -48,12 +48,12 @@ export class ComboboxInputWidget extends InputWidget<string> {
         this.searchInput.id = crypto.randomUUID();
         this.searchInput.type = "text";
         this.searchInput.placeholder = "Search...";
-        this.searchInput.classList.add("cean-combox-search");
+        this.searchInput.classList.add("cean-combox-search", "cean-input");
         this.searchInput.style.display = "none";
         wrap.appendChild(this.searchInput);
 
         this.displayElement = document.createElement("div");
-        this.displayElement.classList.add("cean-combox-display");
+        this.displayElement.classList.add("cean-combox-display", "cean-input");
         wrap.appendChild(this.displayElement);
         this.showPlaceholder();
 

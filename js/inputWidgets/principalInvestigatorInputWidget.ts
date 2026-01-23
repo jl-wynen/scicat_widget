@@ -17,6 +17,7 @@ export class PrincipalInvestigatorInputWidget extends InputWidget<Person> {
         // event handlers.
         const wrap = document.createElement("div");
         super(key, wrap);
+        wrap.classList.remove("cean-input");
 
         const [sameAsContainer, personWidget, sameAsCheckbox, sameAsDropdown] =
             this.createPiWidget();

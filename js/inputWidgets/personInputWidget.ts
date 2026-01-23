@@ -23,6 +23,7 @@ export class PersonInputWidget extends InputWidget<Person> {
         });
 
         super(key, wrap);
+        wrap.classList.remove("cean-input");
         this.widgets = widgets;
     }
 

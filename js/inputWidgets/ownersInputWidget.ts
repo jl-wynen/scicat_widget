@@ -18,6 +18,7 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
         });
 
         super(key, element);
+        element.classList.remove("cean-input");
         this.ownerWidgets = ownerWidgets;
     }
 

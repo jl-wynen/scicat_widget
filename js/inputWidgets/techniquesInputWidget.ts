@@ -15,6 +15,7 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
         wrap.classList.add("cean-techniques-widget");
 
         super(key, wrap);
+        wrap.classList.remove("cean-input");
 
         this.idPrefix = techniques.prefix;
         this.choices = techniques.techniques

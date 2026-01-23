@@ -61,18 +61,6 @@
         /* Ensure input columns can shrink and inputs don't overflow */
         min-width: 0;
     }
-
-    & input,
-    & select,
-    & textarea {
-        width: 100%;
-        box-sizing: border-box;
-    }
-
-    & input[type="checkbox"] {
-        width: auto;
-        justify-self: start;
-    }
 }
 
 .cean-single-owner {
@@ -146,26 +134,6 @@ label.cean-required {
     }
 }
 
-.cean-input-status {
-    /* default: hide the status element */
-    display: none;
-    font-size: var(--jp-ui-font-size0);
-    min-height: 1.2em;
-    line-height: 1.2em;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.cean-input[data-valid="false"] {
-    border-color: var(--jp-error-color2);
-
-    & ~ .cean-input-status {
-        display: block; /* show status on error */
-        color: var(--jp-error-color2);
-    }
-}
-
 .cean-person-widget {
     display: grid;
     grid-template-columns: max-content 1fr;
@@ -183,30 +151,6 @@ label.cean-required {
 
 .cean-ds textarea {
     resize: vertical;
-}
-
-.cean-ds input, .cean-ds textarea, .cean-files-widget input {
-    box-sizing: border-box;
-    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
-    color: var(--jp-content-font-color1);
-    background-color: var(--jp-input-background);
-
-    &:focus-visible {
-        outline: none;
-    }
-
-    &:focus {
-        border-color: var(--jp-input-active-border-color);
-        background-color: var(--jp-input-active-background);
-    }
-
-    &::selection {
-        background-color: var(--jp-editor-selected-focused-background);
-    }
-
-    &:hover:not(:disabled) {
-        border-color: var(--jp-input-active-border-color);
-    }
 }
 
 .cean-datetime-input {
@@ -316,6 +260,61 @@ body[data-jp-theme-light="false"] {
 
 }
 
+.cean-input {
+    background: var(--jp-cell-editor-background);
+    color: var(--jp-content-font-color1);
+
+    &::selection {
+        background-color: var(--jp-editor-selected-focused-background);
+    }
+}
+
+input.cean-input,
+select.cean-input,
+textarea.cean-input {
+    width: 100%;
+    box-sizing: border-box;
+    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &:focus {
+        border-color: var(--jp-input-active-border-color);
+        background-color: var(--jp-input-active-background);
+    }
+
+    &:hover:not(:disabled) {
+        border-color: var(--jp-input-active-border-color);
+    }
+}
+
+input[type="checkbox"].cean-input {
+    width: auto;
+    justify-self: start;
+}
+
+.cean-input[data-valid="false"] {
+    border-color: var(--jp-error-color2);
+
+    & ~ .cean-input-status {
+        display: block; /* show status on error */
+        color: var(--jp-error-color2);
+    }
+}
+
+.cean-input-status {
+    /* default: hide the status element */
+    display: none;
+    font-size: var(--jp-ui-font-size0);
+    min-height: 1.2em;
+    line-height: 1.2em;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
 .cean-input-panel {
     background: rgba(from var(--jp-layout-color0) r g b / 0.7);
 
@@ -324,10 +323,6 @@ body[data-jp-theme-light="false"] {
     padding: 6px;
     margin: 0.25em 0.5em 0.25em 0.5em;
 
-    & input, & textarea {
-        /* TODO use dedicated class for input fields */
-        background: rgb(0, 0, 0, 0.5);
-    }
 }
 
 .cean-upload-button {
@@ -420,7 +415,6 @@ body[data-jp-theme-light="false"] {
     box-sizing: border-box;
     border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
     color: var(--jp-content-font-color1);
-    background: var(--jp-input-background);
     padding: 0.1rem 0.5rem 0.1rem 0.5rem;
     min-height: 1.5rem;
 
@@ -430,10 +424,6 @@ body[data-jp-theme-light="false"] {
 
     &:focus {
         border-color: var(--jp-input-active-border-color);
-    }
-
-    &::selection {
-        background-color: var(--jp-editor-selected-focused-background);
     }
 }
 
@@ -548,11 +538,6 @@ body[data-jp-theme-light="false"] {
 select.cean-chk-alg {
     /* this dropdown looks strange when it is the full width of the parent */
     width: 10em !important;
-}
-
-select.cean-dropdown {
-    background: var(--jp-input-background);
-    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
 }
 
 .cean-string-list-widget {

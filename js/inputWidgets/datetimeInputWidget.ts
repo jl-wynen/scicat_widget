@@ -10,9 +10,11 @@ export class DatetimeInputWidget extends InputWidget<Date> {
         wrap.classList.add("cean-datetime-input");
 
         const dateElement = createFormElement("input") as HTMLInputElement;
+        dateElement.classList.add("cean-input");
         dateElement.type = "date";
 
         const timeElement = createFormElement("input") as HTMLInputElement;
+        timeElement.classList.add("cean-input");
         timeElement.type = "time";
         timeElement.step = "1";
 

@@ -21,6 +21,7 @@ export class RelationshipsInputWidget extends InputWidget<Array<Relationship>> {
         // still listen for events.
         const wrap = document.createElement("div");
         super(key, wrap);
+        wrap.classList.remove("cean-input");
         this.wrapElement = wrap;
         // Apply the class to the outside div provided by the parent.
         this.container.classList.add("cean-relationships");

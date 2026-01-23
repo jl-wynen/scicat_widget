@@ -11,6 +11,7 @@ export class StringListInputWidget extends InputWidget<string[]> {
         wrap.classList.add("cean-string-list-widget");
 
         super(key, wrap);
+        wrap.classList.remove("cean-input");
 
         const inputRow = document.createElement("div");
         inputRow.classList.add("cean-string-list-input-row");
@@ -18,7 +19,7 @@ export class StringListInputWidget extends InputWidget<string[]> {
         this.input = document.createElement("input");
         this.input.id = crypto.randomUUID();
         this.input.type = "text";
-        this.input.classList.add("cean-combox-search"); // TODO rename class?
+        this.input.classList.add("cean-input");
         this.input.placeholder = "Add new item...";
         this.input.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {

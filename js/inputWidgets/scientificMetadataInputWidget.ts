@@ -19,6 +19,7 @@ export class ScientificMetadataInputWidget extends InputWidget<
         wrap.classList.add("cean-scientific-metadata-widget");
 
         super(key, wrap);
+        wrap.classList.remove("cean-input");
 
         const table = document.createElement("table");
         table.classList.add("cean-scientific-metadata-table");
