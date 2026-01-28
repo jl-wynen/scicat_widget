@@ -5,8 +5,8 @@ from scitacean import PID, Client, Dataset, File, model
 
 def upload_dataset(client: Client, widget_data: dict[str, object]) -> None:
     dataset = make_dataset_from_widget_data(widget_data)
-    print("Converted dataset:", dataset)
-    print("Files:", dataset.files)
+    print("Converted dataset:", dataset)  # noqa: T201
+    print("Files:", dataset.files)  # noqa: T201
 
 
 def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
@@ -21,9 +21,8 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     converted.update(file_meta)
 
     # TODO
-    attachments = _convert_attachments(data.get("attachments"))
+    _attachments = _convert_attachments(data.get("attachments"))
 
-    print("Converted params:", converted)
     dataset = Dataset(**converted)
     dataset.add_files(*files)
     return dataset

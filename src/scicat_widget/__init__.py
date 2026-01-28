@@ -1,3 +1,5 @@
+"""Jupyter widget for uploading datasets to SciCat."""
+
 import importlib.metadata
 
 from ._widgets import DatasetUploadWidget, dataset_upload_widget

@@ -2,6 +2,8 @@
     "scripts": {
         "dev": "npm run build -- --sourcemap=inline --watch",
         "build": "esbuild js/*.ts --minify --format=esm --bundle --outdir=src/scicat_widget/_static --loader:.svg=text",
+        "fix:prettier": "npm run lint:prettier -- --write",
+        "lint:prettier": "prettier --config package.json --check",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {

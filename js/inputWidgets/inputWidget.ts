@@ -128,9 +128,9 @@ export abstract class InputWidget<T> {
         handler: (widget: InputWidget<T>, value: U | null) => void,
     ): EventListener {
         return (e: Event) => {
-            const ue = e as UpdateEvent;
-            if (ue.key === otherKey) {
-                handler(this, ue.value_as<U>());
+            const event = e as UpdateEvent;
+            if (event.key === otherKey) {
+                handler(this, event.value_as<U>());
             }
         };
     }
