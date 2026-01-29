@@ -1,31 +1,35 @@
-import { StringInputWidget } from "./stringInputWidget.ts";
 import type { AnyModel } from "@anywidget/types";
 import { humanSize } from "../widgets/output.ts";
+import { InputWidget } from "./inputWidget.ts";
+import { StringInputWidget } from "./stringInputWidget.ts";
 
-export class FileInputWidget extends StringInputWidget {
+export class FileInputWidget extends InputWidget<string> {
+    private stringInput: StringInputWidget;
+    private model: AnyModel<object>;
+    private readonly responseHandler: (message: any) => void;
+
     private debounceTimer: number | null = null;
     private previousValue: string | null = null;
     private validationResult: string | null = null;
-    private model: AnyModel<object>;
-    private readonly responseHandler: (message: any) => void;
 
     private size_: number | null = null;
     private creationTime_: Date | null = null;
 
     constructor(key: string, model: AnyModel<object>) {
-        super(key, {
+        const wrapper = document.createElement("div");
+        wrapper.classList.add("cean-file-input");
+
+        const stringInput = new StringInputWidget(`${key}_string`, {
             validator: (value: string) => {
                 return this.checkValidation(value);
             },
         });
-
-        this.container.classList.add("cean-file-input");
-        this.container.children[0].classList.add("cean-file-input-input");
-        this.container.addEventListener("input", () => {
+        stringInput.container.addEventListener("input", () => {
             this.callDebouncedAfter(() => {
                 this.inspectFile();
             }, 500);
         });
+        wrapper.appendChild(stringInput.container);
 
         const pickerButton = document.createElement("button");
         pickerButton.textContent = "Browse";
@@ -33,13 +37,16 @@ export class FileInputWidget extends StringInputWidget {
             model.send({
                 type: "req:browse-files",
                 payload: {
-                    key: this.key, // To identify responses for this input element.
+                    key, // To identify responses for this input element.
                 },
             });
         });
-        this.container.appendChild(pickerButton);
+        wrapper.appendChild(pickerButton);
 
+        super(key, wrapper);
+        this.stringInput = stringInput;
         this.model = model;
+
         this.responseHandler = (message: any) => {
             if (message.payload?.key !== this.key) return;
             const payload = message.payload;
@@ -57,6 +64,14 @@ export class FileInputWidget extends StringInputWidget {
 
     destroy() {
         this.model.off("msg:custom", this.responseHandler);
+    }
+
+    get value(): string | null {
+        return this.stringInput.value;
+    }
+
+    set value(v: string | null) {
+        this.stringInput.value = v;
     }
 
     get size(): number | null {
@@ -100,6 +115,7 @@ export class FileInputWidget extends StringInputWidget {
         } else {
             this.size_ = null;
             this.creationTime_ = null;
+            this.statusElement.replaceChildren();
         }
         super.updated(); // triggers validator which checks the validationResult
         this.container.dispatchEvent(

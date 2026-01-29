@@ -291,19 +291,6 @@ input[type="checkbox"].cean-input {
     justify-self: start;
 }
 
-.cean-input[data-valid="false"] {
-    border-color: var(--jp-error-color2);
-
-    & ~ .cean-input-status {
-        display: block; /* show status on error */
-        color: var(--jp-error-color2);
-    }
-}
-
-.cean-file-input-input + .cean-input-status {
-    display: block;
-}
-
 .cean-input-status {
     /* default: hide the status element */
     display: none;
@@ -313,6 +300,19 @@ input[type="checkbox"].cean-input {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+}
+
+.cean-input[data-valid="false"] {
+    border-color: var(--jp-error-color2);
+
+    & ~ .cean-input-status {
+        display: block; /* show status on error */
+        color: var(--jp-error-color2);
+    }
+}
+
+.cean-file-input + .cean-input-status {
+    display: block;
 }
 
 .cean-input-panel {
