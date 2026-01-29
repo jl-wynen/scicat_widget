@@ -482,6 +482,15 @@ input[type="checkbox"].cean-input {
     font-family: monospace;
 }
 
+.cean-file-input {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+
+    & button {
+        margin-left: 1em;
+    }
+}
+
 .cean-files-widget {
     & input {
         width: 100%;

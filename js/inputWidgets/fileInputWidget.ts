@@ -33,6 +33,7 @@ export class FileInputWidget extends InputWidget<string> {
 
         const pickerButton = document.createElement("button");
         pickerButton.textContent = "Browse";
+        pickerButton.classList.add("cean-button");
         pickerButton.addEventListener("click", () => {
             model.send({
                 type: "req:browse-files",
@@ -86,6 +87,11 @@ export class FileInputWidget extends InputWidget<string> {
         return this.validationResult;
     }
 
+    private updated_(): void {
+        this.stringInput.updated();
+        super.updated();
+    }
+
     private inspectFile() {
         const value = this.value;
         if (value === null) {
@@ -94,6 +100,7 @@ export class FileInputWidget extends InputWidget<string> {
             this.size_ = null;
             this.creationTime_ = null;
             this.statusElement.replaceChildren();
+            this.updated_();
         } else if (value !== this.previousValue) {
             this.model.send({
                 type: "req:inspect-file",
@@ -117,7 +124,7 @@ export class FileInputWidget extends InputWidget<string> {
             this.creationTime_ = null;
             this.statusElement.replaceChildren();
         }
-        super.updated(); // triggers validator which checks the validationResult
+        this.updated_();
         this.container.dispatchEvent(
             new CustomEvent("file-inspected", {
                 bubbles: false,
