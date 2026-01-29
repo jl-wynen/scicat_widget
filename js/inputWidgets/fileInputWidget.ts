@@ -7,7 +7,7 @@ export class FileInputWidget extends StringInputWidget {
     private previousValue: string | null = null;
     private validationResult: string | null = null;
     private model: AnyModel<object>;
-    private readonly inspectionResponseHandler: (message: any) => void;
+    private readonly responseHandler: (message: any) => void;
 
     private size_: number | null = null;
     private creationTime_: Date | null = null;
@@ -22,7 +22,7 @@ export class FileInputWidget extends StringInputWidget {
         this.container.classList.add("cean-file-input");
         this.container.addEventListener("input", () => {
             this.callDebouncedAfter(() => {
-                this.inspectFile(model);
+                this.inspectFile();
             }, 500);
         });
 
@@ -39,23 +39,23 @@ export class FileInputWidget extends StringInputWidget {
         this.container.appendChild(pickerButton);
 
         this.model = model;
-        this.inspectionResponseHandler = (message: any) => {
-            if (message.type !== "res:inspect-file") return;
-            const payload = message.payload as InspectionResult;
-            if (payload.key !== this.key) return;
-            this.applyInspectionResult(payload);
-            this.container.dispatchEvent(
-                new CustomEvent("file-inspected", {
-                    bubbles: false,
-                    detail: { payload },
-                }),
-            );
+        this.responseHandler = (message: any) => {
+            if (message.payload?.key !== this.key) return;
+            const payload = message.payload;
+            switch (message.type) {
+                case "res:inspect-file":
+                    this.applyInspectionResult(payload as InspectionResult);
+                    break;
+                case "res:browse-files":
+                    this.applSelectedFile(payload as BrowseResult);
+                    break;
+            }
         };
-        model.on("msg:custom", this.inspectionResponseHandler);
+        model.on("msg:custom", this.responseHandler);
     }
 
     destroy() {
-        this.model.off("msg:custom", this.inspectionResponseHandler);
+        this.model.off("msg:custom", this.responseHandler);
     }
 
     get size(): number | null {
@@ -70,7 +70,7 @@ export class FileInputWidget extends StringInputWidget {
         return this.validationResult;
     }
 
-    private inspectFile(model: AnyModel<object>) {
+    private inspectFile() {
         const value = this.value;
         if (value === null) {
             this.previousValue = null;
@@ -79,7 +79,7 @@ export class FileInputWidget extends StringInputWidget {
             this.creationTime_ = null;
             this.statusElement.replaceChildren();
         } else if (value !== this.previousValue) {
-            model.send({
+            this.model.send({
                 type: "req:inspect-file",
                 payload: {
                     filename: value,
@@ -101,6 +101,17 @@ export class FileInputWidget extends StringInputWidget {
             this.creationTime_ = null;
         }
         super.updated(); // triggers validator which checks the validationResult
+        this.container.dispatchEvent(
+            new CustomEvent("file-inspected", {
+                bubbles: false,
+                detail: { payload: result },
+            }),
+        );
+    }
+
+    private applSelectedFile(result: BrowseResult) {
+        this.value = result.selected;
+        this.inspectFile();
     }
 
     private callDebouncedAfter(fn: () => void, timeout: number) {
@@ -120,6 +131,11 @@ type InspectionResult = {
     size?: number;
     creationTime?: string;
     error?: string;
+};
+
+type BrowseResult = {
+    key: string;
+    selected: string;
 };
 
 function renderFileStats(

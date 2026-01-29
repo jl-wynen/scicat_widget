@@ -161,10 +161,6 @@ label.cean-required {
     align-items: start;
 }
 
-.cean-tabs {
-    margin-bottom: 10px;
-}
-
 .cean-tab-buttons {
     display: flex;
     justify-content: space-between;
@@ -640,4 +636,8 @@ button.cean-button-remove {
     &[disabled="true"] {
         visibility: hidden;
     }
+}
+
+.cean-output-anchor {
+    display: none;
 }

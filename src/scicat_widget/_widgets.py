@@ -1,7 +1,9 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2026 SciCat Project (https://github.com/SciCatProject/scitacean)
 
+import os
 import pathlib
+from pathlib import Path
 from typing import Any
 
 import anywidget
@@ -32,13 +34,30 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     scicatUrl = traitlets.Unicode().tag(sync=True)
     skipConfirm = traitlets.Bool().tag(sync=True)
 
-    _filePickerOutput = traitlets.Instance(ipywidgets.Output).tag(
-        sync=True, **ipywidgets.widget_serialization
-    )
-
     def __init__(self, *, client: Client, **kwargs: Any) -> None:
-        super().__init__(_filePickerOutput=ipywidgets.Output(), **kwargs)
+        super().__init__(**kwargs)
         self.client = client
+
+        # This `Output` is displayed along with `self` so that sub widgets,
+        # e.g., a file picker can be attached to it and displayed.
+        # We need this because we cannot display widgets in callbacks
+        # as those don't have a display context.
+        self._aux_output_widget = ipywidgets.Output()
+        self._aux_output_widget.add_class("cean-output-anchor")
+        self._is_displaying = False
+
+    def _repr_mimebundle_(self, **kwargs: Any) -> dict[str, Any]:
+        # This is a bit hacky, but it allows us to display this DatasetUploadWidget like
+        # normal while also placing the aux output widget next to it.
+        if self._is_displaying:
+            return super()._repr_mimebundle_(**kwargs)  # type: ignore[no-any-return]
+        self._is_displaying = True
+        try:
+            return ipywidgets.VBox([self, self._aux_output_widget])._repr_mimebundle_(
+                **kwargs
+            )
+        finally:
+            self._is_displaying = False
 
 
 def dataset_upload_widget(
@@ -144,12 +163,25 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
 
 
 def _browse_files(widget: DatasetUploadWidget, input_payload: dict[str, str]) -> None:
-    from ipywidgets import widgets
+    def send_selected_files(change: dict[str, Any]) -> None:
+        selected: list[Path] = change["new"]
+        # TODO handle multi select once supported by file picker
+        if len(change) > 0:
+            widget.send(
+                {
+                    "type": "res:browse-files",
+                    "payload": {
+                        "key": input_payload["key"],
+                        "selected": os.fspath(selected[0]),
+                    },
+                }
+            )
 
     # Use the output widget's context manager to capture the display call
-    with widget._filePickerOutput:
-        widget._filePickerOutput.clear_output()  # Optional: clear previous picker if any
+    with widget._aux_output_widget:
+        widget._aux_output_widget.clear_output()  # clear previous picker if any
         picker = HostFilePicker()
+        picker.observe(send_selected_files, names="selected")
         IPython.display.display(picker)
 
 
