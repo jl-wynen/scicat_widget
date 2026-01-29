@@ -20,6 +20,7 @@ export class FileInputWidget extends StringInputWidget {
         });
 
         this.container.classList.add("cean-file-input");
+        this.container.children[0].classList.add("cean-file-input-input");
         this.container.addEventListener("input", () => {
             this.callDebouncedAfter(() => {
                 this.inspectFile();

@@ -300,6 +300,10 @@ input[type="checkbox"].cean-input {
     }
 }
 
+.cean-file-input-input + .cean-input-status {
+    display: block;
+}
+
 .cean-input-status {
     /* default: hide the status element */
     display: none;
