@@ -12,10 +12,12 @@ dependencies = [
     "anywidget>=0.9.21",
     "pydantic>=2.12",
     "scitacean",
+    "jupyter-host-file-picker",
 ]
 
 [tool.uv.sources]
 scitacean = { path = "../scitacean", editable = true }
+jupyter-host-file-picker = { path = "/home/jl/Prog/jupyter-host-file-picker", editable = true }
 
 [dependency-groups]
 dev = [

@@ -14,9 +14,10 @@ interface WidgetModel {
     techniques: Techniques;
     scicatUrl: string;
     skipConfirm: boolean;
+    _filePickerOutput: AnyModel | string;
 }
 
-function render({ model, el }: RenderProps<WidgetModel>) {
+async function render({ model, el }: RenderProps<WidgetModel>) {
     const [tabs, datasetWidget] = createTabs(model, model.get("scicatUrl"));
 
     const initial = model.get("initial") as any;
@@ -25,6 +26,28 @@ function render({ model, el }: RenderProps<WidgetModel>) {
     }
 
     el.appendChild(tabs.element);
+
+    // 1. Get the value (which is likely the ID string)
+    const outputModelId = model.get("_filePickerOutput");
+
+    if (outputModelId) {
+        // @ts-ignore: widget_manager exists on AnyModel at runtime in Jupyter
+        const manager = model.widget_manager;
+
+        if (manager) {
+            // 2. Resolve the ID to the actual model object
+            // If it's already a model, get_model usually returns it,
+            // but we check the type for robustness.
+            const outputModel =
+                typeof outputModelId === "string"
+                    ? await manager.get_model(outputModelId)
+                    : outputModelId;
+
+            // 3. Create the view using the resolved model
+            const outputView = await manager.create_view(outputModel);
+            el.appendChild(outputView.el);
+        }
+    }
 }
 
 function createTabs(

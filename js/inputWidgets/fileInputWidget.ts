@@ -26,6 +26,18 @@ export class FileInputWidget extends StringInputWidget {
             }, 500);
         });
 
+        const pickerButton = document.createElement("button");
+        pickerButton.textContent = "Browse";
+        pickerButton.addEventListener("click", () => {
+            model.send({
+                type: "req:browse-files",
+                payload: {
+                    key: this.key, // To identify responses for this input element.
+                },
+            });
+        });
+        this.container.appendChild(pickerButton);
+
         this.model = model;
         this.inspectionResponseHandler = (message: any) => {
             if (message.type !== "res:inspect-file") return;

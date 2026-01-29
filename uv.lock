@@ -712,6 +712,27 @@ wheels = [
 ]
 
 [[package]]
+name = "jupyter-host-file-picker"
+version = "0.0.0"
+source = { editable = "../../../Prog/jupyter-host-file-picker" }
+dependencies = [
+    { name = "anywidget" },
+]
+
+[package.metadata]
+requires-dist = [{ name = "anywidget", specifier = ">=0.9.21" }]
+
+[package.metadata.requires-dev]
+dev = [
+    { name = "anywidget", extras = ["dev"] },
+    { name = "ipykernel", specifier = ">=7.1.0" },
+    { name = "jupyterlab", specifier = ">=4.5.0" },
+    { name = "mypy", specifier = ">=1.17" },
+    { name = "ruff" },
+    { name = "watchfiles" },
+]
+
+[[package]]
 name = "jupyter-lsp"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1802,6 +1823,7 @@ version = "0.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "anywidget" },
+    { name = "jupyter-host-file-picker" },
     { name = "pydantic" },
     { name = "scitacean" },
 ]
@@ -1831,6 +1853,7 @@ lint = [
 [package.metadata]
 requires-dist = [
     { name = "anywidget", specifier = ">=0.9.21" },
+    { name = "jupyter-host-file-picker", editable = "../../../Prog/jupyter-host-file-picker" },
     { name = "pydantic", specifier = ">=2.12" },
     { name = "scitacean", editable = "../scitacean" },
 ]

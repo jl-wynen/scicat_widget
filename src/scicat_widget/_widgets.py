@@ -5,7 +5,10 @@ import pathlib
 from typing import Any
 
 import anywidget
+import IPython.display
+import ipywidgets
 import traitlets
+from jupyter_host_file_picker import HostFilePicker
 from scitacean import Client, File, ScicatCommError
 from scitacean.ontology import expands_techniques
 
@@ -29,8 +32,12 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     scicatUrl = traitlets.Unicode().tag(sync=True)
     skipConfirm = traitlets.Bool().tag(sync=True)
 
+    _filePickerOutput = traitlets.Instance(ipywidgets.Output).tag(
+        sync=True, **ipywidgets.widget_serialization
+    )
+
     def __init__(self, *, client: Client, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
+        super().__init__(_filePickerOutput=ipywidgets.Output(), **kwargs)
         self.client = client
 
 
@@ -136,6 +143,16 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
     )
 
 
+def _browse_files(widget: DatasetUploadWidget, input_payload: dict[str, str]) -> None:
+    from ipywidgets import widgets
+
+    # Use the output widget's context manager to capture the display call
+    with widget._filePickerOutput:
+        widget._filePickerOutput.clear_output()  # Optional: clear previous picker if any
+        picker = HostFilePicker()
+        IPython.display.display(picker)
+
+
 def _upload_dataset(widget: DatasetUploadWidget, payload: dict[str, object]) -> None:
     print("Uploading")  # noqa: T201
     print("raw payload:", payload)  # noqa: T201
@@ -144,6 +161,7 @@ def _upload_dataset(widget: DatasetUploadWidget, payload: dict[str, object]) -> 
 
 _EVENT_HANDLERS = {
     "req:inspect-file": _inspect_file,
+    "req:browse-files": _browse_files,
     "cmd:upload-dataset": _upload_dataset,
 }
 
