@@ -24,6 +24,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
     private readonly filter: boolean;
     private _value: string | null = null;
     private isFocused: boolean = false;
+    private isMouseDownInside: boolean = false;
 
     constructor(
         key: string,
@@ -72,6 +73,14 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
         this.renderChoices();
 
+        // Track interactions inside to keep the dropdown open when using the scrollbar
+        this.container.addEventListener("mousedown", () => {
+            this.isMouseDownInside = true;
+        });
+        document.addEventListener("mouseup", () => {
+            this.isMouseDownInside = false;
+        });
+
         this.displayElement.addEventListener("click", () => {
             this.enterEditMode();
         });
@@ -100,6 +109,14 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
         this.searchInput.addEventListener("blur", () => {
             this.isFocused = false;
+
+            // If blur happened while interacting inside the dropdown (e.g., clicking the scrollbar),
+            // keep it open and restore focus to the input so the user can continue.
+            if (this.isMouseDownInside) {
+                this.searchInput.focus();
+                return;
+            }
+
             this.selectFromSearch();
             this.closeDropdown();
             this.updateDisplay();
