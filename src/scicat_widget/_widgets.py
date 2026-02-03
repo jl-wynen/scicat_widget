@@ -10,6 +10,7 @@ import anywidget
 import IPython.display
 import ipywidgets
 import traitlets
+from pydantic import ValidationError
 from jupyter_host_file_picker import HostFilePicker
 from scitacean import Client, File, ScicatCommError
 from scitacean.ontology import expands_techniques
@@ -138,7 +139,9 @@ def _load_techniques() -> dict[str, Any]:
     }
 
 
-def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) -> None:
+def _inspect_file(
+    widget: DatasetUploadWidget, key: str, input_payload: dict[str, str]
+) -> None:
     try:
         # TODO do not allow folders (probably in scitacean)
         file = File.from_local(input_payload["filename"])
@@ -153,6 +156,7 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
     widget.send(
         {
             "type": "res:inspect-file",
+            "key": key,
             "payload": {
                 # Echo the input to identify the element that the request came from.
                 **input_payload,
@@ -162,7 +166,9 @@ def _inspect_file(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
     )
 
 
-def _browse_files(widget: DatasetUploadWidget, input_payload: dict[str, str]) -> None:
+def _browse_files(
+    widget: DatasetUploadWidget, key: str, _input_payload: dict[str, str]
+) -> None:
     def send_selected_files(change: dict[str, Any]) -> None:
         selected: list[Path] = change["new"]
         # TODO handle multi select once supported by file picker
@@ -170,8 +176,8 @@ def _browse_files(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
             widget.send(
                 {
                     "type": "res:browse-files",
+                    "key": key,
                     "payload": {
-                        "key": input_payload["key"],
                         "selected": os.fspath(selected[0]),
                     },
                 }
@@ -185,16 +191,22 @@ def _browse_files(widget: DatasetUploadWidget, input_payload: dict[str, str]) ->
         IPython.display.display(picker)
 
 
-def _upload_dataset(widget: DatasetUploadWidget, payload: dict[str, object]) -> None:
-    print("Uploading")  # noqa: T201
-    print("raw payload:", payload)  # noqa: T201
-    _dataset = upload_dataset(widget.client, payload)
+def _upload_dataset(
+    widget: DatasetUploadWidget, key: str, payload: dict[str, object]
+) -> None:
+    try:
+        dataset = upload_dataset(widget.client, payload)
+    except ValidationError as error:
+        widget.send(
+            {"type": "res:upload-dataset", "key": key, "payload": {"error": str(error)}}
+        )
+        return
 
 
 _EVENT_HANDLERS = {
     "req:inspect-file": _inspect_file,
     "req:browse-files": _browse_files,
-    "cmd:upload-dataset": _upload_dataset,
+    "req:upload-dataset": _upload_dataset,
 }
 
 
@@ -206,4 +218,4 @@ def _handle_event(
     except KeyError:
         get_logger().warning("Received unknown event from widget: %s", content)
         return
-    handler(widget, content["payload"])
+    handler(widget, content["key"], content["payload"])

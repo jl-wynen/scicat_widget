@@ -6,6 +6,7 @@ import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 import { Instrument, Proposal, Techniques } from "./models.ts";
 import { FilesWidget } from "./filesWidget.ts";
 import { textButton } from "./widgets/button.ts";
+import { BackendComm } from "./comm.ts";
 
 interface WidgetModel {
     initial: object;
@@ -18,7 +19,9 @@ interface WidgetModel {
 }
 
 async function render({ model, el }: RenderProps<WidgetModel>) {
-    const [tabs, datasetWidget] = createTabs(model, model.get("scicatUrl"));
+    const comm = new BackendComm(model);
+
+    const [tabs, datasetWidget] = createTabs(model, model.get("scicatUrl"), comm);
 
     const initial = model.get("initial") as any;
     if (initial && initial.hasOwnProperty("owners")) {
@@ -31,6 +34,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 function createTabs(
     model: AnyModel<any>,
     scicatUrl: string,
+    comm: BackendComm,
 ): [Tabs, DatasetWidget, FilesWidget] {
     const datasetLabel = document.createElement("span");
     datasetLabel.textContent = "Dataset";
@@ -53,13 +57,14 @@ function createTabs(
         model.get("accessGroups"),
         model.get("techniques"),
     );
-    const filesWidget = new FilesWidget(model, nFiles);
+    const filesWidget = new FilesWidget(comm, nFiles);
     const attachmentsWidget = new StringInputWidget("attachments");
 
     const uploadButton = makeUploadButton(
         doUpload.bind(
             null,
             model,
+            comm,
             datasetWidget,
             filesWidget,
             attachmentsWidget,
@@ -81,17 +86,19 @@ function createTabs(
 }
 
 function doUpload(
-    model: AnyModel<WidgetModel>,
+    model: AnyModel<any>,
+    comm: BackendComm,
     datasetWidget: DatasetWidget,
     filesWidget: FilesWidget,
     attachmentsWidget: StringInputWidget,
     scicatUrl: string,
 ) {
     function uploadImpl() {
-        model.send({
-            type: "cmd:upload-dataset",
-            payload: gatherData(datasetWidget, filesWidget, attachmentsWidget),
-        });
+        // TODO key
+        comm.sendReqUploadDataset(
+            "TODO",
+            gatherData(datasetWidget, filesWidget, attachmentsWidget),
+        );
     }
 
     if (model.get("skipConfirm")) {

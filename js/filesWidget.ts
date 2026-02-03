@@ -1,4 +1,3 @@
-import type { AnyModel } from "@anywidget/types";
 import {
     DropdownInputWidget,
     FileInputWidget,
@@ -8,10 +7,11 @@ import {
 import { removeButton } from "./widgets/button.ts";
 import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
+import { BackendComm } from "./comm.ts";
 
 export class FilesWidget {
     element: HTMLDivElement;
-    private readonly model: AnyModel<object>;
+    private readonly comm: BackendComm;
     private readonly fileWidgets: SingleFileWidget[] = [];
     private readonly sourceFolderInput: InputWidget<string>;
     private readonly algInput: InputWidget<string>;
@@ -20,8 +20,8 @@ export class FilesWidget {
     private totalSizeElement!: HTMLSpanElement;
     private widgetsContainer!: HTMLElement;
 
-    constructor(model: AnyModel<object>, nFilesTabElement: HTMLSpanElement) {
-        this.model = model;
+    constructor(comm: BackendComm, nFilesTabElement: HTMLSpanElement) {
+        this.comm = comm;
         this.nFilesTabElement = nFilesTabElement;
 
         const element = document.createElement("div");
@@ -103,7 +103,7 @@ export class FilesWidget {
 
     private addFileWidget() {
         const widget = new SingleFileWidget(
-            this.model,
+            this.comm,
             () => {
                 this.updateSummary();
                 if (
@@ -144,7 +144,7 @@ class SingleFileWidget {
     private readonly remotePathInput: StringInputWidget;
     private readonly removeButton: HTMLButtonElement;
 
-    constructor(model: AnyModel<object>, onChange: () => void, onRemove: () => void) {
+    constructor(comm: BackendComm, onChange: () => void, onRemove: () => void) {
         this.key = crypto.randomUUID();
         this.element = document.createElement("div");
         this.element.id = this.key;
@@ -153,7 +153,7 @@ class SingleFileWidget {
         const [localPathLabel, localPathInput] = createInputWithLabel(
             `${this.key}_localPath`,
             FileInputWidget,
-            [model],
+            [comm],
             "Path",
         );
         this.localPathInput = localPathInput as FileInputWidget;

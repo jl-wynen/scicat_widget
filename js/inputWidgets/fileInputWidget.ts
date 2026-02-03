@@ -1,13 +1,12 @@
-import type { AnyModel } from "@anywidget/types";
 import { humanSize } from "../widgets/output.ts";
 import { InputWidget } from "./inputWidget.ts";
 import { iconTextButton } from "../widgets/button.ts";
 import { StringInputWidget } from "./stringInputWidget.ts";
+import { BackendComm, ResBrowseFiles, ResInspectFilePayload } from "../comm.ts";
 
 export class FileInputWidget extends InputWidget<string> {
     private stringInput: StringInputWidget;
-    private model: AnyModel<object>;
-    private readonly responseHandler: (message: any) => void;
+    private comm: BackendComm;
 
     private debounceTimer: number | null = null;
     private previousValue: string | null = null;
@@ -16,7 +15,7 @@ export class FileInputWidget extends InputWidget<string> {
     private size_: number | null = null;
     private creationTime_: Date | null = null;
 
-    constructor(key: string, model: AnyModel<object>) {
+    constructor(key: string, comm: BackendComm) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("cean-file-input");
 
@@ -39,38 +38,27 @@ export class FileInputWidget extends InputWidget<string> {
                 "folder-open",
                 "Browse",
                 () => {
-                    model.send({
-                        type: "req:browse-files",
-                        payload: {
-                            key, // To identify responses for this input element.
-                        },
-                    });
+                    comm.sendReqBrowseFiles(key, {});
                 },
                 "Browse files",
             ),
         );
 
+        comm.onResInspectFile(key, (payload) => {
+            this.applyInspectionResult(payload);
+        });
+        comm.onResBrowseFiles(key, (payload) => {
+            this.applySelectedFile(payload);
+        });
+
         super(key, wrapper);
         this.stringInput = stringInput;
-        this.model = model;
-
-        this.responseHandler = (message: any) => {
-            if (message.payload?.key !== this.key) return;
-            const payload = message.payload;
-            switch (message.type) {
-                case "res:inspect-file":
-                    this.applyInspectionResult(payload as InspectionResult);
-                    break;
-                case "res:browse-files":
-                    this.applSelectedFile(payload as BrowseResult);
-                    break;
-            }
-        };
-        model.on("msg:custom", this.responseHandler);
+        this.comm = comm;
     }
 
     destroy() {
-        this.model.off("msg:custom", this.responseHandler);
+        this.comm.offResInspectFile(this.key);
+        this.comm.offResBrowseFiles(this.key);
     }
 
     get value(): string | null {
@@ -109,17 +97,13 @@ export class FileInputWidget extends InputWidget<string> {
             this.statusElement.replaceChildren();
             this.updated_();
         } else if (value !== this.previousValue) {
-            this.model.send({
-                type: "req:inspect-file",
-                payload: {
-                    filename: value,
-                    key: this.key, // To identify responses for this input element.
-                },
+            this.comm.sendReqInspectFile(this.key, {
+                filename: value,
             });
         }
     }
 
-    private applyInspectionResult(result: InspectionResult) {
+    private applyInspectionResult(result: ResInspectFilePayload) {
         this.validationResult = result.error ?? null;
         this.previousValue = this.value;
         if (result.success) {
@@ -140,7 +124,7 @@ export class FileInputWidget extends InputWidget<string> {
         );
     }
 
-    private applSelectedFile(result: BrowseResult) {
+    private applySelectedFile(result: ResBrowseFiles) {
         this.value = result.selected;
         this.inspectFile();
     }
@@ -155,19 +139,6 @@ export class FileInputWidget extends InputWidget<string> {
         }, timeout);
     }
 }
-
-type InspectionResult = {
-    key: string;
-    success: boolean;
-    size?: number;
-    creationTime?: string;
-    error?: string;
-};
-
-type BrowseResult = {
-    key: string;
-    selected: string;
-};
 
 function renderFileStats(
     parent: HTMLElement,
