@@ -92,7 +92,7 @@ def _download_scicat_data(
 ) -> tuple[dict[str, Any], list[Instrument], list[ProposalOverview], list[str]]:
     try:
         user_info, instruments = get_user_and_scicat_info(client)
-    except (ScicatCommError, ValueError, TypeError) as error:
+    except (ScicatCommError, ValueError, TypeError, RuntimeError) as error:
         get_logger().warning("Failed to download initial data for user: %s", error)
         return {}, [], [], []
 
