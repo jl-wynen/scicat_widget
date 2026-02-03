@@ -113,6 +113,8 @@ table.cean-scientific-metadata-table {
 
         &:focus-within {
             background: var(--jp-input-active-background);
+            /* use box-shadow instead of border to apply to all 4 edges (because of border-collapse) */
+            box-shadow: inset 0 0 0 var(--jp-border-width) var(--jp-input-active-border-color);
         }
     }
 
@@ -120,6 +122,10 @@ table.cean-scientific-metadata-table {
         width: 100%;
         border: none !important;
         background: unset !important;
+
+        &:focus-visible {
+            outline: none;
+        }
     }
 
     & button {
