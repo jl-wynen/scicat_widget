@@ -11,19 +11,18 @@ requires-python = ">=3.11"
 dependencies = [
     "anywidget>=0.9.21",
     "pydantic>=2.12",
-    "scitacean",
-    "jupyter-host-file-picker",
+    "scitacean>=25.8.0",
+    "jupyter-host-file-picker>=26.2.1",
 ]
 
 [tool.uv.sources]
 scitacean = { path = "../scitacean", editable = true }
-jupyter-host-file-picker = { path = "/home/jl/Prog/jupyter-host-file-picker", editable = true }
 
 [dependency-groups]
 dev = [
     { include-group = "format" },
     { include-group = "lint" },
-    "anywidget[dev]",
+    "anywidget[dev]>=0.9.21",
     "ipykernel>=7.1.0",
     "jupyterlab>=4.5.0",
     "mypy >= 1.17",

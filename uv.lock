@@ -713,23 +713,15 @@ wheels = [
 
 [[package]]
 name = "jupyter-host-file-picker"
-version = "0.0.0"
-source = { editable = "../../../Prog/jupyter-host-file-picker" }
+version = "26.2.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anywidget" },
+    { name = "ipykernel" },
 ]
-
-[package.metadata]
-requires-dist = [{ name = "anywidget", specifier = ">=0.9.21" }]
-
-[package.metadata.requires-dev]
-dev = [
-    { name = "anywidget", extras = ["dev"] },
-    { name = "ipykernel", specifier = ">=7.1.0" },
-    { name = "jupyterlab", specifier = ">=4.5.0" },
-    { name = "mypy", specifier = ">=1.17" },
-    { name = "ruff" },
-    { name = "watchfiles" },
+sdist = { url = "https://files.pythonhosted.org/packages/d8/28/0a649be99b27d5728545d48b88b87511821efb96e5b003876b2479a02d68/jupyter_host_file_picker-26.2.1.tar.gz", hash = "sha256:61e519859423c0d394eefd5c472b490ac66e30397f22f012f95b0dda43c45318", size = 97632, upload-time = "2026-02-03T10:01:37.99Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/b0/5e/e84a63e0bb11589edf5d0a31804f5891b43f3277c53d5c28aafbac4affba/jupyter_host_file_picker-26.2.1-py3-none-any.whl", hash = "sha256:6c9044c121480cd9f3a61fd62d02cc917874ef66a1e3b6f22ebfbd3b3aaa7176", size = 98247, upload-time = "2026-02-03T10:01:36.679Z" },
 ]
 
 [[package]]
@@ -1853,14 +1845,14 @@ lint = [
 [package.metadata]
 requires-dist = [
     { name = "anywidget", specifier = ">=0.9.21" },
-    { name = "jupyter-host-file-picker", editable = "../../../Prog/jupyter-host-file-picker" },
+    { name = "jupyter-host-file-picker", specifier = ">=26.2.1" },
     { name = "pydantic", specifier = ">=2.12" },
     { name = "scitacean", editable = "../scitacean" },
 ]
 
 [package.metadata.requires-dev]
 dev = [
-    { name = "anywidget", extras = ["dev"] },
+    { name = "anywidget", extras = ["dev"], specifier = ">=0.9.21" },
     { name = "codespell", specifier = ">=2.4" },
     { name = "ipykernel", specifier = ">=7.1.0" },
     { name = "jupyterlab", specifier = ">=4.5.0" },
