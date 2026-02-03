@@ -5,7 +5,7 @@ import {
     InputWidget,
     StringInputWidget,
 } from "./inputWidgets.ts";
-import { removeButton } from "./widgets/iconButton.ts";
+import { removeButton } from "./widgets/button.ts";
 import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
 

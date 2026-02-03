@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
 import { createFormElement } from "../forms";
 import { PersonInputWidget } from "./personInputWidget.ts";
-import { removeButton } from "../widgets/iconButton.ts";
+import { removeButton } from "../widgets/button.ts";
 
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
     ownerWidgets: Map<string, PersonInputWidget>;

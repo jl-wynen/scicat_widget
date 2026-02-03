@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidget";
-import { iconButton } from "../widgets/iconButton";
+import { iconButton, removeButton } from "../widgets/button.ts";
 
 export class StringListInputWidget extends InputWidget<string[]> {
     private readonly itemsContainer: HTMLDivElement;
@@ -74,11 +74,7 @@ export class StringListInputWidget extends InputWidget<string[]> {
         label.textContent = text;
         box.appendChild(label);
 
-        const removeBtn = iconButton("trash", () => this.removeItem(index));
-        removeBtn.title = "Remove item";
-        removeBtn.classList.add("cean-remove-item");
-        removeBtn.setAttribute("tabindex", "-1");
-        box.appendChild(removeBtn);
+        box.appendChild(removeButton(() => this.removeItem(index)));
 
         return box;
     }

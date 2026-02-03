@@ -1,6 +1,6 @@
 import { InputWidget, UpdateEvent } from "./inputWidget";
 import { Choice, ComboboxInputWidget } from "./comboboxInputWidget";
-import { removeButton } from "../widgets/iconButton";
+import { removeButton } from "../widgets/button.ts";
 import { Techniques } from "../models.ts";
 
 export class TechniquesInputWidget extends InputWidget<string[]> {

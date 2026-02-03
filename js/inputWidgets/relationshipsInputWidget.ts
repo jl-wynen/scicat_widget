@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidget";
-import { removeButton } from "../widgets/iconButton.ts";
+import { removeButton } from "../widgets/button.ts";
 import { ComboboxInputWidget, Choice } from "./comboboxInputWidget.ts";
 import { StringInputWidget } from "./stringInputWidget.ts";
 import { createInputWithLabel } from "../forms.ts";

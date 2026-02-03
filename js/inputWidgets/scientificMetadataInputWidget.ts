@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidget";
-import { removeButton } from "../widgets/iconButton";
+import { removeButton } from "../widgets/button.ts";
 import { createFormElement } from "../forms";
 
 export type ScientificMetadataItem = {
