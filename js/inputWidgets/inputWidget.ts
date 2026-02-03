@@ -72,7 +72,7 @@ export abstract class InputWidget<T> {
      * On success, emit an `UpdateEvent` with this widget's key and current value.
      * Consumers may listen to any ancestor (the event bubbles).
      */
-    protected updated(): void {
+    updated(): void {
         if (this.validate()) {
             this.container.dispatchEvent(
                 new UpdateEvent(this.key, this.value, { bubbles: true }),

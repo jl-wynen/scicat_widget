@@ -21,6 +21,8 @@ export class FileInputWidget extends InputWidget<string> {
 
         const stringInput = new StringInputWidget(`${key}_string`, {
             validator: (value: string) => {
+                // The validation result gets stored asynchronously,
+                // we only read it here so the string input is simpler.
                 return this.checkValidation(value);
             },
         });
@@ -87,9 +89,10 @@ export class FileInputWidget extends InputWidget<string> {
         return this.validationResult;
     }
 
+    /** Update this and the contained string input. */
     private updated_(): void {
         this.stringInput.updated();
-        super.updated();
+        this.updated();
     }
 
     private inspectFile() {
