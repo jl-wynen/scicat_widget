@@ -160,7 +160,7 @@ function createTechnicalOwnerPanel(
     const create = createAndAppend.bind(null, inputWidgets, columns);
 
     createOwnerGroupWidget(inputWidgets, columns, accessGroups);
-    create("accessGroups", StringInputWidget);
+    create("accessGroups", StringListInputWidget);
     create("license", StringInputWidget);
     create("isPublished", CheckboxInputWidget);
 
