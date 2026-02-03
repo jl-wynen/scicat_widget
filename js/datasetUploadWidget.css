@@ -343,10 +343,13 @@ input[type="checkbox"].cean-input {
 
 .cean-modal-dialog {
     border: none;
-    padding: 0;
-    background: transparent;
     border-radius: var(--jp-border-radius);
     box-shadow: var(--jp-elevation-z8);
+    background: var(--jp-layout-color1);
+    color: var(--jp-ui-font-color1);
+    padding: 20px;
+    max-width: 400px;
+    width: max-content;
 
     &::backdrop {
         backdrop-filter: brightness(80%);
@@ -362,26 +365,19 @@ input[type="checkbox"].cean-input {
     }
 }
 
-.cean-modal-content {
-    background-color: var(--jp-layout-color1);
-    padding: 20px;
-    max-width: 400px;
-    width: max-content;
-    color: var(--jp-ui-font-color1);
-}
 
-.cean-modal-header {
+.cean-dialog-header {
     margin-bottom: 15px;
     font-size: var(--jp-ui-font-size3);
     font-weight: 400;
     color: var(--jp-ui-font-color1);
 }
 
-.cean-modal-body {
+.cean-dialog-body {
     margin-bottom: 20px;
 }
 
-.cean-modal-footer {
+.cean-dialog-footer {
     display: flex;
     justify-content: flex-end;
     gap: 10px;
@@ -389,6 +385,14 @@ input[type="checkbox"].cean-input {
 
 .cean-warning {
     color: var(--jp-warn-color1);
+}
+
+.cean-warning-severe {
+    background: var(--jp-warn-color2);
+    color: var(--jp-ui-inverse-font-color0);
+    padding: 0.3em 0;
+    font-variant: all-small-caps;
+    font-size: var(--jp-ui-font-size2);
 }
 
 .cean-button {
@@ -668,4 +672,25 @@ select.cean-chk-alg {
 
 .cean-output-anchor {
     display: none;
+}
+
+.cean-spinner {
+    width: 48px;
+    height: 48px;
+    border: 5px solid #ed6c6b;
+    border-bottom-color: transparent;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto;
+    box-sizing: border-box;
+    animation: cean-rotation 1s linear infinite;
+}
+
+@keyframes cean-rotation {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
 }

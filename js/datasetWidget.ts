@@ -14,7 +14,7 @@ import {
 import { createInputWithLabel } from "./forms.ts";
 import { Instrument, Proposal, Techniques } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
-// TODO
+import { GatherResult } from "./widgets/upload.ts";
 import { validateOrcid } from "./validation.ts";
 
 export class DatasetWidget {
@@ -43,13 +43,14 @@ export class DatasetWidget {
         this.element = container;
     }
 
-    gatherData(): Record<string, any> {
+    gatherData(): GatherResult {
         const data: Record<string, any> = {};
         this.inputWidgets.forEach((widget, key) => {
             const value = widget.value;
             if (value !== null) data[key] = value;
         });
-        return data;
+        // TODO validation
+        return { validationErrors: false, data };
     }
 
     setValue(key: string, value: any) {

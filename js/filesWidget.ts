@@ -8,6 +8,7 @@ import { removeButton } from "./widgets/button.ts";
 import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
 import { BackendComm } from "./comm.ts";
+import { GatherResult } from "./widgets/upload.ts";
 
 export class FilesWidget {
     element: HTMLDivElement;
@@ -37,8 +38,8 @@ export class FilesWidget {
         this.element = element;
     }
 
-    gatherData(): Record<string, any> {
-        return {
+    gatherData(): GatherResult {
+        const data = {
             sourceFolder: this.sourceFolderInput.value,
             checksumAlgorithm: this.algInput.value,
             files: this.fileWidgets
@@ -51,6 +52,8 @@ export class FilesWidget {
                 })
                 .filter((v) => v.localPath),
         };
+        // TODO validation
+        return { validationErrors: false, data };
     }
 
     private updateSummary() {

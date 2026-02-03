@@ -10,3 +10,9 @@ export function humanSize(size: number | null): HTMLSpanElement {
     }
     return span;
 }
+
+/** Create a link HTML without displaying a scheme that opens in a new tab. */
+export function simpleLink(href: string): string {
+    const display = href.replace(/^https?:\/\/|\/$/g, "");
+    return `<a href="${href}" target=_blank>${display}</a>`;
+}

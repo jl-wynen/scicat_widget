@@ -3,10 +3,9 @@ from typing import Any
 from scitacean import PID, Client, Dataset, File, model
 
 
-def upload_dataset(client: Client, widget_data: dict[str, object]) -> None:
+def upload_dataset(client: Client, widget_data: dict[str, object]) -> Dataset:
     dataset = make_dataset_from_widget_data(widget_data)
-    print("Converted dataset:", dataset)  # noqa: T201
-    print("Files:", dataset.files)  # noqa: T201
+    return client.upload_new_dataset_now(dataset)
 
 
 def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:

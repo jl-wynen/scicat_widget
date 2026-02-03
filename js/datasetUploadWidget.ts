@@ -5,8 +5,9 @@ import { Tabs } from "./tabs.ts";
 import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 import { Instrument, Proposal, Techniques } from "./models.ts";
 import { FilesWidget } from "./filesWidget.ts";
-import { textButton } from "./widgets/button.ts";
+import { simpleLink } from "./widgets/output.ts";
 import { BackendComm } from "./comm.ts";
+import { UploadWidget, GatherResult } from "./widgets/upload.ts";
 
 interface WidgetModel {
     initial: object;
@@ -21,7 +22,11 @@ interface WidgetModel {
 async function render({ model, el }: RenderProps<WidgetModel>) {
     const comm = new BackendComm(model);
 
-    const [tabs, datasetWidget] = createTabs(model, model.get("scicatUrl"), comm);
+    const [tabs, datasetWidget, filesWidget, attachmentsWidget] = createTabs(
+        model,
+        model.get("scicatUrl"),
+        comm,
+    );
 
     const initial = model.get("initial") as any;
     if (initial && initial.hasOwnProperty("owners")) {
@@ -35,7 +40,7 @@ function createTabs(
     model: AnyModel<any>,
     scicatUrl: string,
     comm: BackendComm,
-): [Tabs, DatasetWidget, FilesWidget] {
+): [Tabs, DatasetWidget, FilesWidget, StringInputWidget] {
     const datasetLabel = document.createElement("span");
     datasetLabel.textContent = "Dataset";
 
@@ -60,17 +65,9 @@ function createTabs(
     const filesWidget = new FilesWidget(comm, nFiles);
     const attachmentsWidget = new StringInputWidget("attachments");
 
-    const uploadButton = makeUploadButton(
-        doUpload.bind(
-            null,
-            model,
-            comm,
-            datasetWidget,
-            filesWidget,
-            attachmentsWidget,
-            scicatUrl,
-        ),
-    );
+    const uploader = new UploadWidget(comm, scicatUrl, model.get("skipConfirm"), () => {
+        return gatherData(datasetWidget, filesWidget, attachmentsWidget);
+    });
 
     const tabs = new Tabs(
         [
@@ -78,131 +75,36 @@ function createTabs(
             { label: filesLabel, element: filesWidget.element },
             { label: attachmentsLabel, element: attachmentsWidget.container },
         ],
-        [makeSciCatLinkDiv(scicatUrl), uploadButton],
+        [makeSciCatLinkDiv(scicatUrl), uploader.createButton()],
         scicatUrl,
     );
 
-    return [tabs, datasetWidget, filesWidget];
-}
-
-function doUpload(
-    model: AnyModel<any>,
-    comm: BackendComm,
-    datasetWidget: DatasetWidget,
-    filesWidget: FilesWidget,
-    attachmentsWidget: StringInputWidget,
-    scicatUrl: string,
-) {
-    function uploadImpl() {
-        // TODO key
-        comm.sendReqUploadDataset(
-            "TODO",
-            gatherData(datasetWidget, filesWidget, attachmentsWidget),
-        );
-    }
-
-    if (model.get("skipConfirm")) {
-        uploadImpl();
-    } else {
-        uploadConfirmDialog(uploadImpl, scicatUrl);
-    }
-}
-
-function uploadConfirmDialog(uploadImpl: () => void, scicatUrl: string) {
-    const dialog = document.createElement("dialog");
-    dialog.className = "cean-modal-dialog";
-
-    const content = document.createElement("div");
-    content.className = "cean-modal-content";
-
-    const header = document.createElement("div");
-    header.className = "cean-modal-header";
-    header.textContent = "Confirm Upload";
-
-    const body = document.createElement("div");
-    body.className = "cean-modal-body";
-    body.innerHTML = `<p>Are you sure you want to upload this dataset to
-${makeSciCatLink(scicatUrl)}?</p>
-<p class="cean-warning" style="text-align: center;">This cannot be undone!</p>
-    `;
-
-    const footer = document.createElement("div");
-    footer.className = "cean-modal-footer";
-
-    const cancelButton = textButton(
-        "Cancel",
-        () => {
-            dialog.close();
-        },
-        "Cancel upload",
-    );
-    cancelButton.classList.add("jupyter-button");
-
-    const uploadButton = textButton(
-        "Upload",
-        () => {
-            uploadImpl();
-            dialog.close();
-        },
-        "Upload dataset",
-    );
-    uploadButton.setAttribute("autofocus", "");
-    // Override default cean-button
-    uploadButton.className = "cean-upload-button jupyter-button";
-
-    footer.appendChild(cancelButton);
-    footer.appendChild(uploadButton);
-
-    content.appendChild(header);
-    content.appendChild(body);
-    content.appendChild(footer);
-    dialog.appendChild(content);
-
-    // Close on click outside
-    dialog.onclick = (event) => {
-        if (event.target === dialog) {
-            dialog.close();
-        }
-    };
-
-    // Remove from DOM when closed
-    dialog.onclose = () => {
-        dialog.remove();
-    };
-
-    document.body.appendChild(dialog);
-    dialog.showModal();
+    return [tabs, datasetWidget, filesWidget, attachmentsWidget];
 }
 
 function gatherData(
     datasetWidget: DatasetWidget,
     filesWidget: FilesWidget,
     attachmentsWidget: StringInputWidget,
-): Record<string, any> {
-    return {
-        ...datasetWidget.gatherData(),
-        files: filesWidget.gatherData(),
-        attachments: attachmentsWidget.value,
+): GatherResult {
+    const fields = datasetWidget.gatherData();
+    const files = filesWidget.gatherData();
+    const attachments = {
+        validationErrors: false,
+        data: { attachments: attachmentsWidget.value },
     };
-}
-
-function makeUploadButton(uploadFn: () => void): HTMLButtonElement {
-    const uploadButton = document.createElement("button");
-    uploadButton.textContent = "Upload dataset";
-    uploadButton.classList.add("cean-upload-button");
-    uploadButton.classList.add("jupyter-button");
-    uploadButton.addEventListener("click", uploadFn);
-    return uploadButton;
-}
-
-function makeSciCatLink(href: string): string {
-    const display = href.replace(/^https?:\/\/|\/$/g, "");
-    return `<a href="${href}" target=_blank>${display}</a>`;
+    return {
+        validationErrors:
+            fields.validationErrors ||
+            files.validationErrors ||
+            attachments.validationErrors,
+        data: { ...fields.data, files: files.data, attachments: attachments.data },
+    };
 }
 
 function makeSciCatLinkDiv(href: string): HTMLDivElement {
     const div = document.createElement("div");
-    div.innerHTML = makeSciCatLink(href);
+    div.innerHTML = simpleLink(href);
     return div;
 }
 
