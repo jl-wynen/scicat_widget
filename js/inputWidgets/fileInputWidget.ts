@@ -1,6 +1,7 @@
 import type { AnyModel } from "@anywidget/types";
 import { humanSize } from "../widgets/output.ts";
 import { InputWidget } from "./inputWidget.ts";
+import { iconTextButton } from "../widgets/button.ts";
 import { StringInputWidget } from "./stringInputWidget.ts";
 
 export class FileInputWidget extends InputWidget<string> {
@@ -33,18 +34,21 @@ export class FileInputWidget extends InputWidget<string> {
         });
         wrapper.appendChild(stringInput.container);
 
-        const pickerButton = document.createElement("button");
-        pickerButton.textContent = "Browse";
-        pickerButton.classList.add("cean-button");
-        pickerButton.addEventListener("click", () => {
-            model.send({
-                type: "req:browse-files",
-                payload: {
-                    key, // To identify responses for this input element.
+        wrapper.appendChild(
+            iconTextButton(
+                "folder-open",
+                "Browse",
+                () => {
+                    model.send({
+                        type: "req:browse-files",
+                        payload: {
+                            key, // To identify responses for this input element.
+                        },
+                    });
                 },
-            });
-        });
-        wrapper.appendChild(pickerButton);
+                "Browse files",
+            ),
+        );
 
         super(key, wrapper);
         this.stringInput = stringInput;

@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
 import { createFormElement } from "../forms";
 import { PersonInputWidget } from "./personInputWidget.ts";
-import { removeButton } from "../widgets/button.ts";
+import { removeButton, textButton } from "../widgets/button.ts";
 
 export class OwnersInputWidget extends InputWidget<Array<Person>> {
     ownerWidgets: Map<string, PersonInputWidget>;
@@ -75,14 +75,11 @@ function createOwnersElement(
 
     addOwner(ownerWidgets, ownersContainer);
 
-    const addOwnerButton = document.createElement("button");
-    addOwnerButton.classList.add("cean-button");
-    addOwnerButton.textContent = "Add owner";
-    addOwnerButton.title = "Add owner";
-    addOwnerButton.addEventListener("click", () => {
-        addOwner(ownerWidgets, ownersContainer);
-    });
-    container.appendChild(addOwnerButton);
+    container.appendChild(
+        textButton("Add owner", () => {
+            addOwner(ownerWidgets, ownersContainer);
+        }),
+    );
 
     return container;
 }

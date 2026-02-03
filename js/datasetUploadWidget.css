@@ -396,13 +396,32 @@ input[type="checkbox"].cean-input {
         background: var(--jp-input-hover-background);
         color: var(--jp-ui-font-color0);
     }
+
+    &[disabled="true"] {
+        background: var(--jp-input-background);
+        color: var(--jp-ui-font-color2);
+        cursor: unset;
+    }
 }
 
-.cean-button[disabled="true"] {
-    background: var(--jp-input-background);
-    color: var(--jp-ui-font-color2);
-    cursor: unset;
+.cean-button i + span {
+    /* Margin for buttons with icon and text */
+    margin-left: 0.5em;
 }
+
+button.cean-button-remove {
+    background: none;
+
+    &:hover {
+        color: var(--jp-error-color1);
+        background: none;
+    }
+
+    &[disabled="true"] {
+        visibility: hidden;
+    }
+}
+
 
 .cean-combox-dropdown {
     position: relative;
@@ -635,19 +654,6 @@ select.cean-chk-alg {
     & .cean-item-id:hover {
         color: var(--jp-content-link-color);
         text-decoration: underline;
-    }
-}
-
-button.cean-button-remove {
-    background: none;
-
-    &:hover {
-        color: var(--jp-error-color1);
-        background: none;
-    }
-
-    &[disabled="true"] {
-        visibility: hidden;
     }
 }
 

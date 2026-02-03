@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidget";
-import { removeButton } from "../widgets/button.ts";
+import { removeButton, textButton } from "../widgets/button.ts";
 import { createFormElement } from "../forms";
 
 export type ScientificMetadataItem = {
@@ -38,14 +38,11 @@ export class ScientificMetadataInputWidget extends InputWidget<
         table.appendChild(this.tableBody);
         wrap.appendChild(table);
 
-        const addButton = document.createElement("button");
-        addButton.type = "button";
-        addButton.classList.add("cean-button");
-        addButton.textContent = "Add item";
-        addButton.addEventListener("click", () => {
-            this.addNewRow();
-        });
-        wrap.appendChild(addButton);
+        wrap.appendChild(
+            textButton("Add item", () => {
+                this.addNewRow();
+            }),
+        );
 
         // Initial row
         this.addNewRow();

@@ -5,6 +5,7 @@ import { Tabs } from "./tabs.ts";
 import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 import { Instrument, Proposal, Techniques } from "./models.ts";
 import { FilesWidget } from "./filesWidget.ts";
+import { textButton } from "./widgets/button.ts";
 
 interface WidgetModel {
     initial: object;
@@ -121,21 +122,26 @@ ${makeSciCatLink(scicatUrl)}?</p>
     const footer = document.createElement("div");
     footer.className = "cean-modal-footer";
 
-    const cancelButton = document.createElement("button");
-    cancelButton.className = "jupyter-button";
-    cancelButton.textContent = "Cancel";
-    cancelButton.onclick = () => {
-        dialog.close();
-    };
+    const cancelButton = textButton(
+        "Cancel",
+        () => {
+            dialog.close();
+        },
+        "Cancel upload",
+    );
+    cancelButton.classList.add("jupyter-button");
 
-    const uploadButton = document.createElement("button");
-    uploadButton.className = "cean-upload-button jupyter-button";
+    const uploadButton = textButton(
+        "Upload",
+        () => {
+            uploadImpl();
+            dialog.close();
+        },
+        "Upload dataset",
+    );
     uploadButton.setAttribute("autofocus", "");
-    uploadButton.textContent = "Upload";
-    uploadButton.onclick = () => {
-        uploadImpl();
-        dialog.close();
-    };
+    // Override default cean-button
+    uploadButton.className = "cean-upload-button jupyter-button";
 
     footer.appendChild(cancelButton);
     footer.appendChild(uploadButton);
