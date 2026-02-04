@@ -29,6 +29,7 @@ export function iconButton(
     iconElement.className = `fa fa-${icon}`;
 
     const button = createEmptyButton(callback, title);
+    button.classList.add("cean-icon-button");
     button.appendChild(iconElement);
 
     return button;

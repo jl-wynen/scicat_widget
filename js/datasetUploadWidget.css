@@ -64,6 +64,7 @@
 }
 
 .cean-single-owner {
+    margin: 0.3em 0;
     display: grid;
     grid-template-columns: 1fr max-content;
     column-gap: 12px;
@@ -218,6 +219,7 @@ label.cean-required {
 
 .cean-tab-button-active {
     color: var(--jp-ui-font-color1);
+    background-color: var(--jp-layout-color1);
     font-weight: bold;
 }
 
@@ -305,11 +307,10 @@ input[type="checkbox"].cean-input {
 .cean-input-panel {
     background: rgba(from var(--jp-layout-color0) r g b / 0.7);
 
-    border: 1px solid rgb(0, 0, 0, 0.2);
+    border: 1px solid var(--jp-border-color2);
     border-radius: 6px;
     padding: 6px;
     margin: 0.25em 0.5em 0.25em 0.5em;
-
 }
 
 .cean-upload-button {
@@ -323,13 +324,14 @@ input[type="checkbox"].cean-input {
 }
 
 .cean-modal-dialog {
-    border: none;
+    border: 1px solid var(--jp-border-color1);
     border-radius: var(--jp-border-radius);
     box-shadow: var(--jp-elevation-z8);
     background: var(--jp-layout-color1);
     color: var(--jp-ui-font-color1);
     padding: 20px;
-    max-width: 400px;
+    min-width: 30%;
+    max-width: 50%;
     width: max-content;
 
     &::backdrop {
@@ -393,6 +395,17 @@ input[type="checkbox"].cean-input {
         color: var(--jp-ui-font-color2);
         cursor: unset;
     }
+
+    &:active {
+        box-shadow: 0 0 0 1px var(--jp-input-active-border-color);
+    }
+}
+
+.cean-icon-button {
+    &:active {
+        box-shadow: none;
+        background: var(--jp-input-active-background);
+    }
 }
 
 .cean-button i + span {
@@ -410,6 +423,10 @@ button.cean-button-remove {
 
     &[disabled="true"] {
         visibility: hidden;
+    }
+
+    &:active {
+        color: var(--jp-error-color2);
     }
 }
 
@@ -504,6 +521,14 @@ button.cean-button-remove {
     }
 }
 
+.cean-browse-files-button {
+    background: var(--jp-layout-color3);
+
+    &:hover {
+        background: var(--jp-layout-color4);
+    }
+}
+
 .cean-files-widget {
     & input {
         width: 100%;
@@ -534,7 +559,7 @@ button.cean-button-remove {
     margin: 1em 0.5em 0.5em 0.5em;
 }
 
-.cean-single-file-widget, .cean-single-relationship-widget {
+.cean-single-file-widget, .cean-single-relationship-widget, .cean-single-owner {
     background: rgb(from var(--jp-layout-color2) r g b / 0.8);
     border: 1px solid var(--jp-border-color2);
     padding: 0.5em;
@@ -542,7 +567,7 @@ button.cean-button-remove {
 
 .cean-single-relationship-widget {
     grid-template-columns: max-content 1fr max-content;
-    margin: 0.5em;
+    margin: 0.3em 0;
 }
 
 .cean-relationships {

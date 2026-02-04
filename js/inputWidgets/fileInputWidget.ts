@@ -33,16 +33,16 @@ export class FileInputWidget extends InputWidget<string> {
         });
         wrapper.appendChild(stringInput.container);
 
-        wrapper.appendChild(
-            iconTextButton(
-                "folder-open",
-                "Browse",
-                () => {
-                    comm.sendReqBrowseFiles(key, {});
-                },
-                "Browse files",
-            ),
+        const browseButton = iconTextButton(
+            "folder-open",
+            "Browse",
+            () => {
+                comm.sendReqBrowseFiles(key, {});
+            },
+            "Browse files",
         );
+        browseButton.classList.add("cean-browse-files-button");
+        wrapper.appendChild(browseButton);
 
         comm.onResInspectFile(key, (payload) => {
             this.applyInspectionResult(payload);
@@ -54,6 +54,9 @@ export class FileInputWidget extends InputWidget<string> {
         super(key, wrapper);
         this.stringInput = stringInput;
         this.comm = comm;
+
+        // Only the <input> element should have this class, not the <div> wrapper.
+        wrapper.classList.remove("cean-input");
     }
 
     destroy() {
