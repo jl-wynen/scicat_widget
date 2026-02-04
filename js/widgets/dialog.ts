@@ -25,6 +25,13 @@ export class Dialog {
             if (this.closeOnClickOutside && event.target === this._dialog) this.close();
         };
 
+        this._dialog.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" && e.shiftKey) {
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        });
+
         // Remove from DOM when closed
         this._dialog.onclose = () => {
             this._dialog.remove();

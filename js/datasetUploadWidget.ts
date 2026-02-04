@@ -34,6 +34,17 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     }
 
     el.appendChild(tabs.element);
+    el.addEventListener(
+        "keydown",
+        (e) => {
+            if (e.key === "Enter" && e.shiftKey) {
+                // Make sure that shift+enter does not re-run the notebook cell.
+                e.stopPropagation();
+                e.preventDefault();
+            }
+        },
+        true,
+    );
 }
 
 function createTabs(
