@@ -17,14 +17,18 @@ export class Dialog {
         this._footer = document.createElement("footer");
         this._footer.className = "cean-dialog-footer";
 
+        const content = document.createElement("div");
+        content.append(this._header, this._body, this._footer);
+        // Stop click in the dialog from closing the dialog:
+        content.addEventListener("click", (e) => e.stopPropagation());
+
         this._dialog = document.createElement("dialog");
         this._dialog.className = "cean-modal-dialog";
-        this._dialog.append(this._header, this._body, this._footer);
+        this._dialog.append(content);
 
         this._dialog.onclick = (event) => {
             if (this.closeOnClickOutside && event.target === this._dialog) this.close();
         };
-
         this._dialog.addEventListener("keydown", (e) => {
             if (e.key === "Enter" && e.shiftKey) {
                 e.stopPropagation();

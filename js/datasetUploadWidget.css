@@ -329,10 +329,14 @@ input[type="checkbox"].cean-input {
     box-shadow: var(--jp-elevation-z8);
     background: var(--jp-layout-color1);
     color: var(--jp-ui-font-color1);
-    padding: 20px;
+    padding: 0;
     min-width: 30%;
     max-width: 50%;
     width: max-content;
+
+    & > div {
+        padding: 1em 2em;
+    }
 
     &::backdrop {
         backdrop-filter: brightness(80%);
