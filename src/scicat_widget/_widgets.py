@@ -5,20 +5,20 @@ import os
 import pathlib
 from pathlib import Path
 from typing import Any
+from urllib.parse import quote_plus, urljoin
 
 import anywidget
 import IPython.display
 import ipywidgets
 import traitlets
-from urllib.parse import urljoin, quote_plus
 from jupyter_host_file_picker import HostFilePicker
-from scitacean import Client, File, ScicatCommError, Dataset
+from scitacean import Client, Dataset, File, ScicatCommError
 from scitacean.ontology import expands_techniques
 
 from ._logging import get_logger
 from ._model import Instrument, ProposalOverview
 from ._scicat_api import get_user_and_scicat_info
-from ._upload import upload_dataset, UploadError
+from ._upload import UploadError, upload_dataset
 
 _STATIC_PATH = pathlib.Path(__file__).parent / "_static"
 

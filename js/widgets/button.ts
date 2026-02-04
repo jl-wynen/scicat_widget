@@ -47,7 +47,7 @@ export function removeButton(callback: () => void): HTMLButtonElement {
 }
 
 /**
- * Createa a button with an icon and text.
+ * Create a button with an icon and text.
  * @param icon Name of a Fontawesome icon.
  * @param text Button text.
  * @param callback Callback to be invoked when the button is clicked.
