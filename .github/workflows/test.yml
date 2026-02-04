@@ -1,0 +1,35 @@
+name: Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      os-variant:
+        default: 'ubuntu-24.04'
+        type: string
+        description: 'Operating system'
+      python-version:
+        type: string
+        description: 'Python interpreter version'
+  workflow_call:
+    inputs:
+      os-variant:
+        default: 'ubuntu-24.04'
+        type: string
+      python-version:
+        type: string
+
+jobs:
+  tests:
+    name: Tests ${{ inputs.os-variant }} py${{ inputs.python-version }}
+    runs-on: ${{ inputs.os-variant }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "${{ inputs.python-version }}"
+      - name: Pin Python version
+        run: uv python pin ${{ inputs.python-version }}
+      - run: uv run --group=test pytest

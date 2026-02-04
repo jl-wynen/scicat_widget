@@ -1,0 +1,49 @@
+name: CI
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  formatting:
+    name: Formatting and static analysis
+    runs-on: ubuntu-slim
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+      - name: Install prek
+        run: uv tool install prek
+      - name: Install Javascript dependencies
+        run: npm install
+      - run: prek run -a
+
+  type-checking:
+    name: Type checking
+    needs: formatting
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v6
+      - name: Install Javascript dependencies
+        run: npm install
+      - name: Typecheck TypeScript
+        run: npm run typecheck
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+      - name: Typecheck Python
+        run: uv run --group=dev python -m mypy .
+
+# TODO add tests
+#  tests:
+#    name: Tests
+#    needs: formatting
+#    uses: ./.github/workflows/test.yml
+#    with:
+#      os-variant: ubuntu-24.04
+#      python-version: '3.11'

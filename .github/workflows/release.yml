@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  release:
+    types: [ published ]
+  workflow_dispatch:
+
+jobs:
+  build_wheel:
+    name: Wheel
+    runs-on: ubuntu-24.04
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # history required build tool can determine version
+
+      - name: Install Node
+        uses: actions/setup-node@v6
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+
+      - name: Build wheel
+        run: uv build
+
+      - name: Upload wheel
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+
+  upload_packages:
+    name: Deploy packages
+    needs: [ build_wheel ]
+    runs-on: ubuntu-24.04
+    environment:
+      name: release
+      url: https://pypi.org/p/scicat_widget
+    permissions:
+      id-token: write
+    if: github.event_name == 'release' && github.event.action == 'published'
+
+    steps:
+      - uses: actions/download-artifact@v4
+      - uses: pypa/gh-action-pypi-publish@v1.13.0
+        with:
+          attestations: true
