@@ -4,6 +4,7 @@ from typing import Any
 
 from pydantic import BaseModel, ValidationError
 from scitacean import PID, Client, Dataset, File, model
+from pydantic import BaseModel, ValidationError
 
 
 def upload_dataset(
