@@ -330,7 +330,7 @@ input[type="checkbox"].cean-input {
     background: var(--jp-layout-color1);
     color: var(--jp-ui-font-color1);
     padding: 0;
-    min-width: 30%;
+    min-width: calc(min(30%, 30em));
     max-width: 50%;
     width: max-content;
 
