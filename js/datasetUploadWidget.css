@@ -221,15 +221,7 @@ label.cean-required {
     color: var(--jp-ui-font-color1);
     background-color: var(--jp-layout-color1);
     font-weight: bold;
-}
-
-.cean-tab-indicator {
-    position: absolute;
-    bottom: 0;
-    height: 2px;
-    background-color: #27aae1;
-    transition: all 0.2s ease;
-    pointer-events: none;
+    border-bottom: 2px solid var(--jp-brand-color1);
 }
 
 .cean-tab-content {
