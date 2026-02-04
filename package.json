@@ -13,7 +13,7 @@
         "@anywidget/types": "^0.2.0",
         "@types/validator": "^13.15.10",
         "esbuild": "^0.25.4",
-        "prettier": "3.7.4",
+        "prettier": "^3.7.4",
         "typescript": "^5.8.3"
     },
     "prettier": {
