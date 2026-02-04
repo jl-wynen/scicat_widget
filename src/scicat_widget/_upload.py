@@ -22,7 +22,7 @@ def upload_dataset(
     except ValueError as error:
         if "cannot determine source_folder" in error.args[0].lower():
             return UploadError(
-                errors=[FieldError(field="sourceFolder", error="Required")]
+                errors=[FieldError(field="sourceFolder", error="Field required")]
             )
         raise
 
@@ -71,7 +71,7 @@ def _convert_pi(pi: dict[str, str] | None) -> dict[str, str]:
     if not pi:
         return {}
     return {
-        "principal_investigator": pi.get("name", ""),
+        "investigator": pi.get("name", ""),
         "contact_email": pi.get("email", ""),
     }
 

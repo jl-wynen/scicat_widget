@@ -151,7 +151,6 @@ ${simpleLink(this.scicatUrl)}?</p>
         const closeButton = textButton(
             "Close",
             () => {
-                // TODO actually abort upload, possible?
                 this.dialog.close();
             },
             "Close dialog",
@@ -166,12 +165,11 @@ ${simpleLink(this.scicatUrl)}?</p>
         this.dialog.header.textContent = "Success";
 
         const closeButton = textButton(
-            "Abort",
+            "Close",
             () => {
-                // TODO actually abort upload, possible?
                 this.dialog.close();
             },
-            "Abort upload",
+            "Close dialog",
         );
         closeButton.setAttribute("autofocus", "");
         closeButton.classList.add("jupyter-button");
