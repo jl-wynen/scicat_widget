@@ -181,7 +181,7 @@ function createMiscPanel(
 
     const createLeft = createAndAppend.bind(null, inputWidgets, left);
     createLeft("techniques", TechniquesInputWidget, [techniques]);
-    createLeft("usedSoftware", StringInputWidget, [{ required: true }]);
+    createLeft("usedSoftware", StringListInputWidget);
     createLeft("sampleId", StringInputWidget);
 
     const createRight = createAndAppend.bind(null, inputWidgets, right);
