@@ -1,4 +1,4 @@
-import { BackendComm } from "../comm";
+import { BackendComm, FieldError, ResUploadDataset } from "../comm";
 import { simpleLink } from "./output.ts";
 import { textButton } from "./button.ts";
 import { Dialog } from "./dialog.ts";
@@ -24,6 +24,9 @@ export class UploadWidget {
         this.gatherData = gatherData;
 
         this.dialog = new Dialog();
+        this.comm.onResUploadDataset(this.key, (payload) => {
+            this.onUploadResult(payload);
+        });
     }
 
     createButton() {
@@ -49,10 +52,17 @@ export class UploadWidget {
         this.comm.sendReqUploadDataset(this.key, data);
     }
 
+    private onUploadResult(payload: ResUploadDataset) {
+        if (payload.errors !== undefined) {
+            this.showErrorDialog(payload.errors);
+        }
+    }
+
     private showConfirmationDialog(
         data: Record<string, any>,
         validationErrors: boolean,
     ) {
+        this.dialog.closeOnClickOutside = true;
         this.dialog.header.textContent = "Confirm Upload";
 
         let content = `<p>Are you sure you want to upload this dataset to
@@ -113,17 +123,38 @@ ${simpleLink(this.scicatUrl)}?</p>
         this.dialog.footer.replaceChildren(abortButton);
     }
 
-    private showErrorDialog() {
+    private showErrorDialog(errors: FieldError[]) {
         this.dialog.closeOnClickOutside = true;
         this.dialog.header.textContent = "Error";
 
+        const intro = document.createElement("p");
+        intro.textContent = "There were errors during the upload:";
+
+        const list = document.createElement("ul");
+        list.classList.add("cean-validation-error-list");
+        for (const error of errors) {
+            const name = document.createElement("strong");
+            name.textContent = error.field;
+            const message = document.createElement("span");
+            message.textContent = error.error;
+            const item = document.createElement("li");
+            item.append(name, message);
+            list.appendChild(item);
+        }
+
+        const detail = document.createElement("p");
+        detail.textContent =
+            "The dataset was not uploaded. Please fix the listed fields and try again.";
+
+        this.dialog.body.replaceChildren(intro, list, detail);
+
         const closeButton = textButton(
-            "Abort",
+            "Close",
             () => {
                 // TODO actually abort upload, possible?
                 this.dialog.close();
             },
-            "Abort upload",
+            "Close dialog",
         );
         closeButton.setAttribute("autofocus", "");
         closeButton.classList.add("jupyter-button");

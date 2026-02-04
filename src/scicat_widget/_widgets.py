@@ -12,13 +12,13 @@ import ipywidgets
 import traitlets
 from pydantic import ValidationError
 from jupyter_host_file_picker import HostFilePicker
-from scitacean import Client, File, ScicatCommError
+from scitacean import Client, File, ScicatCommError, Dataset
 from scitacean.ontology import expands_techniques
 
 from ._logging import get_logger
 from ._model import Instrument, ProposalOverview
 from ._scicat_api import get_user_and_scicat_info
-from ._upload import upload_dataset
+from ._upload import upload_dataset, UploadError
 
 _STATIC_PATH = pathlib.Path(__file__).parent / "_static"
 
@@ -194,13 +194,17 @@ def _browse_files(
 def _upload_dataset(
     widget: DatasetUploadWidget, key: str, payload: dict[str, object]
 ) -> None:
-    try:
-        dataset = upload_dataset(widget.client, payload)
-    except ValidationError as error:
-        widget.send(
-            {"type": "res:upload-dataset", "key": key, "payload": {"error": str(error)}}
-        )
-        return
+    match upload_dataset(widget.client, payload):
+        case Dataset() as ds:
+            pass  # TODO
+        case UploadError() as error:
+            widget.send(
+                {
+                    "type": "res:upload-dataset",
+                    "key": key,
+                    "payload": error.model_dump(),
+                }
+            )
 
 
 _EVENT_HANDLERS = {

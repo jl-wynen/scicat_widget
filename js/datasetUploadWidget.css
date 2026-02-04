@@ -680,6 +680,13 @@ select.cean-chk-alg {
     display: none;
 }
 
+.cean-validation-error-list {
+    & strong {
+        color: var(--jp-error-color2);
+        margin-right: 0.5em;
+    }
+}
+
 .cean-spinner {
     width: 48px;
     height: 48px;

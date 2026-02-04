@@ -19,6 +19,15 @@ export type ResBrowseFiles = {
 
 export type ReqUploadDataset = Record<string, any>;
 
+export type FieldError = {
+    field: string;
+    error: string;
+};
+
+export type ResUploadDataset = {
+    errors?: FieldError[];
+};
+
 export class BackendComm {
     private readonly model: AnyModel<any>;
     private callbacks = new Map<string, Map<string, (payload: any) => void>>();
@@ -65,6 +74,10 @@ export class BackendComm {
 
     sendReqUploadDataset(key: string, payload: ReqUploadDataset) {
         this.model.send({ type: "req:upload-dataset", key, payload });
+    }
+
+    onResUploadDataset(key: string, callback: (payload: ResBrowseFiles) => void) {
+        this.getForMethod("res:upload-dataset").set(key, callback);
     }
 
     private getForMethod(method: string) {

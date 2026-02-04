@@ -38,7 +38,7 @@ export class PersonInputWidget extends InputWidget<Person> {
             name: nameVal ?? "",
             email: emailVal ?? "",
         };
-        if (orcidVal !== null && orcidVal !== undefined && orcidVal !== "") {
+        if (orcidVal !== null && orcidVal !== "") {
             person.orcid = orcidVal;
         }
         return person;

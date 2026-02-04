@@ -1,11 +1,39 @@
+from __future__ import annotations
+
 from typing import Any
 
+from pydantic import BaseModel, ValidationError
 from scitacean import PID, Client, Dataset, File, model
 
 
-def upload_dataset(client: Client, widget_data: dict[str, object]) -> Dataset:
+def upload_dataset(
+    client: Client, widget_data: dict[str, object]
+) -> Dataset | UploadError:
     dataset = make_dataset_from_widget_data(widget_data)
-    return client.upload_new_dataset_now(dataset)
+    try:
+        return client.upload_new_dataset_now(dataset)
+    except ValidationError as error:
+        return UploadError(
+            errors=[
+                FieldError(field=err["loc"][0], error=err["msg"])
+                for err in error.errors()
+            ]
+        )
+    except ValueError as error:
+        if "cannot determine source_folder" in error.args[0].lower():
+            return UploadError(
+                errors=[FieldError(field="sourceFolder", error="Required")]
+            )
+        raise
+
+
+class FieldError(BaseModel, extra="forbid"):
+    field: str
+    error: str
+
+
+class UploadError(BaseModel, extra="forbid"):
+    errors: list[FieldError]
 
 
 def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
