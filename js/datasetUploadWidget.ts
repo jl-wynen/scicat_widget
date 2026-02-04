@@ -7,7 +7,7 @@ import { Instrument, Proposal, Techniques } from "./models.ts";
 import { FilesWidget } from "./filesWidget.ts";
 import { simpleLink } from "./widgets/output.ts";
 import { BackendComm } from "./comm.ts";
-import { UploadWidget, GatherResult } from "./widgets/upload.ts";
+import { GatherResult, UploadWidget } from "./widgets/upload.ts";
 
 interface WidgetModel {
     initial: object;
@@ -22,7 +22,7 @@ interface WidgetModel {
 async function render({ model, el }: RenderProps<WidgetModel>) {
     const comm = new BackendComm(model);
 
-    const [tabs, datasetWidget, filesWidget, attachmentsWidget] = createTabs(
+    const [tabs, datasetWidget, _filesWidget, _attachmentsWidget] = createTabs(
         model,
         model.get("scicatUrl"),
         comm,

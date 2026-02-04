@@ -15,7 +15,7 @@ def upload_dataset(
     except ValidationError as error:
         return UploadError(
             errors=[
-                FieldError(field=err["loc"][0], error=err["msg"])
+                FieldError(field=str(err["loc"][0]), error=err["msg"])
                 for err in error.errors()
             ]
         )
@@ -45,11 +45,11 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     converted.update(_convert_relationships(converted.pop("relationships", None)))
     converted.update(_convert_scientific_metadata(data.get("scientificMetadata", [])))
 
-    [file_meta, files] = _convert_files(data.get("files"))
+    [file_meta, files] = _convert_files(data.get("files", {}))
     converted.update(file_meta)
 
     # TODO
-    _attachments = _convert_attachments(data.get("attachments"))
+    _attachments = _convert_attachments(data.get("attachments", []))
 
     dataset = Dataset(**converted)
     dataset.add_files(*files)
@@ -85,7 +85,7 @@ def _convert_relationships(
 
     converted = [
         model.Relationship(
-            relationship=rel.get("relationship"),
+            relationship=rel.get("relationship", ""),
             pid=PID.parse(rel.get("dataset", "")),
         )
         for rel in relationships
@@ -97,7 +97,7 @@ def _convert_relationships(
         if rel.get("relationship", "") == "input"
     ]
 
-    result = {}
+    result: dict[str, Any] = {}
     if inputs:
         result["input_datasets"] = inputs
     if converted:
@@ -107,7 +107,7 @@ def _convert_relationships(
 
 def _convert_scientific_metadata(
     meta: list[dict[str, str]],
-) -> dict[str, dict[str, str]]:
+) -> dict[str, dict[str, dict[str, str]]]:
     converted = {}
     for field in meta:
         data = {"value": field.get("value", "")}
@@ -122,16 +122,18 @@ def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
         "source_folder": files.pop("sourceFolder", ""),
         "checksum_algorithm": files.pop("checksumAlgorithm", ""),
     }
-    files = [
+    converted_files = [
         File.from_local(spec["localPath"], remote_path=spec.get("remotePath", None))
         for spec in files.get("files", [])
     ]
-    return fields, files
+    return fields, converted_files
 
 
-def _convert_attachments(attachments: list[dict[str, str]] | None) -> None:
+def _convert_attachments(
+    attachments: list[dict[str, str]] | None,
+) -> list[dict[str, Any]]:
     # TODO implement
-    return
+    return []
 
 
 def _convert_field_names(widget_data: dict[str, Any]) -> dict[str, Any]:

@@ -28,10 +28,10 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     _css = _STATIC_PATH / "datasetUploadWidget.css"
 
     initial = traitlets.Dict().tag(sync=True)
-    instruments = traitlets.List().tag(sync=True)
-    proposals = traitlets.List().tag(sync=True)
-    accessGroups = traitlets.List().tag(sync=True)
-    techniques = traitlets.Dict().tag(sync=True)
+    instruments = traitlets.List(trait=traitlets.Dict()).tag(sync=True)
+    proposals = traitlets.List(trait=traitlets.Dict()).tag(sync=True)
+    accessGroups = traitlets.List(trait=traitlets.Unicode()).tag(sync=True)
+    techniques = traitlets.Dict(trait=traitlets.Dict()).tag(sync=True)
     scicatUrl = traitlets.Unicode().tag(sync=True)
     skipConfirm = traitlets.Bool().tag(sync=True)
 
@@ -47,14 +47,16 @@ class DatasetUploadWidget(anywidget.AnyWidget):
         self._aux_output_widget.add_class("cean-output-anchor")
         self._is_displaying = False
 
-    def _repr_mimebundle_(self, **kwargs: Any) -> dict[str, Any]:
+    def _repr_mimebundle_(
+        self, **kwargs: Any
+    ) -> tuple[dict[Any, Any], dict[Any, Any]] | None:
         # This is a bit hacky, but it allows us to display this DatasetUploadWidget like
         # normal while also placing the aux output widget next to it.
         if self._is_displaying:
-            return super()._repr_mimebundle_(**kwargs)  # type: ignore[no-any-return]
+            return super()._repr_mimebundle_(**kwargs)
         self._is_displaying = True
         try:
-            return ipywidgets.VBox([self, self._aux_output_widget])._repr_mimebundle_(
+            return ipywidgets.VBox([self, self._aux_output_widget])._repr_mimebundle_(  # type: ignore[no-any-return]
                 **kwargs
             )
         finally:
@@ -71,9 +73,9 @@ def dataset_upload_widget(
         proposals=[_serialize_proposal(proposal) for proposal in proposals],
         accessGroups=access_groups,
         techniques=_load_techniques(),
-        scicatUrl="https://staging.scicat.ess.eu/",  # TODO detector from client
+        scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
         skipConfirm=skip_confirm,
-        client=client,
+        client=client,  # type: ignore[arg-type]  # TODO create client here if not given
     )
     widget.on_msg(_handle_event)
     return widget
@@ -188,7 +190,7 @@ def _browse_files(
         widget._aux_output_widget.clear_output()  # clear previous picker if any
         picker = HostFilePicker()
         picker.observe(send_selected_files, names="selected")
-        IPython.display.display(picker)
+        IPython.display.display(picker)  # type: ignore[no-untyped-call]
 
 
 def _upload_dataset(
@@ -227,11 +229,11 @@ _EVENT_HANDLERS = {
 
 
 def _handle_event(
-    widget: DatasetUploadWidget, content: dict[str, object], buffer: object
+    widget: DatasetUploadWidget, content: dict[str, Any], buffer: object
 ) -> None:
     try:
-        handler = _EVENT_HANDLERS[content["type"]]  # type: ignore[arg-type]
+        handler = _EVENT_HANDLERS[content["type"]]
     except KeyError:
         get_logger().warning("Received unknown event from widget: %s", content)
         return
-    handler(widget, content["key"], content["payload"])
+    handler(widget, content["key"], content["payload"])  # type: ignore[operator]
