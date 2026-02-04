@@ -59,18 +59,12 @@ def _convert_owners(owners: list[dict[str, str]] | None) -> dict[str, str]:
     if not owners:
         return {}
 
-    names = []
-    emails = []
-    orcids = []
-    for owner in owners:
-        names.append(owner.get("name", ""))
-        emails.append(owner.get("email", ""))
-        orcids.append(owner.get("orcid", ""))
-
-    name = ";".join(names)
-    email = ";".join(emails)
-    orcid = ";".join(orcids)
-    return {"owner": name, "owner_email": email, "orcid_of_owner": orcid}
+    names = [("name", "owner"), ("email", "owner_email"), ("orcid", "orcid_of_owner")]
+    return {
+        scicat_name: ";".join(collected)
+        for short_name, scicat_name in names
+        if any(collected := [owner.get(short_name, "") for owner in owners])
+    }
 
 
 def _convert_pi(pi: dict[str, str] | None) -> dict[str, str]:
