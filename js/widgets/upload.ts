@@ -1,5 +1,5 @@
 import { BackendComm, FieldError, ResUploadDataset } from "../comm";
-import { simpleLink } from "./output.ts";
+import { simpleLink, textElement } from "./output.ts";
 import { textButton } from "./button.ts";
 import { Dialog } from "./dialog.ts";
 
@@ -55,6 +55,12 @@ export class UploadWidget {
     private onUploadResult(payload: ResUploadDataset) {
         if (payload.errors !== undefined) {
             this.showErrorDialog(payload.errors);
+        } else {
+            this.showSuccessDialog(
+                payload.datasetName,
+                payload.pid ?? "UNKNOWN",
+                payload.datasetUrl ?? "UNKNOWN",
+            );
         }
     }
 
@@ -160,9 +166,26 @@ ${simpleLink(this.scicatUrl)}?</p>
         this.dialog.footer.replaceChildren(closeButton);
     }
 
-    private showSuccessDialog() {
+    private showSuccessDialog(datasetName: string, pid: string, datasetUrl: string) {
         this.dialog.closeOnClickOutside = true;
         this.dialog.header.textContent = "Success";
+
+        const a = textElement("p", "Dataset");
+        const name = textElement("p", `"${datasetName}"`);
+        name.style.fontWeight = "bold";
+        name.style.textAlign = "center";
+        const b = textElement("p", "with ID");
+        const idDiv = document.createElement("div");
+        idDiv.style.display = "flex";
+        idDiv.style.justifyContent = "center";
+        idDiv.style.color = "var(--jp-success-color2)";
+        idDiv.append(textElement("code", pid));
+        const c = textElement("p", "was uploaded successfully. You can find it at");
+        const link = document.createElement("div");
+        link.style.display = "flex";
+        link.style.textAlign = "center";
+        link.innerHTML = simpleLink(datasetUrl);
+        this.dialog.body.replaceChildren(a, name, b, idDiv, c, link);
 
         const closeButton = textButton(
             "Close",

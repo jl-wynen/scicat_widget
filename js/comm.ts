@@ -25,6 +25,9 @@ export type FieldError = {
 };
 
 export type ResUploadDataset = {
+    datasetName: string;
+    pid?: string;
+    datasetUrl?: string;
     errors?: FieldError[];
 };
 
@@ -76,7 +79,7 @@ export class BackendComm {
         this.model.send({ type: "req:upload-dataset", key, payload });
     }
 
-    onResUploadDataset(key: string, callback: (payload: ResBrowseFiles) => void) {
+    onResUploadDataset(key: string, callback: (payload: ResUploadDataset) => void) {
         this.getForMethod("res:upload-dataset").set(key, callback);
     }
 

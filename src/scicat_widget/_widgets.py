@@ -10,7 +10,7 @@ import anywidget
 import IPython.display
 import ipywidgets
 import traitlets
-from pydantic import ValidationError
+from urllib.parse import urljoin, quote_plus
 from jupyter_host_file_picker import HostFilePicker
 from scitacean import Client, File, ScicatCommError, Dataset
 from scitacean.ontology import expands_techniques
@@ -196,7 +196,19 @@ def _upload_dataset(
 ) -> None:
     match upload_dataset(widget.client, payload):
         case Dataset() as ds:
-            pass  # TODO
+            widget.send(
+                {
+                    "type": "res:upload-dataset",
+                    "key": key,
+                    "payload": {
+                        "datasetName": ds.name,
+                        "pid": str(ds.pid),
+                        "datasetUrl": urljoin(
+                            widget.scicatUrl, "datasets/" + quote_plus(str(ds.pid))
+                        ),
+                    },
+                }
+            )
         case UploadError() as error:
             widget.send(
                 {

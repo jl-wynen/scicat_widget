@@ -16,3 +16,10 @@ export function simpleLink(href: string): string {
     const display = href.replace(/^https?:\/\/|\/$/g, "");
     return `<a href="${href}" target=_blank>${display}</a>`;
 }
+
+/** Create an element containing text. */
+export function textElement(tag: string, text: string): HTMLElement {
+    const el = document.createElement(tag);
+    el.textContent = text;
+    return el;
+}
