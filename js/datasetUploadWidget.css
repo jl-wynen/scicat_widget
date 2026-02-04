@@ -677,13 +677,39 @@ select.cean-chk-alg {
 .cean-spinner {
     width: 48px;
     height: 48px;
-    border: 5px solid #ed6c6b;
-    border-bottom-color: transparent;
+    border: 2px solid var(--jp-ui-font-color0);
     border-radius: 50%;
-    display: block;
-    margin: 0 auto;
+    display: inline-block;
+    position: relative;
     box-sizing: border-box;
-    animation: cean-rotation 1s linear infinite;
+
+    &::after {
+        content: '';
+        box-sizing: border-box;
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 4px solid transparent;
+        border-bottom-color: #ed6c6b;
+        animation: cean-rotation 1.5s linear infinite;
+    }
+
+    &::before {
+        content: '';
+        box-sizing: border-box;
+        position: absolute;
+        left: -6px;
+        top: -6px;
+        width: 56px;
+        height: 56px;
+        border-radius: 50%;
+        border: 4px solid transparent;
+        border-bottom-color: #58caed;
+        animation: cean-rotation 2.0s linear infinite;
+    }
 }
 
 @keyframes cean-rotation {
