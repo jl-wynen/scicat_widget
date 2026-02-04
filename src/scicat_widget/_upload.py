@@ -44,6 +44,7 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     converted.update(_convert_owners(data.get("owners", [])))
     converted.update(_convert_pi(data.get("principalInvestigator", {})))
     converted.update(_convert_relationships(converted.pop("relationships", None)))
+    converted.update(_convert_scientific_metadata(data.get("scientificMetadata", [])))
 
     [file_meta, files] = _convert_files(data.get("files"))
     converted.update(file_meta)
@@ -103,6 +104,18 @@ def _convert_relationships(
     if converted:
         result["relationships"] = converted
     return result
+
+
+def _convert_scientific_metadata(
+    meta: list[dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    converted = {}
+    for field in meta:
+        data = {"value": field.get("value", "")}
+        if unit := field.get("unit"):
+            data["unit"] = unit
+        converted[field["name"]] = data
+    return {"meta": converted}
 
 
 def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
