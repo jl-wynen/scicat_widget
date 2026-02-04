@@ -28,10 +28,10 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     _css = _STATIC_PATH / "datasetUploadWidget.css"
 
     initial = traitlets.Dict().tag(sync=True)
-    instruments = traitlets.List(trait=traitlets.Dict()).tag(sync=True)
-    proposals = traitlets.List(trait=traitlets.Dict()).tag(sync=True)
+    instruments = traitlets.List(trait=traitlets.Any()).tag(sync=True)
+    proposals = traitlets.List(trait=traitlets.Any()).tag(sync=True)
     accessGroups = traitlets.List(trait=traitlets.Unicode()).tag(sync=True)
-    techniques = traitlets.Dict(trait=traitlets.Dict()).tag(sync=True)
+    techniques = traitlets.Dict(trait=traitlets.Any()).tag(sync=True)
     scicatUrl = traitlets.Unicode().tag(sync=True)
     skipConfirm = traitlets.Bool().tag(sync=True)
 
