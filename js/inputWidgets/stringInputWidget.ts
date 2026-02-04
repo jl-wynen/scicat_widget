@@ -14,12 +14,22 @@ export class StringInputWidget extends InputWidget<string> {
         super(key, element, args.required, args.validator);
 
         element.addEventListener("blur", () => this.updated(), true);
-        element.addEventListener("keydown", (ev) => {
-            const kev = ev as KeyboardEvent;
-            if (kev.key === "Enter" && element.tagName.toLowerCase() === "input") {
-                this.updated();
-            }
-        });
+
+        if (element.tagName.toLowerCase() === "input") {
+            element.addEventListener("keydown", (e) => {
+                if ((e as KeyboardEvent).key === "Enter") {
+                    this.updated();
+                }
+            });
+        } else {
+            element.addEventListener("keydown", (e) => {
+                if ((e as KeyboardEvent).key === "Enter") {
+                    // Do not handle the event upstream but use the <textarea>
+                    // default to insert a line break.
+                    e.stopPropagation();
+                }
+            });
+        }
     }
 
     get value(): string | null {
@@ -41,7 +51,6 @@ export class StringInputWidget extends InputWidget<string> {
 
 function makeStringElement(multiLine: boolean): HTMLInputElement | HTMLTextAreaElement {
     if (multiLine) {
-        // TODO enter does not insert new line
         return createFormElement("textarea") as HTMLTextAreaElement;
     } else {
         const element = createFormElement("input") as HTMLInputElement;
