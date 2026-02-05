@@ -15,17 +15,30 @@ export class AttachmentsWidget {
         this.comm = comm;
         this.nAttachmentsTabElement = nAttachmentsTabElement;
 
-        const addButton = document.createElement("button");
-        addButton.onclick = () => this.addAttachmentWidget();
+        const [newPathLabel, newPathWidget] = createInputWithLabel(
+            crypto.randomUUID(),
+            FileInputWidget,
+            [comm],
+            "New attachment",
+        ) as [HTMLLabelElement, FileInputWidget];
+        newPathWidget.container.addEventListener("input-updated", () => {
+            if (newPathWidget.size && newPathWidget.value) {
+                this.addAttachmentWidget(newPathWidget.value);
+                newPathWidget.value = null;
+                // TODO remove file stats
+                // TODO apply file stats to att widget
+            }
+        });
+        const newPanel = document.createElement("section");
+        newPanel.classList.add("cean-input-panel");
+        newPanel.append(newPathLabel, newPathWidget.container);
 
         this.attachmentsGrid = document.createElement("section");
-        this.attachmentsGrid.classList.add("cean-attachments-grid");
+        this.attachmentsGrid.classList.add("cean-attachments-grid", "cean-input-panel");
 
         this.element = document.createElement("div");
         this.element.classList.add("cean-attachments-widget");
-        this.element.append(addButton, this.attachmentsGrid);
-
-        this.addAttachmentWidget();
+        this.element.append(newPanel, this.attachmentsGrid);
     }
 
     gatherData(): GatherResult {
@@ -39,8 +52,8 @@ export class AttachmentsWidget {
         return { validationErrors: false, data };
     }
 
-    private addAttachmentWidget() {
-        const widget = new SingleAttachmentWidget(this.comm, () =>
+    private addAttachmentWidget(path: string) {
+        const widget = new SingleAttachmentWidget(this.comm, path, () =>
             this.removeAttachmentWidget(widget),
         );
         this.attachmentsGrid.appendChild(widget.element);
@@ -54,10 +67,6 @@ export class AttachmentsWidget {
             this.attachmentWidgets.splice(index, 1);
         }
         widget.element.remove();
-
-        if (this.attachmentWidgets.length === 0) {
-            this.addAttachmentWidget();
-        }
     }
 }
 
@@ -69,7 +78,7 @@ class SingleAttachmentWidget {
     private readonly imageContainer: HTMLDivElement;
     private readonly removeButton: HTMLButtonElement;
 
-    constructor(comm: BackendComm, onRemove: () => void) {
+    constructor(comm: BackendComm, path: string, onRemove: () => void) {
         this.element = document.createElement("div");
         this.element.id = this.key;
         this.element.classList.add("cean-single-attachment-widget");
@@ -82,7 +91,7 @@ class SingleAttachmentWidget {
         const [captionLabel, captionInput] = createInputWithLabel(
             `${this.key}_caption`,
             StringInputWidget,
-            [],
+            [{ required: true }],
             "Caption",
         );
         this.captionInput = captionInput as StringInputWidget;
@@ -95,11 +104,14 @@ class SingleAttachmentWidget {
             "File",
         );
         this.fileInput = fileInput as FileInputWidget;
+        this.fileInput.value = path;
         this.element.append(fileLabel, this.fileInput.container);
 
         this.imageContainer = document.createElement("div");
         this.imageContainer.classList.add("cean-attachment-image-container");
         this.element.appendChild(this.imageContainer);
+
+        // TODO load and display attachment
     }
 
     get path(): string | null {
