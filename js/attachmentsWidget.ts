@@ -1,5 +1,8 @@
 import { BackendComm } from "./comm.ts";
 import { GatherResult } from "./widgets/upload.ts";
+import { FileInputWidget, StringInputWidget } from "./inputWidgets.ts";
+import { removeButton } from "./widgets/button.ts";
+import { createInputWithLabel } from "./forms.ts";
 
 export class AttachmentsWidget {
     readonly element: HTMLDivElement;
@@ -26,23 +29,19 @@ export class AttachmentsWidget {
     }
 
     gatherData(): GatherResult {
+        const data = this.attachmentWidgets
+            .map((widget) => ({
+                caption: widget.caption,
+                path: widget.path,
+            }))
+            .filter((a) => a.path !== null);
         // TODO validation
-        return { validationErrors: false, data: {} };
+        return { validationErrors: false, data };
     }
 
     private addAttachmentWidget() {
-        const widget = new SingleAttachmentWidget(
-            this.comm,
-            () => {
-                if (
-                    widget ===
-                        this.attachmentWidgets[this.attachmentWidgets.length - 1] &&
-                    widget.path !== null
-                ) {
-                    this.addAttachmentWidget();
-                }
-            },
-            () => this.removeAttachmentWidget(widget),
+        const widget = new SingleAttachmentWidget(this.comm, () =>
+            this.removeAttachmentWidget(widget),
         );
         this.attachmentsGrid.appendChild(widget.element);
         this.attachmentWidgets.push(widget);
@@ -65,10 +64,49 @@ export class AttachmentsWidget {
 class SingleAttachmentWidget {
     readonly key: string = crypto.randomUUID();
     readonly element: HTMLDivElement;
+    private readonly captionInput: StringInputWidget;
+    private readonly fileInput: FileInputWidget;
+    private readonly imageContainer: HTMLDivElement;
+    private readonly removeButton: HTMLButtonElement;
 
-    constructor(comm: BackendComm, onChange: () => void, onRemove: () => void) {
+    constructor(comm: BackendComm, onRemove: () => void) {
         this.element = document.createElement("div");
         this.element.id = this.key;
         this.element.classList.add("cean-single-attachment-widget");
+
+        this.removeButton = removeButton(() => {
+            onRemove();
+        });
+        this.element.appendChild(this.removeButton);
+
+        const [captionLabel, captionInput] = createInputWithLabel(
+            `${this.key}_caption`,
+            StringInputWidget,
+            [],
+            "Caption",
+        );
+        this.captionInput = captionInput as StringInputWidget;
+        this.element.append(captionLabel, this.captionInput.container);
+
+        const [fileLabel, fileInput] = createInputWithLabel(
+            `${this.key}_file`,
+            FileInputWidget,
+            [comm],
+            "File",
+        );
+        this.fileInput = fileInput as FileInputWidget;
+        this.element.append(fileLabel, this.fileInput.container);
+
+        this.imageContainer = document.createElement("div");
+        this.imageContainer.classList.add("cean-attachment-image-container");
+        this.element.appendChild(this.imageContainer);
+    }
+
+    get path(): string | null {
+        return this.fileInput.value;
+    }
+
+    get caption(): string | null {
+        return this.captionInput.value;
     }
 }

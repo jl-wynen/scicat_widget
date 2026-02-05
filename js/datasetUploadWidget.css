@@ -695,9 +695,33 @@ select.cean-chk-alg {
     border: 1px solid var(--jp-border-color1);
     background-color: var(--jp-layout-color2);
     border-radius: 4px;
+    padding: 0.4em;
     display: flex;
-    align-items: center;
-    justify-content: center;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+
+    & .cean-button-remove {
+        position: absolute;
+        top: 2px;
+        right: 4px;
+    }
+
+    & label {
+        font-size: 0.85em;
+    }
+
+    & .cean-attachment-image-container {
+        flex-grow: 1;
+        border: 1px dashed var(--jp-border-color2);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+        background-color: var(--jp-layout-color1);
+    }
 }
 
 .cean-spinner {
