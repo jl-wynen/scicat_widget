@@ -11,7 +11,7 @@ import { BackendComm } from "./comm.ts";
 import { GatherResult } from "./widgets/upload.ts";
 
 export class FilesWidget {
-    element: HTMLDivElement;
+    readonly element: HTMLDivElement;
     private readonly comm: BackendComm;
     private readonly fileWidgets: SingleFileWidget[] = [];
     private readonly sourceFolderInput: InputWidget<string>;

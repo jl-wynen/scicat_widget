@@ -2,12 +2,12 @@ import type { AnyModel, RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
 import { DatasetWidget } from "./datasetWidget.ts";
 import { Tabs } from "./tabs.ts";
-import { StringInputWidget } from "./inputWidgets/stringInputWidget.ts";
 import { Instrument, Proposal, Techniques } from "./models.ts";
 import { FilesWidget } from "./filesWidget.ts";
 import { simpleLink } from "./widgets/output.ts";
 import { BackendComm } from "./comm.ts";
 import { GatherResult, UploadWidget } from "./widgets/upload.ts";
+import { AttachmentsWidget } from "./attachmentsWidget.ts";
 
 interface WidgetModel {
     initial: object;
@@ -51,21 +51,12 @@ function createTabs(
     model: AnyModel<any>,
     scicatUrl: string,
     comm: BackendComm,
-): [Tabs, DatasetWidget, FilesWidget, StringInputWidget] {
+): [Tabs, DatasetWidget, FilesWidget, AttachmentsWidget] {
     const datasetLabel = document.createElement("span");
     datasetLabel.textContent = "Dataset";
 
-    const filesLabel = document.createElement("div");
-    const filesSpan = document.createElement("span");
-    filesSpan.textContent = "Files";
-    filesLabel.appendChild(filesSpan);
-    const nFiles = document.createElement("span");
-    nFiles.textContent = "(0)";
-    nFiles.style.marginLeft = "0.5em";
-    filesLabel.appendChild(nFiles);
-
-    const attachmentsLabel = document.createElement("span");
-    attachmentsLabel.textContent = "Attachments";
+    const [filesLabel, nFiles] = createTabLabelWithCount("Files");
+    const [attachmentsLabel, nAttachments] = createTabLabelWithCount("Attachments");
 
     const datasetWidget = new DatasetWidget(
         model.get("proposals"),
@@ -74,7 +65,7 @@ function createTabs(
         model.get("techniques"),
     );
     const filesWidget = new FilesWidget(comm, nFiles);
-    const attachmentsWidget = new StringInputWidget("attachments");
+    const attachmentsWidget = new AttachmentsWidget(comm, nAttachments);
 
     const uploader = new UploadWidget(comm, scicatUrl, model.get("skipConfirm"), () => {
         return gatherData(datasetWidget, filesWidget, attachmentsWidget);
@@ -84,7 +75,7 @@ function createTabs(
         [
             { label: datasetLabel, element: datasetWidget.element },
             { label: filesLabel, element: filesWidget.element },
-            { label: attachmentsLabel, element: attachmentsWidget.container },
+            { label: attachmentsLabel, element: attachmentsWidget.element },
         ],
         [makeSciCatLinkDiv(scicatUrl), uploader.createButton()],
         scicatUrl,
@@ -93,17 +84,26 @@ function createTabs(
     return [tabs, datasetWidget, filesWidget, attachmentsWidget];
 }
 
+function createTabLabelWithCount(text: string): [HTMLDivElement, HTMLSpanElement] {
+    const textSpan = document.createElement("span");
+    textSpan.textContent = text;
+    const countSpan = document.createElement("span");
+    countSpan.textContent = "(0)";
+    countSpan.style.marginLeft = "0.5em";
+
+    const label = document.createElement("div");
+    label.append(textSpan, countSpan);
+    return [label, countSpan];
+}
+
 function gatherData(
     datasetWidget: DatasetWidget,
     filesWidget: FilesWidget,
-    attachmentsWidget: StringInputWidget,
+    attachmentsWidget: AttachmentsWidget,
 ): GatherResult {
     const fields = datasetWidget.gatherData();
     const files = filesWidget.gatherData();
-    const attachments = {
-        validationErrors: false,
-        data: { attachments: attachmentsWidget.value },
-    };
+    const attachments = attachmentsWidget.gatherData();
     return {
         validationErrors:
             fields.validationErrors ||
