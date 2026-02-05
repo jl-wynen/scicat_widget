@@ -683,6 +683,23 @@ select.cean-chk-alg {
     }
 }
 
+.cean-attachments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(15em, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+.cean-single-attachment-widget {
+    aspect-ratio: 1 / 1;
+    border: 1px solid var(--jp-border-color1);
+    background-color: var(--jp-layout-color2);
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .cean-spinner {
     width: 48px;
     height: 48px;
