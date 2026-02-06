@@ -23,7 +23,7 @@ export class Tabs {
         });
 
         insertExtraTopContent(rightContainer, right);
-        this.selectTab(2); // TODO set to 0
+        this.selectTab(0);
     }
 
     private selectTab(index: number) {

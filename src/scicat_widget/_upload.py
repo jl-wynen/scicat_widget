@@ -121,7 +121,6 @@ def _convert_scientific_metadata(
 def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
     fields = {
         "source_folder": files.pop("sourceFolder", ""),
-        "checksum_algorithm": files.pop("checksumAlgorithm", ""),
     }
     converted_files = [
         File.from_local(spec["localPath"], remote_path=spec.get("remotePath", None))
