@@ -48,11 +48,12 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     [file_meta, files] = _convert_files(data.get("files", {}))
     converted.update(file_meta)
 
-    # TODO
-    _attachments = _convert_attachments(data.get("attachments", []))
+    attachments = _convert_attachments(data.get("attachments", {}))
 
     dataset = Dataset(**converted)
     dataset.add_files(*files)
+    for attachment in attachments:
+        dataset.add_attachment(attachment["path"], caption=attachment["caption"])
     return dataset
 
 
@@ -130,10 +131,12 @@ def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
 
 
 def _convert_attachments(
-    attachments: list[dict[str, str]] | None,
+    attachments: dict[str, list[dict[str, str]]],
 ) -> list[dict[str, Any]]:
-    # TODO implement
-    return []
+    return [
+        {"path": attachment.get("path", ""), "caption": attachment.get("caption", "")}
+        for attachment in attachments.get("attachments", [])
+    ]
 
 
 def _convert_field_names(widget_data: dict[str, Any]) -> dict[str, Any]:

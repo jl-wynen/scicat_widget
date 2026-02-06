@@ -41,14 +41,18 @@ export class AttachmentsWidget {
     }
 
     gatherData(): GatherResult {
-        const data = this.attachmentWidgets
-            .map((widget) => ({
-                caption: widget.caption,
-                path: widget.path,
-            }))
-            .filter((a) => a.path !== null);
-        // TODO validation
-        return { validationErrors: false, data };
+        const attachmentsData = [];
+        for (const widget of this.attachmentWidgets) {
+            if (widget.isValid()) {
+                attachmentsData.push({
+                    caption: widget.caption,
+                    path: widget.path,
+                });
+            } else {
+                return { validationErrors: true, data: {} };
+            }
+        }
+        return { validationErrors: false, data: { attachments: attachmentsData } };
     }
 
     private addAttachmentWidget(path: string) {
@@ -131,6 +135,16 @@ class SingleAttachmentWidget {
 
     get caption(): string | null {
         return this.captionInput.value;
+    }
+
+    isValid(): boolean {
+        return (
+            !this.imageContainer.classList.contains("cean-error") &&
+            this.path !== null &&
+            this.path !== "" &&
+            this.caption !== null &&
+            this.caption !== ""
+        );
     }
 
     private updateImage() {
