@@ -21,7 +21,6 @@ export class DatasetWidget {
     element: HTMLDivElement;
     private readonly inputWidgets: Map<string, InputWidget<any>>;
 
-    // TODO suppress shift+enter, else it re-renders the cell!
     constructor(
         proposals: [Proposal],
         instruments: [Instrument],

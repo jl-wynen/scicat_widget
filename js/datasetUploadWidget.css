@@ -683,6 +683,56 @@ select.cean-chk-alg {
     }
 }
 
+.cean-attachments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+.cean-single-attachment-widget {
+    border: 1px solid var(--jp-border-color1);
+    background-color: var(--jp-layout-color2);
+    border-radius: 4px;
+    padding: 0.4em;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+
+    & .cean-button-remove {
+        position: absolute;
+        top: 2px;
+        right: 4px;
+    }
+
+    & label {
+        font-size: 0.85em;
+    }
+
+    & .cean-attachment-image-container {
+        aspect-ratio: 1 / 1;
+        border: 1px dashed var(--jp-border-color2);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+        background-color: var(--jp-layout-color1);
+        font-size: var(--jp-ui-font-size3);
+
+        & img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    }
+
+    & .cean-attachment-image-container.cean-error {
+        color: var(--jp-error-color1);
+    }
+}
+
 .cean-spinner {
     width: 48px;
     height: 48px;

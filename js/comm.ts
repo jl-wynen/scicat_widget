@@ -1,10 +1,10 @@
 import { AnyModel } from "@anywidget/types";
 
-export type ReqInspectFilePayload = {
+export type ReqInspectFile = {
     filename: string;
 };
 
-export type ResInspectFilePayload = {
+export type ResInspectFile = {
     success: boolean;
     size?: number;
     creationTime?: string;
@@ -22,6 +22,16 @@ export type ReqUploadDataset = Record<string, any>;
 export type FieldError = {
     field: string;
     error: string;
+};
+
+export type ReqLoadImage = {
+    path: string;
+};
+
+export type ResLoadImage = {
+    image?: string;
+    caption?: string;
+    error?: string;
 };
 
 export type ResUploadDataset = {
@@ -51,11 +61,11 @@ export class BackendComm {
         });
     }
 
-    sendReqInspectFile(key: string, payload: ReqInspectFilePayload) {
+    sendReqInspectFile(key: string, payload: ReqInspectFile) {
         this.model.send({ type: "req:inspect-file", key, payload });
     }
 
-    onResInspectFile(key: string, callback: (payload: ResInspectFilePayload) => void) {
+    onResInspectFile(key: string, callback: (payload: ResInspectFile) => void) {
         this.getForMethod("res:inspect-file").set(key, callback);
     }
 
@@ -81,6 +91,18 @@ export class BackendComm {
 
     onResUploadDataset(key: string, callback: (payload: ResUploadDataset) => void) {
         this.getForMethod("res:upload-dataset").set(key, callback);
+    }
+
+    sendReqLoadImage(key: string, payload: ReqLoadImage) {
+        this.model.send({ type: "req:load-image", key, payload });
+    }
+
+    onResLoadImage(key: string, callback: (payload: ResLoadImage) => void) {
+        this.getForMethod("res:load-image").set(key, callback);
+    }
+
+    offResLoadImage(key: string) {
+        this.getForMethod("res:load-image").delete(key);
     }
 
     private getForMethod(method: string) {
