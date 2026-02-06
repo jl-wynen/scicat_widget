@@ -12,7 +12,7 @@ import IPython.display
 import ipywidgets
 import traitlets
 from jupyter_host_file_picker import HostFilePicker
-from scitacean import Client, Dataset, File, ScicatCommError
+from scitacean import Client, Dataset, File, ScicatCommError, Thumbnail
 from scitacean.ontology import expands_techniques
 
 from ._logging import get_logger
@@ -193,6 +193,26 @@ def _browse_files(
         IPython.display.display(picker)  # type: ignore[no-untyped-call]
 
 
+def _load_image(
+    widget: DatasetUploadWidget, key: str, input_payload: dict[str, str]
+) -> None:
+    path = Path(input_payload.get("path", ""))
+    try:
+        thumbnail = Thumbnail.load_file(path)
+    except FileNotFoundError:
+        payload = {"error": "File not found"}
+    else:
+        payload = {"image": thumbnail.serialize(), "caption": path.stem}
+
+    widget.send(
+        {
+            "type": "res:load-image",
+            "key": key,
+            "payload": payload,
+        }
+    )
+
+
 def _upload_dataset(
     widget: DatasetUploadWidget, key: str, payload: dict[str, object]
 ) -> None:
@@ -224,6 +244,7 @@ def _upload_dataset(
 _EVENT_HANDLERS = {
     "req:inspect-file": _inspect_file,
     "req:browse-files": _browse_files,
+    "req:load-image": _load_image,
     "req:upload-dataset": _upload_dataset,
 }
 

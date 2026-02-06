@@ -720,6 +720,16 @@ select.cean-chk-alg {
         justify-content: center;
         min-height: 0;
         background-color: var(--jp-layout-color1);
+        font-size: var(--jp-ui-font-size3);
+
+        & img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+    }
+
+    & .cean-attachment-image-container.cean-error {
+        color: var(--jp-error-color1);
     }
 }
 

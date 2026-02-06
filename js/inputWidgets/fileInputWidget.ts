@@ -2,7 +2,7 @@ import { humanSize } from "../widgets/output.ts";
 import { InputWidget } from "./inputWidget.ts";
 import { iconTextButton } from "../widgets/button.ts";
 import { StringInputWidget } from "./stringInputWidget.ts";
-import { BackendComm, ResBrowseFiles, ResInspectFilePayload } from "../comm.ts";
+import { BackendComm, ResBrowseFiles, ResInspectFile } from "../comm.ts";
 
 export class FileInputWidget extends InputWidget<string> {
     private stringInput: StringInputWidget;
@@ -15,7 +15,7 @@ export class FileInputWidget extends InputWidget<string> {
     private size_: number | null = null;
     private creationTime_: Date | null = null;
 
-    constructor(key: string, comm: BackendComm) {
+    constructor(key: string, comm: BackendComm, path?: string) {
         const wrapper = document.createElement("div");
         wrapper.classList.add("cean-file-input");
 
@@ -31,6 +31,9 @@ export class FileInputWidget extends InputWidget<string> {
                 this.inspectFile();
             }, 500);
         });
+        if (path) {
+            stringInput.value = path;
+        }
         wrapper.appendChild(stringInput.container);
 
         const browseButton = iconTextButton(
@@ -57,6 +60,11 @@ export class FileInputWidget extends InputWidget<string> {
 
         // Only the <input> element should have this class, not the <div> wrapper.
         wrapper.classList.remove("cean-input");
+
+        if (path) {
+            // Need to do this at the end so that everything is set up
+            this.inspectFile();
+        }
     }
 
     destroy() {
@@ -78,6 +86,13 @@ export class FileInputWidget extends InputWidget<string> {
 
     get creationTime(): Date | null {
         return this.creationTime_;
+    }
+
+    clear() {
+        this.stringInput.value = "";
+        this.size_ = null;
+        this.creationTime_ = null;
+        this.statusElement.replaceChildren();
     }
 
     private checkValidation(_value: string): string | null {
@@ -106,7 +121,7 @@ export class FileInputWidget extends InputWidget<string> {
         }
     }
 
-    private applyInspectionResult(result: ResInspectFilePayload) {
+    private applyInspectionResult(result: ResInspectFile) {
         this.validationResult = result.error ?? null;
         this.previousValue = this.value;
         if (result.success) {
