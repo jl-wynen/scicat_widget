@@ -1,9 +1,4 @@
-import {
-    DropdownInputWidget,
-    FileInputWidget,
-    InputWidget,
-    StringInputWidget,
-} from "./inputWidgets.ts";
+import { FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
 import { removeButton } from "./widgets/button.ts";
 import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
@@ -15,7 +10,6 @@ export class FilesWidget {
     private readonly comm: BackendComm;
     private readonly fileWidgets: SingleFileWidget[] = [];
     private readonly sourceFolderInput: InputWidget<string>;
-    private readonly algInput: InputWidget<string>;
     private nFilesTabElement: HTMLSpanElement;
     private nFilesElement!: HTMLSpanElement;
     private totalSizeElement!: HTMLSpanElement;
@@ -29,9 +23,8 @@ export class FilesWidget {
         element.classList.add("cean-files-widget");
 
         element.appendChild(this.createSummary());
-        const [generalContainer, folder, alg] = createGeneralInputs();
+        const [generalContainer, folder] = createGeneralInputs();
         this.sourceFolderInput = folder;
-        this.algInput = alg;
         element.appendChild(generalContainer);
         element.appendChild(this.createFileWidgets());
 
@@ -41,7 +34,6 @@ export class FilesWidget {
     gatherData(): GatherResult {
         const data = {
             sourceFolder: this.sourceFolderInput.value,
-            checksumAlgorithm: this.algInput.value,
             files: this.fileWidgets
                 .filter((widget) => widget.fileExists())
                 .map((widget) => {
@@ -229,11 +221,7 @@ class SingleFileWidget {
     }
 }
 
-function createGeneralInputs(): [
-    HTMLElement,
-    InputWidget<string>,
-    InputWidget<string>,
-] {
+function createGeneralInputs(): [HTMLElement, InputWidget<string>] {
     const container = document.createElement("section");
     container.style.gridTemplateColumns = "max-content 1fr";
     container.classList.add("cean-input-grid", "cean-input-panel");
@@ -246,18 +234,5 @@ function createGeneralInputs(): [
     container.appendChild(sourceFolderLabel);
     container.appendChild(sourceFolderInput.container);
 
-    const [algLabel, algInput] = createInputWithLabel(
-        "checksumAlgorithm",
-        DropdownInputWidget,
-        [CHECKSUM_ALGORITHMS],
-    );
-    algInput.container.classList.add("cean-chk-alg");
-    container.appendChild(algLabel);
-    container.appendChild(algInput.container);
-
-    return [container, sourceFolderInput, algInput];
+    return [container, sourceFolderInput];
 }
-
-// Checksum algorithms supported by Python (Scitacean) and SciCat.
-// The first one is the default.
-const CHECKSUM_ALGORITHMS = ["blake2b", "sha256", "md5"];
