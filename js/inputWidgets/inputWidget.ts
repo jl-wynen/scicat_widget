@@ -72,10 +72,10 @@ export abstract class InputWidget<T> {
      * On success, emit an `UpdateEvent` with this widget's key and current value.
      * Consumers may listen to any ancestor (the event bubbles).
      */
-    updated(): void {
+    updated(userTriggered: boolean = true): void {
         if (this.validate()) {
             this.container.dispatchEvent(
-                new UpdateEvent(this.key, this.value, { bubbles: true }),
+                new UpdateEvent(this.key, this.value, userTriggered, { bubbles: true }),
             );
         }
     }
@@ -110,13 +110,16 @@ export abstract class InputWidget<T> {
         // Call the provided handler on events:
         const listener = this.inputUpdatedListener(otherKey, handler);
         target.addEventListener("input-updated", listener);
+
         // Remove the handler when `this` is updated manually:
-        target.addEventListener(
-            "input-updated",
-            this.inputUpdatedListener(this.key, () =>
-                target.removeEventListener("input-updated", listener as EventListener),
-            ),
-        );
+        const removeListener = (e: Event) => {
+            const event = e as UpdateEvent;
+            if (event.key === this.key && event.userTriggered) {
+                target.removeEventListener("input-updated", listener);
+                target.removeEventListener("input-updated", removeListener);
+            }
+        };
+        target.addEventListener("input-updated", removeListener);
     }
 
     /**
@@ -152,11 +155,21 @@ function wrapInputElement(input: HTMLElement): [HTMLDivElement, HTMLDivElement] 
 export class UpdateEvent extends Event {
     readonly #key: string;
     readonly #value: unknown;
+    /** True if the user triggered this event directly by modifying a widget.
+     * False if the event was triggered by an automatic update.
+     */
+    readonly #userTriggered: boolean;
 
-    constructor(key: string, value: unknown, options?: EventInit) {
+    constructor(
+        key: string,
+        value: unknown,
+        userTriggered: boolean,
+        options?: EventInit,
+    ) {
         super("input-updated", options);
         this.#key = key;
         this.#value = value;
+        this.#userTriggered = userTriggered;
     }
 
     get key(): string {
@@ -165,6 +178,10 @@ export class UpdateEvent extends Event {
 
     get value(): unknown {
         return this.#value;
+    }
+
+    get userTriggered(): boolean {
+        return this.#userTriggered;
     }
 
     value_as<T>(): T | null {

@@ -7,6 +7,10 @@
         "label": "Checksum algorithm",
         "description": "Algorithm for computing checksums of files. The default is a good choice for most cases."
     },
+    "contactEmail": {
+        "label": "Contact email",
+        "description": "Email address of the person to contact about the dataset."
+    },
     "creationLocation": {
         "label": "Creation location",
         "description": "Identifier for the place where data was taken, usually of the form 'site:facility:instrument'."
@@ -49,7 +53,7 @@
     },
     "principalInvestigator": {
         "label": "PI",
-        "description": "Principal investigator and contact person for the dataset."
+        "description": "Principal investigator of the proposal."
     },
     "proposalId": {
         "label": "Proposal",

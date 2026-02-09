@@ -26,6 +26,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         model,
         model.get("scicatUrl"),
         comm,
+        el,
     );
 
     const initial = model.get("initial") as any;
@@ -51,6 +52,7 @@ function createTabs(
     model: AnyModel<any>,
     scicatUrl: string,
     comm: BackendComm,
+    container: HTMLElement,
 ): [Tabs, DatasetWidget, FilesWidget, AttachmentsWidget] {
     const datasetLabel = document.createElement("span");
     datasetLabel.textContent = "Dataset";
@@ -64,7 +66,12 @@ function createTabs(
         model.get("accessGroups"),
         model.get("techniques"),
     );
-    const filesWidget = new FilesWidget(comm, nFiles);
+    const filesWidget = new FilesWidget(
+        comm,
+        nFiles,
+        model.get("instruments"),
+        container,
+    );
     const attachmentsWidget = new AttachmentsWidget(comm, nAttachments);
 
     const uploader = new UploadWidget(comm, scicatUrl, model.get("skipConfirm"), () => {

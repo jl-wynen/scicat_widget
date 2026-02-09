@@ -42,17 +42,15 @@ export class AttachmentsWidget {
 
     gatherData(): GatherResult {
         const attachmentsData = [];
+        let validationErrors = false;
         for (const widget of this.attachmentWidgets) {
-            if (widget.isValid()) {
-                attachmentsData.push({
-                    caption: widget.caption,
-                    path: widget.path,
-                });
-            } else {
-                return { validationErrors: true, data: {} };
-            }
+            attachmentsData.push({
+                caption: widget.caption,
+                path: widget.path,
+            });
+            validationErrors = validationErrors || !widget.isValid();
         }
-        return { validationErrors: false, data: { attachments: attachmentsData } };
+        return { validationErrors, data: { attachments: attachmentsData } };
     }
 
     private addAttachmentWidget(path: string) {

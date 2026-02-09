@@ -41,7 +41,6 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     converted = _convert_field_names(data)
 
     converted.update(_convert_owners(data.get("owners", [])))
-    converted.update(_convert_pi(data.get("principalInvestigator", {})))
     converted.update(_convert_relationships(converted.pop("relationships", None)))
     converted.update(_convert_scientific_metadata(data.get("scientificMetadata", [])))
 
@@ -66,15 +65,6 @@ def _convert_owners(owners: list[dict[str, str]] | None) -> dict[str, str]:
         scicat_name: ";".join(collected)
         for short_name, scicat_name in names
         if any(collected := [owner.get(short_name, "") for owner in owners])
-    }
-
-
-def _convert_pi(pi: dict[str, str] | None) -> dict[str, str]:
-    if not pi:
-        return {}
-    return {
-        "investigator": pi.get("name", ""),
-        "contact_email": pi.get("email", ""),
     }
 
 
@@ -144,6 +134,5 @@ def _convert_field_names(widget_data: dict[str, Any]) -> dict[str, Any]:
         for field in Dataset.fields()
         if (value := widget_data.get(field.scicat_name)) is not None
     }
-    # Not handled by Dataset.fields:
-    converted["meta"] = widget_data.get("scientificMetadata", {})
+    converted["investigator"] = converted.get("principal_investigator", None)
     return converted

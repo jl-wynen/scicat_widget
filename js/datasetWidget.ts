@@ -4,7 +4,6 @@ import {
     DatetimeInputWidget,
     InputWidget,
     OwnersInputWidget,
-    PrincipalInvestigatorInputWidget,
     RelationshipsInputWidget,
     ScientificMetadataInputWidget,
     StringInputWidget,
@@ -15,7 +14,7 @@ import { createInputWithLabel } from "./forms.ts";
 import { Instrument, Proposal, Techniques } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 import { GatherResult } from "./widgets/upload.ts";
-import { validateOrcid } from "./validation.ts";
+import { validateEmail } from "./validation.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;
@@ -27,15 +26,21 @@ export class DatasetWidget {
         accessGroups: [string],
         techniques: Techniques,
     ) {
-        validateOrcid("");
         const container = document.createElement("div");
         container.classList.add("cean-ds");
 
         this.inputWidgets = new Map<string, InputWidget<any>>();
         container.appendChild(
-            createGeneralInfoPanel(this.inputWidgets, proposals, instruments),
+            createGeneralInfoPanel(
+                this.inputWidgets,
+                proposals,
+                instruments,
+                container,
+            ),
         );
-        container.appendChild(createOwnerPanel(this.inputWidgets, accessGroups));
+        container.appendChild(
+            createOwnerPanel(this.inputWidgets, accessGroups, proposals, container),
+        );
         container.appendChild(createMiscPanel(this.inputWidgets, techniques));
         container.appendChild(createScientificMetadataPanel(this.inputWidgets));
 
@@ -62,6 +67,7 @@ function createGeneralInfoPanel(
     inputWidgets: Map<string, InputWidget<any>>,
     proposals: [Proposal],
     instruments: [Instrument],
+    container: HTMLElement,
 ): HTMLElement {
     const create = createAndAppend.bind(null, inputWidgets);
 
@@ -81,21 +87,18 @@ function createGeneralInfoPanel(
     const proposalInput = createProposalsWidget(inputWidgets, columns, proposals);
     proposalInput.container.classList.add("cean-span-3");
 
-    createInstrumentsWidget(inputWidgets, columns, instruments);
+    createInstrumentsWidget(inputWidgets, columns, instruments, proposals);
 
     let creationLocation = create(columns, "creationLocation", StringInputWidget, [
         { required: true },
     ]);
-    creationLocation.listenToWidget("instrumentId", (widget, instrumentId) => {
-        const instrument = instruments.find(
-            (instrument) => instrument.id == instrumentId,
-        );
-        if (!instrument) {
-            widget.value = "";
-        } else {
-            widget.value = `ESS:${instrument.name}`;
-        }
-    });
+    creationLocation.listenToWidget(
+        "instrumentId",
+        makeSetterForIdMatch(instruments, (instrument) => {
+            return `ESS:${instrument.name}`;
+        }),
+        container,
+    );
 
     const runRow = document.createElement("div");
     runRow.classList.add("cean-run-row");
@@ -121,45 +124,72 @@ function createGeneralInfoPanel(
 function createOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
     accessGroups: [string],
+    proposals: [Proposal],
+    container: HTMLElement,
 ): HTMLElement {
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-owner-columns");
-    columns.appendChild(createHumanOwnerPanel(inputWidgets));
-    columns.appendChild(createTechnicalOwnerPanel(inputWidgets, accessGroups));
+    columns.appendChild(createHumanOwnerPanel(inputWidgets, proposals, container));
+    columns.appendChild(
+        createTechnicalOwnerPanel(inputWidgets, accessGroups, proposals, container),
+    );
     return columns;
 }
 
 function createHumanOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
+    proposals: [Proposal],
+    container: HTMLElement,
 ): HTMLDivElement {
     const columns = document.createElement("div");
     columns.classList.add("cean-ds-human-owners", "cean-input-panel");
-    const ownersInput = createAndAppend(
-        inputWidgets,
-        columns,
-        "owners",
-        OwnersInputWidget,
-    ) as OwnersInputWidget;
-    createAndAppend(
+
+    const pi = createAndAppend(
         inputWidgets,
         columns,
         "principalInvestigator",
-        PrincipalInvestigatorInputWidget,
-        [ownersInput],
+        StringInputWidget,
+        [{ required: true }],
     );
+    pi.listenToWidget(
+        "proposalId",
+        makeSetterForIdMatch(proposals, (proposal) => {
+            return proposal.piName;
+        }),
+        container,
+    );
+    const contactEmail = createAndAppend(
+        inputWidgets,
+        columns,
+        "contactEmail",
+        StringInputWidget,
+        [{ required: true, validator: validateEmail }],
+    );
+    contactEmail.listenToWidget(
+        "proposalId",
+        makeSetterForIdMatch(proposals, (proposal) => {
+            return proposal.piEmail;
+        }),
+        container,
+    );
+
+    createAndAppend(inputWidgets, columns, "owners", OwnersInputWidget);
+
     return columns;
 }
 
 function createTechnicalOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
     accessGroups: [string],
+    proposals: [Proposal],
+    container: HTMLElement,
 ): HTMLDivElement {
     const columns = document.createElement("div");
     columns.classList.add("cean-ds-technical-owners", "cean-input-panel");
 
     const create = createAndAppend.bind(null, inputWidgets, columns);
 
-    createOwnerGroupWidget(inputWidgets, columns, accessGroups);
+    createOwnerGroupWidget(inputWidgets, columns, accessGroups, proposals, container);
     create("accessGroups", StringListInputWidget);
     create("license", StringInputWidget);
     create("isPublished", CheckboxInputWidget);
@@ -216,6 +246,7 @@ function createInstrumentsWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
     instruments: [Instrument],
+    proposals: [Proposal],
 ) {
     const instrumentChoices = instruments
         .map((instrument) => {
@@ -227,17 +258,43 @@ function createInstrumentsWidget(
         })
         .sort((a, b) => a.text.localeCompare(b.text));
 
-    createAndAppend(inputWidgets, parent, "instrumentId", ComboboxInputWidget, [
-        {
-            choices: instrumentChoices,
-            renderChoice: (choice: Choice) => {
-                const el = document.createElement("div");
-                el.textContent = choice.text;
-                return el;
+    const instrumentWidget = createAndAppend(
+        inputWidgets,
+        parent,
+        "instrumentId",
+        ComboboxInputWidget,
+        [
+            {
+                choices: instrumentChoices,
+                renderChoice: (choice: Choice) => {
+                    const el = document.createElement("div");
+                    el.textContent = choice.text;
+                    return el;
+                },
+                allowArbitrary: false,
             },
-            allowArbitrary: false,
+        ],
+    );
+
+    instrumentWidget.listenToWidget(
+        "proposalId",
+        (widget, proposalId) => {
+            const proposal = proposals.find((p) => {
+                return p.id == proposalId;
+            });
+            if (proposal) {
+                if (proposal.instrumentIds.length == 1) {
+                    widget.value = proposal.instrumentIds[0];
+                } else {
+                    widget.value = "";
+                }
+            } else {
+                widget.value = "";
+            }
         },
-    ]);
+        // Listen to `parent` because the proposal and instrument are in the same div
+        parent,
+    );
 }
 
 function createProposalsWidget(
@@ -280,22 +337,44 @@ function createOwnerGroupWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
     accessGroups: [string],
+    proposals: [Proposal],
+    container: HTMLElement,
 ): InputWidget<any> {
     const ownerChoices = accessGroups.sort().map((group) => {
         return { key: group, text: group, data: {} };
     });
 
-    return createAndAppend(inputWidgets, parent, "ownerGroup", ComboboxInputWidget, [
-        {
-            choices: ownerChoices,
-            renderChoice: (choice: Choice) => {
-                const el = document.createElement("div");
-                el.textContent = choice.text;
-                return el;
+    const ownerGroup = createAndAppend(
+        inputWidgets,
+        parent,
+        "ownerGroup",
+        ComboboxInputWidget,
+        [
+            {
+                choices: ownerChoices,
+                renderChoice: (choice: Choice) => {
+                    const el = document.createElement("div");
+                    el.textContent = choice.text;
+                    return el;
+                },
+                required: true,
             },
-            required: true,
-        },
-    ]);
+        ],
+    );
+
+    ownerGroup.listenToWidget(
+        "proposalId",
+        makeSetterForIdMatch(proposals, (proposal) => {
+            return (
+                accessGroups.find((group) => {
+                    return group == proposal.id;
+                }) ?? ""
+            );
+        }),
+        container,
+    );
+
+    return ownerGroup;
 }
 
 function createTypeWidget(
@@ -334,4 +413,20 @@ function createAndAppend(
     parent.appendChild(inputWidget.container);
     widgetsMap.set(varName, inputWidget);
     return inputWidget;
+}
+
+function makeSetterForIdMatch(
+    items: { id: string }[],
+    makeValue: (item: any) => string,
+) {
+    return (widget: InputWidget<string>, selectedId: string | null) => {
+        const item = items.find((item) => {
+            return item.id == selectedId;
+        });
+        if (item) {
+            widget.value = makeValue(item);
+        } else {
+            widget.value = "";
+        }
+    };
 }

@@ -1,6 +1,7 @@
 import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
 import { Validator } from "../validation";
+import { animateValueSet } from "../style.ts";
 
 export type Args = {
     multiLine?: boolean;
@@ -40,6 +41,7 @@ export class StringInputWidget extends InputWidget<string> {
 
     set value(v: string | null) {
         const el = this.inputElement<HTMLInputElement | HTMLTextAreaElement>();
+        animateValueSet(el);
         el.value = v ?? "";
     }
 

@@ -14,6 +14,8 @@ export type Proposal = {
     id: string;
     title: string;
     instrumentIds: [string];
+    piName: string | null;
+    piEmail: string | null;
 };
 
 export type Technique = {

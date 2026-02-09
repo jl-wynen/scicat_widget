@@ -45,11 +45,23 @@ def get_proposals(client: Client, access_groups: list[str]) -> list[ProposalOver
     # assuming the access groups match proposals (the case at ESS)
     return [
         ProposalOverview(
-            id_=p["proposalId"], title=p["title"], instrument_ids=p["instrumentIds"]
+            id_=p["proposalId"],
+            title=p["title"],
+            instrument_ids=p["instrumentIds"],
+            pi_name=_combine_pi_name(p),
+            pi_email=p.get("pi_email", None),
         )
         for p in proposals
         if p["proposalId"] in access_groups
     ]
+
+
+def _combine_pi_name(proposal: dict[str, str]) -> str | None:
+    if (pi_firstname := proposal.get("pi_firstname")) is None:
+        return None
+    if (pi_lastname := proposal.get("pi_lastname")) is None:
+        return None
+    return f"{pi_firstname} {pi_lastname}"
 
 
 def get_instruments(client: Client) -> list[Instrument]:

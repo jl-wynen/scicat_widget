@@ -4,6 +4,7 @@ import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
 import { BackendComm } from "./comm.ts";
 import { GatherResult } from "./widgets/upload.ts";
+import { Instrument } from "./models.ts";
 
 export class FilesWidget {
     readonly element: HTMLDivElement;
@@ -15,7 +16,12 @@ export class FilesWidget {
     private totalSizeElement!: HTMLSpanElement;
     private widgetsContainer!: HTMLElement;
 
-    constructor(comm: BackendComm, nFilesTabElement: HTMLSpanElement) {
+    constructor(
+        comm: BackendComm,
+        nFilesTabElement: HTMLSpanElement,
+        instruments: [Instrument],
+        topContainer: HTMLElement,
+    ) {
         this.comm = comm;
         this.nFilesTabElement = nFilesTabElement;
 
@@ -23,9 +29,12 @@ export class FilesWidget {
         element.classList.add("cean-files-widget");
 
         element.appendChild(this.createSummary());
-        const [generalContainer, folder] = createGeneralInputs();
+        const [sourceFolderSection, folder] = createSourceFolderInput(
+            instruments,
+            topContainer,
+        );
         this.sourceFolderInput = folder;
-        element.appendChild(generalContainer);
+        element.appendChild(sourceFolderSection);
         element.appendChild(this.createFileWidgets());
 
         this.element = element;
@@ -221,18 +230,55 @@ class SingleFileWidget {
     }
 }
 
-function createGeneralInputs(): [HTMLElement, InputWidget<string>] {
-    const container = document.createElement("section");
-    container.style.gridTemplateColumns = "max-content 1fr";
-    container.classList.add("cean-input-grid", "cean-input-panel");
+function createSourceFolderInput(
+    instruments: [Instrument],
+    topContainer: HTMLElement,
+): [HTMLElement, InputWidget<string>] {
+    const section = document.createElement("section");
+    section.style.gridTemplateColumns = "max-content 1fr";
+    section.classList.add("cean-input-grid", "cean-input-panel");
 
     const [sourceFolderLabel, sourceFolderInput] = createInputWithLabel(
         "sourceFolder",
         StringInputWidget,
         [{ required: true }],
     );
-    container.appendChild(sourceFolderLabel);
-    container.appendChild(sourceFolderInput.container);
+    section.appendChild(sourceFolderLabel);
+    section.appendChild(sourceFolderInput.container);
 
-    return [container, sourceFolderInput];
+    const listener = {
+        proposalId: null as string | null,
+        instrumentName: null as string | null,
+        listenToProposal(widget: InputWidget<string>, proposalId: string | null) {
+            this.proposalId = proposalId;
+            this.setSourceFolder(widget);
+        },
+        listenToInstrument(widget: InputWidget<string>, instrumentId: string | null) {
+            this.instrumentName =
+                instruments.find((i) => i.id === instrumentId)?.name ?? null;
+            this.setSourceFolder(widget);
+        },
+        setSourceFolder(widget: InputWidget<string>) {
+            if (this.proposalId && this.instrumentName) {
+                widget.value = `/ess/data/${this.instrumentName.toLowerCase()}/${this.proposalId}/upload`;
+            }
+        },
+    };
+
+    sourceFolderInput.listenToWidget(
+        "proposalId",
+        (w, p) => {
+            listener.listenToProposal(w, p as string | null);
+        },
+        topContainer,
+    );
+    sourceFolderInput.listenToWidget(
+        "instrumentId",
+        (w, p) => {
+            listener.listenToInstrument(w, p as string | null);
+        },
+        topContainer,
+    );
+
+    return [section, sourceFolderInput];
 }
