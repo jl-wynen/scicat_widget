@@ -47,7 +47,7 @@ class DatasetUploadWidget(anywidget.AnyWidget):
             techniques=_load_techniques(),
             scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
             skipConfirm=skip_confirm,
-            client=client,  # type: ignore[arg-type]  # TODO create client here if not given
+            client=client,  # TODO create client here if not given
         )
         self.client = client
 
