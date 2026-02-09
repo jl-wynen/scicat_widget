@@ -9,6 +9,8 @@ class ProposalOverview(BaseModel):
     id_: str
     title: str
     instrument_ids: list[str]
+    pi_name: str | None
+    pi_email: EmailStr | None
 
 
 class UserInfo(BaseModel):

@@ -31,9 +31,16 @@ export class DatasetWidget {
 
         this.inputWidgets = new Map<string, InputWidget<any>>();
         container.appendChild(
-            createGeneralInfoPanel(this.inputWidgets, proposals, instruments),
+            createGeneralInfoPanel(
+                this.inputWidgets,
+                proposals,
+                instruments,
+                container,
+            ),
         );
-        container.appendChild(createOwnerPanel(this.inputWidgets, accessGroups));
+        container.appendChild(
+            createOwnerPanel(this.inputWidgets, accessGroups, proposals, container),
+        );
         container.appendChild(createMiscPanel(this.inputWidgets, techniques));
         container.appendChild(createScientificMetadataPanel(this.inputWidgets));
 
@@ -60,6 +67,7 @@ function createGeneralInfoPanel(
     inputWidgets: Map<string, InputWidget<any>>,
     proposals: [Proposal],
     instruments: [Instrument],
+    container: HTMLElement,
 ): HTMLElement {
     const create = createAndAppend.bind(null, inputWidgets);
 
@@ -84,16 +92,13 @@ function createGeneralInfoPanel(
     let creationLocation = create(columns, "creationLocation", StringInputWidget, [
         { required: true },
     ]);
-    creationLocation.listenToWidget("instrumentId", (widget, instrumentId) => {
-        const instrument = instruments.find(
-            (instrument) => instrument.id == instrumentId,
-        );
-        if (!instrument) {
-            widget.value = "";
-        } else {
-            widget.value = `ESS:${instrument.name}`;
-        }
-    });
+    creationLocation.listenToWidget(
+        "instrumentId",
+        makeSetterForIdMatch(instruments, (instrument) => {
+            return `ESS:${instrument.name}`;
+        }),
+        container,
+    );
 
     const runRow = document.createElement("div");
     runRow.classList.add("cean-run-row");
@@ -119,26 +124,52 @@ function createGeneralInfoPanel(
 function createOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
     accessGroups: [string],
+    proposals: [Proposal],
+    container: HTMLElement,
 ): HTMLElement {
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-owner-columns");
-    columns.appendChild(createHumanOwnerPanel(inputWidgets));
+    columns.appendChild(createHumanOwnerPanel(inputWidgets, proposals, container));
     columns.appendChild(createTechnicalOwnerPanel(inputWidgets, accessGroups));
     return columns;
 }
 
 function createHumanOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
+    proposals: [Proposal],
+    container: HTMLElement,
 ): HTMLDivElement {
     const columns = document.createElement("div");
     columns.classList.add("cean-ds-human-owners", "cean-input-panel");
 
-    createAndAppend(inputWidgets, columns, "principalInvestigator", StringInputWidget, [
-        { required: true },
-    ]);
-    createAndAppend(inputWidgets, columns, "contactEmail", StringInputWidget, [
-        { required: true, validator: validateEmail },
-    ]);
+    const pi = createAndAppend(
+        inputWidgets,
+        columns,
+        "principalInvestigator",
+        StringInputWidget,
+        [{ required: true }],
+    );
+    pi.listenToWidget(
+        "proposalId",
+        makeSetterForIdMatch(proposals, (proposal) => {
+            return proposal.piName;
+        }),
+        container,
+    );
+    const contactEmail = createAndAppend(
+        inputWidgets,
+        columns,
+        "contactEmail",
+        StringInputWidget,
+        [{ required: true, validator: validateEmail }],
+    );
+    contactEmail.listenToWidget(
+        "proposalId",
+        makeSetterForIdMatch(proposals, (proposal) => {
+            return proposal.piEmail;
+        }),
+        container,
+    );
 
     createAndAppend(inputWidgets, columns, "owners", OwnersInputWidget);
 
@@ -329,4 +360,20 @@ function createAndAppend(
     parent.appendChild(inputWidget.container);
     widgetsMap.set(varName, inputWidget);
     return inputWidget;
+}
+
+function makeSetterForIdMatch(
+    items: { id: string }[],
+    makeValue: (item: any) => string,
+) {
+    return (widget: InputWidget<string>, selectedId: string | null) => {
+        const item = items.find((item) => {
+            return item.id == selectedId;
+        });
+        if (item) {
+            widget.value = makeValue(item);
+        } else {
+            widget.value = "";
+        }
+    };
 }
