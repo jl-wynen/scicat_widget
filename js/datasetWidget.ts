@@ -4,7 +4,6 @@ import {
     DatetimeInputWidget,
     InputWidget,
     OwnersInputWidget,
-    PrincipalInvestigatorInputWidget,
     RelationshipsInputWidget,
     ScientificMetadataInputWidget,
     StringInputWidget,
@@ -15,7 +14,7 @@ import { createInputWithLabel } from "./forms.ts";
 import { Instrument, Proposal, Techniques } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 import { GatherResult } from "./widgets/upload.ts";
-import { validateOrcid } from "./validation.ts";
+import { validateEmail } from "./validation.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;
@@ -27,7 +26,6 @@ export class DatasetWidget {
         accessGroups: [string],
         techniques: Techniques,
     ) {
-        validateOrcid("");
         const container = document.createElement("div");
         container.classList.add("cean-ds");
 
@@ -134,19 +132,16 @@ function createHumanOwnerPanel(
 ): HTMLDivElement {
     const columns = document.createElement("div");
     columns.classList.add("cean-ds-human-owners", "cean-input-panel");
-    const ownersInput = createAndAppend(
-        inputWidgets,
-        columns,
-        "owners",
-        OwnersInputWidget,
-    ) as OwnersInputWidget;
-    createAndAppend(
-        inputWidgets,
-        columns,
-        "principalInvestigator",
-        PrincipalInvestigatorInputWidget,
-        [ownersInput],
-    );
+
+    createAndAppend(inputWidgets, columns, "principalInvestigator", StringInputWidget, [
+        { required: true },
+    ]);
+    createAndAppend(inputWidgets, columns, "contactEmail", StringInputWidget, [
+        { required: true, validator: validateEmail },
+    ]);
+
+    createAndAppend(inputWidgets, columns, "owners", OwnersInputWidget);
+
     return columns;
 }
 
