@@ -87,7 +87,7 @@ function createGeneralInfoPanel(
     const proposalInput = createProposalsWidget(inputWidgets, columns, proposals);
     proposalInput.container.classList.add("cean-span-3");
 
-    createInstrumentsWidget(inputWidgets, columns, instruments);
+    createInstrumentsWidget(inputWidgets, columns, instruments, proposals);
 
     let creationLocation = create(columns, "creationLocation", StringInputWidget, [
         { required: true },
@@ -242,6 +242,7 @@ function createInstrumentsWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
     instruments: [Instrument],
+    proposals: [Proposal],
 ) {
     const instrumentChoices = instruments
         .map((instrument) => {
@@ -253,17 +254,43 @@ function createInstrumentsWidget(
         })
         .sort((a, b) => a.text.localeCompare(b.text));
 
-    createAndAppend(inputWidgets, parent, "instrumentId", ComboboxInputWidget, [
-        {
-            choices: instrumentChoices,
-            renderChoice: (choice: Choice) => {
-                const el = document.createElement("div");
-                el.textContent = choice.text;
-                return el;
+    const instrumentWidget = createAndAppend(
+        inputWidgets,
+        parent,
+        "instrumentId",
+        ComboboxInputWidget,
+        [
+            {
+                choices: instrumentChoices,
+                renderChoice: (choice: Choice) => {
+                    const el = document.createElement("div");
+                    el.textContent = choice.text;
+                    return el;
+                },
+                allowArbitrary: false,
             },
-            allowArbitrary: false,
+        ],
+    );
+
+    instrumentWidget.listenToWidget(
+        "proposalId",
+        (widget, proposalId) => {
+            const proposal = proposals.find((p) => {
+                return p.id == proposalId;
+            });
+            if (proposal) {
+                if (proposal.instrumentIds.length == 1) {
+                    widget.value = proposal.instrumentIds[0];
+                } else {
+                    widget.value = "";
+                }
+            } else {
+                widget.value = "";
+            }
         },
-    ]);
+        // Listen to `parent` because the proposal and instrument are in the same div
+        parent,
+    );
 }
 
 function createProposalsWidget(

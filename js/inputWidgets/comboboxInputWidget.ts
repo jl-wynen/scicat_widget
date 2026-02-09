@@ -154,6 +154,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
             }
         }
         this.updateDisplay();
+        this.updated(false);
     }
 
     get id(): string {
