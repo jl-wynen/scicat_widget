@@ -35,17 +35,31 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     scicatUrl = traitlets.Unicode().tag(sync=True)
     skipConfirm = traitlets.Bool().tag(sync=True)
 
-    def __init__(self, *, client: Client, **kwargs: Any) -> None:
-        super().__init__(**kwargs)
+    def __init__(self, client: Client, /, *, skip_confirm: bool = False) -> None:
+        initial, instruments, proposals, access_groups = _collect_initial_data(client)
+        super().__init__(
+            initial=initial,
+            instruments=[
+                _serialize_instrument(instrument) for instrument in instruments
+            ],
+            proposals=[_serialize_proposal(proposal) for proposal in proposals],
+            accessGroups=access_groups,
+            techniques=_load_techniques(),
+            scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
+            skipConfirm=skip_confirm,
+            client=client,  # type: ignore[arg-type]  # TODO create client here if not given
+        )
         self.client = client
 
-        # This `Output` is displayed along with `self` so that sub widgets,
+        # This `Output` is displayed alongside `self` so that sub widgets,
         # e.g., a file picker can be attached to it and displayed.
         # We need this because we cannot display widgets in callbacks
         # as those don't have a display context.
         self._aux_output_widget = ipywidgets.Output()
         self._aux_output_widget.add_class("cean-output-anchor")
         self._is_displaying = False
+
+        self.on_msg(_handle_event)
 
     def _repr_mimebundle_(
         self, **kwargs: Any
@@ -61,24 +75,6 @@ class DatasetUploadWidget(anywidget.AnyWidget):
             )
         finally:
             self._is_displaying = False
-
-
-def dataset_upload_widget(
-    client: Client | None = None, *, skip_confirm: bool = False
-) -> DatasetUploadWidget:
-    initial, instruments, proposals, access_groups = _collect_initial_data(client)
-    widget = DatasetUploadWidget(
-        initial=initial,
-        instruments=[_serialize_instrument(instrument) for instrument in instruments],
-        proposals=[_serialize_proposal(proposal) for proposal in proposals],
-        accessGroups=access_groups,
-        techniques=_load_techniques(),
-        scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
-        skipConfirm=skip_confirm,
-        client=client,  # type: ignore[arg-type]  # TODO create client here if not given
-    )
-    widget.on_msg(_handle_event)
-    return widget
 
 
 def _collect_initial_data(
