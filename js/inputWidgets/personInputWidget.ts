@@ -55,28 +55,15 @@ export class PersonInputWidget extends InputWidget<Person> {
             if (this.widgets.orcid) this.widgets.orcid.value = person.orcid ?? "";
         }
     }
-
-    disable() {
-        this.widgets.name.container.setAttribute("disabled", "true");
-        this.widgets.email.container.setAttribute("disabled", "true");
-        this.widgets.orcid?.container.setAttribute("disabled", "true");
-    }
-
-    enable() {
-        this.widgets.name.container.removeAttribute("disabled");
-        this.widgets.email.container.removeAttribute("disabled");
-        this.widgets.orcid?.container.removeAttribute("disabled");
-    }
 }
 
 function createPersonWidget(
     personKey: string,
     hasOrcid: boolean,
     emailRequired: boolean,
-): [HTMLDivElement, PersonWidgets] {
-    // TODO try fieldset
-    const container = document.createElement("div");
-    container.classList.add("cean-person-widget");
+): [HTMLFieldSetElement, PersonWidgets] {
+    const fieldset = document.createElement("fieldset");
+    fieldset.classList.add("cean-person-widget");
 
     const [nameLabel, nameInput] = createInputWithLabel(
         `${personKey}_name`,
@@ -84,8 +71,8 @@ function createPersonWidget(
         [{ required: true }],
         "Name",
     );
-    container.appendChild(nameLabel);
-    container.appendChild(nameInput.container);
+    fieldset.appendChild(nameLabel);
+    fieldset.appendChild(nameInput.container);
 
     const [emailLabel, emailInput] = createInputWithLabel(
         `${personKey}_email`,
@@ -93,8 +80,8 @@ function createPersonWidget(
         [{ validator: validateEmail, required: emailRequired }],
         "Email",
     );
-    container.appendChild(emailLabel);
-    container.appendChild(emailInput.container);
+    fieldset.appendChild(emailLabel);
+    fieldset.appendChild(emailInput.container);
 
     const widgets: PersonWidgets = {
         name: nameInput,
@@ -108,10 +95,10 @@ function createPersonWidget(
             [{ validator: validateOrcid }],
             "ORCID",
         );
-        container.appendChild(orcidLabel);
-        container.appendChild(orcidInput.container);
+        fieldset.appendChild(orcidLabel);
+        fieldset.appendChild(orcidInput.container);
         widgets.orcid = orcidInput;
     }
 
-    return [container, widgets];
+    return [fieldset, widgets];
 }
