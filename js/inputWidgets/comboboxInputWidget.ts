@@ -1,4 +1,5 @@
 import { InputWidget } from "./inputWidget";
+import { animateValueSet } from "../style.ts";
 
 export type Choice = {
     key: string;
@@ -154,6 +155,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
             }
         }
         this.updateDisplay();
+        animateValueSet(this.displayElement);
         this.updated(false);
     }
 
