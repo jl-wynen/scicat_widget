@@ -130,7 +130,9 @@ function createOwnerPanel(
     const columns = document.createElement("section");
     columns.classList.add("cean-ds-owner-columns");
     columns.appendChild(createHumanOwnerPanel(inputWidgets, proposals, container));
-    columns.appendChild(createTechnicalOwnerPanel(inputWidgets, accessGroups));
+    columns.appendChild(
+        createTechnicalOwnerPanel(inputWidgets, accessGroups, proposals, container),
+    );
     return columns;
 }
 
@@ -179,13 +181,15 @@ function createHumanOwnerPanel(
 function createTechnicalOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
     accessGroups: [string],
+    proposals: [Proposal],
+    container: HTMLElement,
 ): HTMLDivElement {
     const columns = document.createElement("div");
     columns.classList.add("cean-ds-technical-owners", "cean-input-panel");
 
     const create = createAndAppend.bind(null, inputWidgets, columns);
 
-    createOwnerGroupWidget(inputWidgets, columns, accessGroups);
+    createOwnerGroupWidget(inputWidgets, columns, accessGroups, proposals, container);
     create("accessGroups", StringListInputWidget);
     create("license", StringInputWidget);
     create("isPublished", CheckboxInputWidget);
@@ -333,22 +337,44 @@ function createOwnerGroupWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
     accessGroups: [string],
+    proposals: [Proposal],
+    container: HTMLElement,
 ): InputWidget<any> {
     const ownerChoices = accessGroups.sort().map((group) => {
         return { key: group, text: group, data: {} };
     });
 
-    return createAndAppend(inputWidgets, parent, "ownerGroup", ComboboxInputWidget, [
-        {
-            choices: ownerChoices,
-            renderChoice: (choice: Choice) => {
-                const el = document.createElement("div");
-                el.textContent = choice.text;
-                return el;
+    const ownerGroup = createAndAppend(
+        inputWidgets,
+        parent,
+        "ownerGroup",
+        ComboboxInputWidget,
+        [
+            {
+                choices: ownerChoices,
+                renderChoice: (choice: Choice) => {
+                    const el = document.createElement("div");
+                    el.textContent = choice.text;
+                    return el;
+                },
+                required: true,
             },
-            required: true,
-        },
-    ]);
+        ],
+    );
+
+    ownerGroup.listenToWidget(
+        "proposalId",
+        makeSetterForIdMatch(proposals, (proposal) => {
+            return (
+                accessGroups.find((group) => {
+                    return group == proposal.id;
+                }) ?? ""
+            );
+        }),
+        container,
+    );
+
+    return ownerGroup;
 }
 
 function createTypeWidget(
