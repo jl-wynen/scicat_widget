@@ -55,18 +55,6 @@ export class PersonInputWidget extends InputWidget<Person> {
             if (this.widgets.orcid) this.widgets.orcid.value = person.orcid ?? "";
         }
     }
-
-    disable() {
-        this.widgets.name.container.setAttribute("disabled", "true");
-        this.widgets.email.container.setAttribute("disabled", "true");
-        this.widgets.orcid?.container.setAttribute("disabled", "true");
-    }
-
-    enable() {
-        this.widgets.name.container.removeAttribute("disabled");
-        this.widgets.email.container.removeAttribute("disabled");
-        this.widgets.orcid?.container.removeAttribute("disabled");
-    }
 }
 
 function createPersonWidget(
