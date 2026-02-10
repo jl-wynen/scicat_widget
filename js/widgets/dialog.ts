@@ -20,7 +20,9 @@ export class Dialog {
         const content = document.createElement("div");
         content.append(this._header, this._body, this._footer);
         // Stop click in the dialog from closing the dialog:
-        content.addEventListener("click", (e) => e.stopPropagation());
+        content.addEventListener("click", (e) => {
+            e.stopPropagation();
+        });
 
         this._dialog = document.createElement("dialog");
         this._dialog.className = "cean-modal-dialog";

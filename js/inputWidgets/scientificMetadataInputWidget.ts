@@ -93,7 +93,11 @@ export class ScientificMetadataInputWidget extends InputWidget<
         });
 
         const actionsTd = document.createElement("td");
-        actionsTd.appendChild(removeButton(() => this.removeItem(index)));
+        actionsTd.appendChild(
+            removeButton(() => {
+                this.removeItem(index);
+            }),
+        );
         tr.appendChild(actionsTd);
 
         return tr;

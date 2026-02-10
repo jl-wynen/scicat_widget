@@ -85,7 +85,9 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
         label.classList.add("cean-techniques-item-content");
         box.appendChild(label);
 
-        const removeBtn = removeButton(() => this.removeItem(index));
+        const removeBtn = removeButton(() => {
+            this.removeItem(index);
+        });
         box.appendChild(removeBtn);
 
         return box;

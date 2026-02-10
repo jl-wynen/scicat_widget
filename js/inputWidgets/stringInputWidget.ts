@@ -14,7 +14,13 @@ export class StringInputWidget extends InputWidget<string> {
         const element = makeStringElement(args.multiLine ?? false);
         super(key, element, args.required, args.validator);
 
-        element.addEventListener("blur", () => this.updated(), true);
+        element.addEventListener(
+            "blur",
+            () => {
+                this.updated();
+            },
+            true,
+        );
 
         if (element.tagName.toLowerCase() === "input") {
             element.addEventListener("keydown", (e) => {

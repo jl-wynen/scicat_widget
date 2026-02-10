@@ -16,10 +16,12 @@ export class PersonInputWidget extends InputWidget<Person> {
     constructor(key: string, hasOrcid: boolean, emailRequired: boolean) {
         const [wrap, widgets] = createPersonWidget(key, hasOrcid, emailRequired);
 
-        const emit = () => this.updated();
+        const emit = () => {
+            this.updated();
+        };
         wrap.addEventListener("blur", emit, true);
         wrap.addEventListener("keydown", (e) => {
-            if ((e as KeyboardEvent).key === "Enter") emit();
+            if (e.key === "Enter") emit();
         });
 
         super(key, wrap);

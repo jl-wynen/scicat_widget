@@ -13,7 +13,9 @@ export class Tabs {
     constructor(tabs: Tab[], right: HTMLElement[], scicatUrl: string) {
         const [element, tabButtonsContainer, tabPanes, rightContainer] = makeTabs(
             tabs,
-            (index) => this.selectTab(index),
+            (index) => {
+                this.selectTab(index);
+            },
             scicatUrl,
         );
         this.element = element;
@@ -91,7 +93,9 @@ function fillTabs(
         const button = document.createElement("button");
         button.appendChild(tab.label);
         button.classList.add("cean-tab-button");
-        button.addEventListener("click", () => selectTab(index));
+        button.addEventListener("click", () => {
+            selectTab(index);
+        });
         buttonContainer.appendChild(button);
 
         const pane = document.createElement("div");

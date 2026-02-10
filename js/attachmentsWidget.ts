@@ -54,9 +54,9 @@ export class AttachmentsWidget {
     }
 
     private addAttachmentWidget(path: string) {
-        const widget = new SingleAttachmentWidget(this.comm, path, () =>
-            this.removeAttachmentWidget(widget),
-        );
+        const widget = new SingleAttachmentWidget(this.comm, path, () => {
+            this.removeAttachmentWidget(widget);
+        });
         this.attachmentsGrid.appendChild(widget.element);
         this.attachmentWidgets.push(widget);
         this.nAttachmentsTabElement.textContent = `(${this.attachmentWidgets.length})`;

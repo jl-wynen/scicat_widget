@@ -4,17 +4,19 @@ import { createFormElement } from "../forms";
 import { PersonInputWidget } from "./personInputWidget.ts";
 import { removeButton, textButton } from "../widgets/button.ts";
 
-export class OwnersInputWidget extends InputWidget<Array<Person>> {
+export class OwnersInputWidget extends InputWidget<Person[]> {
     ownerWidgets: Map<string, PersonInputWidget>;
 
     constructor(key: string) {
         const ownerWidgets = new Map();
         const element = createOwnersElement(ownerWidgets) as HTMLDivElement;
 
-        const emit = () => this.updated();
+        const emit = () => {
+            this.updated();
+        };
         element.addEventListener("blur", emit, true);
         element.addEventListener("keydown", (e) => {
-            if ((e as KeyboardEvent).key === "Enter") emit();
+            if (e.key === "Enter") emit();
         });
 
         super(key, element);
@@ -22,8 +24,8 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
         this.ownerWidgets = ownerWidgets;
     }
 
-    get value(): Array<Person> | null {
-        const persons: Array<Person> = [];
+    get value(): Person[] | null {
+        const persons: Person[] = [];
 
         this.ownerWidgets.forEach((widgets) => {
             const person = widgets.value;
@@ -33,13 +35,13 @@ export class OwnersInputWidget extends InputWidget<Array<Person>> {
         return persons.length > 0 ? persons : null;
     }
 
-    set value(v: Array<Person> | null) {
+    set value(v: Person[] | null) {
         if (!v) return;
 
         this.clearOwners();
-        let container = this.container.querySelector(".cean-owners-container");
+        const container = this.container.querySelector(".cean-owners-container");
         v.forEach((person) => {
-            let owner = addOwner(this.ownerWidgets, container as HTMLElement);
+            const owner = addOwner(this.ownerWidgets, container as HTMLElement);
             owner.value = person;
         });
         if (v.length === 0) {
@@ -90,7 +92,7 @@ function addOwner(
 ): PersonInputWidget {
     const ownerId = crypto.randomUUID();
 
-    let widget = createSingleOwnerWidget(ownersContainer, ownerId, ownerWidgets);
+    const widget = createSingleOwnerWidget(ownersContainer, ownerId, ownerWidgets);
     ownerWidgets.set(ownerId, widget);
     return widget;
 }

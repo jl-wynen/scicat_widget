@@ -117,7 +117,9 @@ export class FilesWidget {
                     this.addFileWidget();
                 }
             },
-            () => this.removeFileWidget(widget),
+            () => {
+                this.removeFileWidget(widget);
+            },
         );
         this.widgetsContainer.appendChild(widget.element);
         this.fileWidgets.push(widget);

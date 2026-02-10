@@ -28,7 +28,9 @@ export class StringListInputWidget extends InputWidget<string[]> {
             }
         });
 
-        const addButton = iconButton("plus", () => this.addItem());
+        const addButton = iconButton("plus", () => {
+            this.addItem();
+        });
         addButton.title = "Add item";
         addButton.setAttribute("tabindex", "-1");
 
@@ -74,7 +76,11 @@ export class StringListInputWidget extends InputWidget<string[]> {
         label.textContent = text;
         box.appendChild(label);
 
-        box.appendChild(removeButton(() => this.removeItem(index)));
+        box.appendChild(
+            removeButton(() => {
+                this.removeItem(index);
+            }),
+        );
 
         return box;
     }

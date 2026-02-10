@@ -21,14 +21,16 @@ export class DatetimeInputWidget extends InputWidget<Date> {
         wrap.appendChild(dateElement);
         wrap.appendChild(timeElement);
 
-        const emit = () => this.updated();
+        const emit = () => {
+            this.updated();
+        };
         dateElement.addEventListener("blur", emit, true);
         timeElement.addEventListener("blur", emit, true);
         dateElement.addEventListener("keydown", (e) => {
-            if ((e as KeyboardEvent).key === "Enter") emit();
+            if (e.key === "Enter") emit();
         });
         timeElement.addEventListener("keydown", (e) => {
-            if ((e as KeyboardEvent).key === "Enter") emit();
+            if (e.key === "Enter") emit();
         });
 
         super(key, wrap);

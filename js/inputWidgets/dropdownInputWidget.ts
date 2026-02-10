@@ -2,12 +2,18 @@ import { InputWidget } from "./inputWidget";
 import { createFormElement } from "../forms";
 
 export class DropdownInputWidget extends InputWidget<string> {
-    constructor(key: string, options: Array<string>) {
+    constructor(key: string, options: string[]) {
         const element = createFormElement("select") as HTMLSelectElement;
         element.classList.add("cean-dropdown", "cean-input");
-        element.addEventListener("blur", () => this.updated(), true);
+        element.addEventListener(
+            "blur",
+            () => {
+                this.updated();
+            },
+            true,
+        );
         element.addEventListener("keydown", (e) => {
-            if ((e as KeyboardEvent).key === "Enter") this.updated();
+            if (e.key === "Enter") this.updated();
         });
 
         super(key, element);
@@ -30,7 +36,7 @@ export class DropdownInputWidget extends InputWidget<string> {
         else el.value = "";
     }
 
-    set options(options: Array<string>) {
+    set options(options: string[]) {
         this.inputElement().replaceChildren();
         this.buildOptions(options);
     }
@@ -43,7 +49,7 @@ export class DropdownInputWidget extends InputWidget<string> {
         this.container.removeAttribute("disabled");
     }
 
-    private buildOptions(options: Array<string>) {
+    private buildOptions(options: string[]) {
         const input = this.inputElement<HTMLSelectElement>();
         options.forEach((option) => {
             const item = document.createElement("option");

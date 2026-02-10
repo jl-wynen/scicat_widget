@@ -8,7 +8,7 @@ export type Choice = {
 };
 
 export type Args = {
-    choices: Array<Choice>;
+    choices: Choice[];
     renderChoice: (choice: Choice) => HTMLElement;
     allowArbitrary: boolean;
     filter: boolean;
@@ -19,13 +19,13 @@ export class ComboboxInputWidget extends InputWidget<string> {
     private readonly searchInput: HTMLInputElement;
     private readonly displayElement: HTMLElement;
     private readonly dropdownList: HTMLElement;
-    private readonly choices: Array<Choice>;
+    private readonly choices: Choice[];
     private readonly renderChoice: (choice: Choice) => HTMLElement;
     private readonly allowArbitrary: boolean;
     private readonly filter: boolean;
     private _value: string | null = null;
-    private isFocused: boolean = false;
-    private isMouseDownInside: boolean = false;
+    private isFocused = false;
+    private isMouseDownInside = false;
 
     constructor(
         key: string,

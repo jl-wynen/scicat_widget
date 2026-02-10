@@ -20,7 +20,7 @@ export abstract class InputWidget<T> {
     protected constructor(
         key: string,
         input: HTMLElement,
-        required: boolean = false,
+        required = false,
         validator?: Validator<T>,
     ) {
         this.key = key;
@@ -29,7 +29,9 @@ export abstract class InputWidget<T> {
         this.inputElement_ = input;
         this.inputElement_.id = crypto.randomUUID();
 
-        input.addEventListener("input", () => this.rawUpdate());
+        input.addEventListener("input", () => {
+            this.rawUpdate();
+        });
         [this.container_, this.statusElement] = wrapInputElement(input);
 
         this.validator = makeValidator<T>(required, validator);
@@ -72,7 +74,7 @@ export abstract class InputWidget<T> {
      * On success, emit an `UpdateEvent` with this widget's key and current value.
      * Consumers may listen to any ancestor (the event bubbles).
      */
-    updated(userTriggered: boolean = true): void {
+    updated(userTriggered = true): void {
         if (this.validate()) {
             this.container.dispatchEvent(
                 new UpdateEvent(this.key, this.value, userTriggered, { bubbles: true }),

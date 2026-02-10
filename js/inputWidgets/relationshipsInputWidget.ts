@@ -9,9 +9,9 @@ export type Relationship = {
     dataset: string;
 };
 
-const RELATIONSHIP_CHOICES: Array<Choice> = [{ key: "input", text: "input", data: {} }];
+const RELATIONSHIP_CHOICES: Choice[] = [{ key: "input", text: "input", data: {} }];
 
-export class RelationshipsInputWidget extends InputWidget<Array<Relationship>> {
+export class RelationshipsInputWidget extends InputWidget<Relationship[]> {
     private relationshipWidgets: SingleRelationshipWidget[] = [];
     private readonly wrapElement: HTMLDivElement;
 
@@ -33,8 +33,8 @@ export class RelationshipsInputWidget extends InputWidget<Array<Relationship>> {
         this.addRelationshipWidget();
     }
 
-    get value(): Array<Relationship> | null {
-        const relationships: Array<Relationship> = [];
+    get value(): Relationship[] | null {
+        const relationships: Relationship[] = [];
 
         for (const widget of this.relationshipWidgets) {
             const rel = widget.value;
@@ -46,7 +46,7 @@ export class RelationshipsInputWidget extends InputWidget<Array<Relationship>> {
         return relationships.length > 0 ? relationships : null;
     }
 
-    set value(v: Array<Relationship> | null) {
+    set value(v: Relationship[] | null) {
         this.clearRelationships();
         if (v && v.length > 0) {
             for (const rel of v) {
@@ -67,8 +67,12 @@ export class RelationshipsInputWidget extends InputWidget<Array<Relationship>> {
 
     private addRelationshipWidget(): SingleRelationshipWidget {
         const widget = new SingleRelationshipWidget(
-            () => this.onWidgetChange(widget),
-            () => this.removeRelationshipWidget(widget),
+            () => {
+                this.onWidgetChange(widget);
+            },
+            () => {
+                this.removeRelationshipWidget(widget);
+            },
         );
         this.wrapElement.appendChild(widget.element);
         this.relationshipWidgets.push(widget);
