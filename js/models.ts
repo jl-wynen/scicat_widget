@@ -13,7 +13,7 @@ export type Instrument = {
 export type Proposal = {
     id: string;
     title: string;
-    instrumentIds: [string];
+    instrumentIds: string[];
     piName: string | null;
     piEmail: string | null;
 };
