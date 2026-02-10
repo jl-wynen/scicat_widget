@@ -4,6 +4,7 @@
         "build": "esbuild js/*.ts --minify --format=esm --bundle --outdir=src/scicat_widget/_static --loader:.svg=text",
         "fix:prettier": "npm run lint:prettier -- --write",
         "lint:prettier": "prettier --config package.json --check",
+        "lint:eslint": "eslint . --cache --concurrency=2",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {
@@ -11,10 +12,16 @@
     },
     "devDependencies": {
         "@anywidget/types": "^0.2.0",
+        "@eslint/css": "^0.14.1",
+        "@eslint/js": "^9.39.2",
+        "@eslint/json": "^1.0.0",
         "@types/validator": "^13.15.10",
         "esbuild": "^0.25.4",
+        "eslint": "^9.39.2",
+        "globals": "^17.3.0",
         "prettier": "^3.7.4",
-        "typescript": "^5.8.3"
+        "typescript": "^5.8.3",
+        "typescript-eslint": "^8.55.0"
     },
     "prettier": {
         "printWidth": 88,

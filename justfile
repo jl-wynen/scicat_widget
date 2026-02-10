@@ -36,11 +36,15 @@ format-md *files='.':
 alias l := lint
 
 # Lint the codebase
-lint *files: (lint-python files) (spell files)
+lint *files: (lint-python files) (spell files) (lint-eslint)
 
 # Lint Python files
 lint-python *files:
     @uv run --group=lint ruff check --fix --exit-non-zero-on-fix {{files}}
+
+# Run ESLint
+lint-eslint:
+    npm run lint:eslint
 
 # Check spelling
 spell *files:
