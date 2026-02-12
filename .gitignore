@@ -32,6 +32,13 @@ venv
 # Ontologies
 *.jsonld
 
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+
 # Data files
 *.data
 *.dat
