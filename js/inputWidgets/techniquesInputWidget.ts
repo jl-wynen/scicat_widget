@@ -76,7 +76,7 @@ export class TechniquesInputWidget extends InputWidget<string[]> {
         const box = document.createElement("div");
         box.classList.add("cean-techniques-item");
 
-        const choice = this.choices.find((c) => c.key === key) || {
+        const choice = this.choices.find((c) => c.key === key) ?? {
             key,
             text: key,
             data: {},

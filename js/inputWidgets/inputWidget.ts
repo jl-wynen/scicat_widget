@@ -51,6 +51,7 @@ export abstract class InputWidget<T> {
     /**
      * This input element cast to the given type.
      */
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
     protected inputElement<E = HTMLInputElement>(): E {
         return this.inputElement_ as E;
     }
@@ -104,9 +105,9 @@ export abstract class InputWidget<T> {
     /**
      * Register a listener that reacts to "input-updated" events from another widget.
      */
-    listenToWidget<U = unknown>(
+    listenToWidget(
         otherKey: string,
-        handler: (widget: InputWidget<T>, value: U | null) => void,
+        handler: (widget: InputWidget<T>, value: unknown) => void,
         target: Document | HTMLElement = document,
     ): void {
         // Call the provided handler on events:
@@ -128,14 +129,14 @@ export abstract class InputWidget<T> {
      * Make an event listener that calls the given handler when an `UpdateEvent` with
      * the given key is emitted.
      */
-    private inputUpdatedListener<U = unknown>(
+    private inputUpdatedListener(
         otherKey: string,
-        handler: (widget: InputWidget<T>, value: U | null) => void,
+        handler: (widget: InputWidget<T>, value: unknown) => void,
     ): EventListener {
         return (e: Event) => {
             const event = e as UpdateEvent;
             if (event.key === otherKey) {
-                handler(this, event.value_as<U>());
+                handler(this, event.value_as<unknown>());
             }
         };
     }
@@ -186,6 +187,7 @@ export class UpdateEvent extends Event {
         return this.#userTriggered;
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-type-parameters
     value_as<T>(): T | null {
         return this.value as T | null;
     }

@@ -8,8 +8,8 @@ export class OwnersInputWidget extends InputWidget<Person[]> {
     ownerWidgets: Map<string, PersonInputWidget>;
 
     constructor(key: string) {
-        const ownerWidgets = new Map();
-        const element = createOwnersElement(ownerWidgets) as HTMLDivElement;
+        const ownerWidgets = new Map<string, PersonInputWidget>();
+        const element = createOwnersElement(ownerWidgets);
 
         const emit = () => {
             this.updated();

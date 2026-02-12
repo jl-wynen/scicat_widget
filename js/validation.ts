@@ -35,13 +35,14 @@ const ORCID_HOST = "orcid.org";
 
 function parseOrcidId(orcid: string): [string | null, string] | { error: string } {
     // This regex allows any URL with a slash or a string without slashes:
-    const match = orcid.match(/^((https?:\/\/)?(.*)\/)?([^/]+)$/);
+    const match = /^((https?:\/\/)?(.*)\/)?([^/]+)$/.exec(orcid);
     if (match === null) return { error: "Invalid ORCID ID structure" };
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     return [match[3] ?? null, match[4]];
 }
 
 function checkOrcidId(orcid: string): string | null {
-    orcid.match(/^((https?:\/\/)?(.*))?\/.[^/]$/);
+    /^((https?:\/\/)?(.*))?\/.[^/]$/.exec(orcid);
 
     const res = parseOrcidId(orcid);
     if (typeof res === "object" && "error" in res) {

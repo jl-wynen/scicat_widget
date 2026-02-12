@@ -122,14 +122,14 @@ export class ScientificMetadataInputWidget extends InputWidget<
             const name = item.name.trim();
             const value = item.value.trim();
             if (name !== "" && value !== "") {
-                result.push({ name, value, unit: item.unit?.trim() || undefined });
+                result.push({ name, value, unit: item.unit?.trim() ?? undefined });
             }
         }
         return result.length > 0 ? result : null;
     }
 
     set value(v: ScientificMetadataItem[] | null) {
-        this.items = v ? v : [];
+        this.items = v ?? [];
         this.renderRows();
     }
 }

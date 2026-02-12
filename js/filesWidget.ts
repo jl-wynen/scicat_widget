@@ -2,7 +2,7 @@ import { FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.
 import { removeButton } from "./widgets/button.ts";
 import { createInputWithLabel } from "./forms.ts";
 import { humanSize } from "./widgets/output.ts";
-import { BackendComm } from "./comm.ts";
+import { BackendComm, ResInspectFile } from "./comm.ts";
 import { GatherResult } from "./widgets/upload.ts";
 import { Instrument } from "./models.ts";
 
@@ -187,10 +187,11 @@ class SingleFileWidget {
         this.element.appendChild(remotePathInput.container);
 
         this.localPathInput.container.addEventListener("file-inspected", (e: Event) => {
-            const event = e as CustomEvent;
+            const event = e as CustomEvent<{ payload: ResInspectFile }>;
             const payload = event.detail.payload;
+            console.log("got file-inspected", event, payload, typeof payload);
             if (payload.success) {
-                this.remotePathInput.placeholder = payload.remotePath;
+                this.remotePathInput.placeholder = payload.remotePath ?? "";
             } else {
                 this.remotePathInput.placeholder = null;
             }

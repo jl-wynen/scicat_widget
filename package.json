@@ -4,7 +4,7 @@
         "build": "esbuild js/*.ts --minify --format=esm --bundle --outdir=src/scicat_widget/_static --loader:.svg=text",
         "fix:prettier": "npm run lint:prettier -- --write",
         "lint:prettier": "prettier --config package.json --check",
-        "lint:eslint": "eslint . --cache --concurrency=2",
+        "lint:eslint": "eslint . --cache",
         "typecheck": "tsc --noEmit"
     },
     "dependencies": {

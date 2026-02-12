@@ -30,8 +30,8 @@ export class PersonInputWidget extends InputWidget<Person> {
     }
 
     get value(): Person | null {
-        const nameVal = this.widgets.name?.value;
-        const emailVal = this.widgets.email?.value;
+        const nameVal = this.widgets.name.value;
+        const emailVal = this.widgets.email.value;
         const orcidVal = this.widgets.orcid?.value ?? null;
 
         if (nameVal === null && emailVal === null && orcidVal === null) return null;
@@ -52,7 +52,7 @@ export class PersonInputWidget extends InputWidget<Person> {
             this.widgets.email.value = "";
             if (this.widgets.orcid) this.widgets.orcid.value = "";
         } else {
-            this.widgets.name.value = person.name ?? "";
+            this.widgets.name.value = person.name;
             this.widgets.email.value = person.email ?? "";
             if (this.widgets.orcid) this.widgets.orcid.value = person.orcid ?? "";
         }

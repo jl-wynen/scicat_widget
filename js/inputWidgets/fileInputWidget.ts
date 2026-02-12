@@ -20,10 +20,10 @@ export class FileInputWidget extends InputWidget<string> {
         wrapper.classList.add("cean-file-input");
 
         const stringInput = new StringInputWidget(`${key}_string`, {
-            validator: (value: string) => {
+            validator: () => {
                 // The validation result gets stored asynchronously,
                 // we only read it here so the string input is simpler.
-                return this.checkValidation(value);
+                return this.checkValidation();
             },
         });
         stringInput.container.addEventListener("input", () => {
@@ -95,7 +95,7 @@ export class FileInputWidget extends InputWidget<string> {
         this.statusElement.replaceChildren();
     }
 
-    private checkValidation(_value: string): string | null {
+    private checkValidation(): string | null {
         return this.validationResult;
     }
 

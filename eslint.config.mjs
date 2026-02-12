@@ -29,6 +29,10 @@ export default defineConfig([
         plugins: { css },
         language: "css/css",
         extends: ["css/recommended"],
+        rules: {
+            "css/no-invalid-properties": ["error", { allowUnknownVariables: true }],
+            "css/use-baseline": ["error", { available: 2024 }],
+        },
     },
     {
         files: ["js/**/*.ts"],
@@ -41,6 +45,10 @@ export default defineConfig([
         },
         rules: {
             "@typescript-eslint/consistent-type-definitions": "off",
+            "@typescript-eslint/restrict-template-expressions": [
+                "error",
+                { allowNumber: true },
+            ],
         },
     },
 ]);

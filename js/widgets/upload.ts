@@ -48,7 +48,7 @@ export class UploadWidget {
         }
     }
 
-    private startUpload(data: Record<string, any>) {
+    private startUpload(data: Record<string, never>) {
         this.comm.sendReqUploadDataset(this.key, data);
     }
 
@@ -65,7 +65,7 @@ export class UploadWidget {
     }
 
     private showConfirmationDialog(
-        data: Record<string, any>,
+        data: Record<string, never>,
         validationErrors: boolean,
     ) {
         this.dialog.closeOnClickOutside = true;
@@ -105,7 +105,7 @@ ${simpleLink(this.scicatUrl)}?</p>
         this.dialog.showModal();
     }
 
-    private showProcessingDialog(data: Record<string, any>) {
+    private showProcessingDialog(data: Record<string, never>) {
         this.startUpload(data);
 
         this.dialog.closeOnClickOutside = false;
@@ -202,5 +202,5 @@ ${simpleLink(this.scicatUrl)}?</p>
 
 export type GatherResult = {
     validationErrors: boolean;
-    data: Record<string, any>;
+    data: Record<string, never>;
 };

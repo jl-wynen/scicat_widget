@@ -4,15 +4,15 @@ import { animateValueSet } from "../style.ts";
 export type Choice = {
     key: string;
     text: string;
-    data: any;
+    data: unknown;
 };
 
 export type Args = {
     choices: Choice[];
     renderChoice: (choice: Choice) => HTMLElement;
-    allowArbitrary: boolean;
-    filter: boolean;
-    required: boolean;
+    allowArbitrary: true;
+    filter: true;
+    required: false;
 };
 
 export class ComboboxInputWidget extends InputWidget<string> {
@@ -29,13 +29,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
 
     constructor(
         key: string,
-        {
-            choices,
-            renderChoice,
-            allowArbitrary = true,
-            filter = true,
-            required = false,
-        }: Args,
+        { choices, renderChoice, allowArbitrary, filter, required }: Args,
     ) {
         const wrap = document.createElement("div");
         wrap.classList.add("cean-combox-dropdown");
@@ -184,9 +178,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
             }
 
             let choice = this.findChoice(this._value);
-            if (!choice) {
-                choice = { key: this._value, text: this._value, data: {} };
-            }
+            choice ??= { key: this._value, text: this._value, data: {} };
             this.displayElement.appendChild(this.renderChoice(choice));
         }
     }
@@ -245,7 +237,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
         const items = this.dropdownList.querySelectorAll(".cean-combox-item");
         items.forEach((item) => {
             const htmlItem = item as HTMLElement;
-            if (htmlItem.textContent?.toLowerCase().includes(searchText)) {
+            if (htmlItem.textContent.toLowerCase().includes(searchText)) {
                 htmlItem.style.display = "block";
             } else {
                 htmlItem.style.display = "none";
@@ -295,7 +287,7 @@ export class ComboboxInputWidget extends InputWidget<string> {
         }
     }
 
-    private findChoice(value: string, allowText: boolean = false): Choice | null {
+    private findChoice(value: string, allowText = false): Choice | null {
         const byKey = this.choices.find((c) => c.key === value);
         if (byKey) return byKey;
         if (allowText) {

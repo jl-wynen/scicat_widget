@@ -8,16 +8,17 @@ export type ResInspectFile = {
     success: boolean;
     size?: number;
     creationTime?: string;
+    remotePath?: string;
     error?: string;
 };
 
-export type ReqBrowseFiles = {};
+export type ReqBrowseFiles = object;
 
 export type ResBrowseFiles = {
     selected: string;
 };
 
-export type ReqUploadDataset = Record<string, any>;
+export type ReqUploadDataset = Record<string, never>;
 
 export type FieldError = {
     field: string;
