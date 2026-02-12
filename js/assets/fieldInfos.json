@@ -16,7 +16,7 @@
         "description": "Identifier for the place where data was taken, usually of the form 'site:facility:instrument'."
     },
     "datasetName": {
-        "label": "Name",
+        "label": "Dataset name",
         "description": "The name of the dataset."
     },
     "description": {
