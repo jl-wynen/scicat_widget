@@ -10,11 +10,11 @@ watch:
 
 # Run tests
 test *args:
-    @uv run --group=test pytest {{args}}
+    npx playwright test {{args}}
 
-# Run tests with dependencies at lower bound
-test-lowest *args:
-    @uv run --resolution=lowest-direct --group=test --group=sftp pytest --backend-tests --sftp-tests {{args}}
+# Start JupyterLab for UI tests
+start-test-lab:
+    uv run jupyter lab --config ui-tests/jupyter_server_test_config.py
 
 # --- Formatting ---
 
