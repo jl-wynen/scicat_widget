@@ -21,13 +21,23 @@
       </div>
     </nav>
     <div class="tab-content">
-      <div id="tab-dataset" role="tabpanel" tabindex="0" aria-labelledby="tab-button-dataset">
-        The dataset
+      <div id="tab-dataset" role="tabpanel" aria-labelledby="tab-button-dataset">
+        <fieldset class="input-grid">
+          <label for="datasetName"></label><input id="datasetName" type="text" required class="grid-span-3">
+          <label for="description"></label><input id="description" type="text" data-multiline="true"
+                                                  class="grid-span-3">
+          <label for="proposalId"></label><input id="proposalId" type="text" class="grid-span-3">
+          <label for="instrumentId"></label><input id="instrumentId" type="text">
+          <label for="creationLocation"></label><input id="creationLocation" type="text" required>
+          <label for="runNumber"></label><input id="runNumber" type="text">
+          <label for="startTime"></label><input id="startTime" type="date">
+          <label for="endTime"></label><input id="endTime" type="date">
+        </fieldset>
       </div>
-      <div id="tab-files" role="tabpanel" tabindex="0" aria-labelledby="tab-button-files" class="hidden">
+      <div id="tab-files" role="tabpanel" aria-labelledby="tab-button-files" class="hidden">
         Files files files
       </div>
-      <div id="tab-attachments" role="tabpanel" tabindex="0" aria-labelledby="tab-button-attachments"
+      <div id="tab-attachments" role="tabpanel" aria-labelledby="tab-button-attachments"
            class="hidden">
         Attach tahT!
       </div>

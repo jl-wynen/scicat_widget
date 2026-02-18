@@ -3,9 +3,10 @@ import type { AnyModel, RenderProps } from "@anywidget/types";
 import { Tabs } from "./tabs.ts";
 import { Instrument, Proposal, Techniques } from "./models.ts";
 import { BackendComm } from "./comm.ts";
-import { styleSheet, widgetTemplate } from "./assets.ts";
+import { styleSheet, widgetTemplate } from "./assets";
 import { imageLink } from "./components/links.ts";
 import scicatLogo from "./assets/SciCat_logo_icon.svg";
+import { attachInputComponents } from "./components";
 
 interface WidgetModel {
     initial: object;
@@ -38,6 +39,17 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     const tabs = Tabs.attachTo(shadow.firstElementChild as HTMLElement);
     shadow.querySelectorAll(".logo-scicat").forEach((parent) => {
         parent.replaceChildren(imageLink(model.get("scicatUrl"), scicatLogo));
+    });
+    const inputs = attachInputComponents(shadow);
+
+    // TODO
+    shadow.querySelector("button[type='submit']")?.addEventListener("click", (e) => {
+        console.log("submitting form with ");
+        for (const [name, element] of inputs) {
+            console.log("  ", name, element.value);
+        }
+        e.stopPropagation();
+        e.preventDefault();
     });
 }
 

@@ -100,3 +100,23 @@ button[type="submit"] {
         color: var(--jp-ui-inverse-font-color0);
     }
 }
+
+label:has(+ div input:required)::after {
+    content: " *";
+    color: var(--jp-error-color2);
+}
+
+.input-grid {
+    display: grid;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+    /* This can be overridden in specialised grids */
+    grid-template-columns:
+        max-content 1fr
+        max-content 1fr;
+
+    .grid-span-3 {
+        grid-column: span 3;
+    }
+}

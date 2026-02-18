@@ -1,6 +1,6 @@
-import cssContent from "./assets/datasetUploadWidget.css";
-import fieldInfos from "./assets/fieldInfos.json";
-import htmlFragment from "./assets/widget-fragment.html";
+import cssContent from "./datasetUploadWidget.css";
+import fieldInfos from "./fieldInfos.json";
+import htmlFragment from "./widget-fragment.html";
 
 export type FieldInfo = {
     label: string;
