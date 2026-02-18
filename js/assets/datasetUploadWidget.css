@@ -70,3 +70,33 @@ button[role="tab"] {
         }
     }
 }
+
+button[type="submit"] {
+    background: #27aae1;
+    color: var(--jp-ui-inverse-font-color1);
+
+    padding: 0 10px;
+    display: inline-block;
+    white-space: nowrap;
+    text-align: center;
+    font-size: var(--jp-widgets-font-size);
+    line-height: var(--jp-widgets-inline-height);
+    box-shadow: none;
+    border-color: var(--jp-border-color2);
+    border-radius: var(--jp-border-radius);
+    border: none;
+    user-select: none;
+    cursor: pointer;
+
+    &:hover {
+        background: #3ec2fa;
+    }
+
+    &:active {
+        /* from the jupyter style */
+        box-shadow: 0 4px 5px 0 rgba(0, 0, 0, var(--md-shadow-key-penumbra-opacity)),
+        0 1px 10px 0 rgba(0, 0, 0, var(--md-shadow-ambient-shadow-opacity)),
+        0 2px 4px -1px rgba(0, 0, 0, var(--md-shadow-key-umbra-opacity));
+        color: var(--jp-ui-inverse-font-color0);
+    }
+}
