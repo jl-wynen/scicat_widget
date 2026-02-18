@@ -1,0 +1,72 @@
+.tabs nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--jp-border-color1);
+
+    .logo-scicat {
+        padding: 0 1em 0 1em;
+
+        & svg {
+            height: 1.8rem;
+            width: auto;
+            transform: translateY(0.4em);
+        }
+    }
+
+    [role="tablist"] {
+        display: flex;
+        position: relative;
+    }
+
+    .widget-controls {
+        display: flex;
+        align-items: center;
+        padding-right: 16px;
+        margin-left: auto;
+
+        & a {
+            margin-right: 1em;
+        }
+
+        & a:hover {
+            text-decoration: underline;
+        }
+    }
+}
+
+button[role="tab"] {
+    background: none;
+    border: none;
+    padding: 8px 16px;
+    cursor: pointer;
+    color: var(--jp-ui-font-color2);
+
+    &:hover {
+        background-color: var(--jp-layout-color2);
+    }
+
+    &[aria-selected="true"] {
+        color: var(--jp-ui-font-color1);
+        background-color: var(--jp-layout-color1);
+        font-weight: bold;
+        border-bottom: 2px solid var(--jp-brand-color1);
+
+    }
+}
+
+.tab-content {
+    /* use a grid to place all panes in the same location */
+    display: grid;
+
+    [role="tabpanel"] {
+        grid-column: 1;
+        grid-row: 1;
+        padding: 10px 0;
+
+        &.hidden {
+            /* control with `visibility`, *not* `display` so all panes use the same amount of space */
+            visibility: hidden;
+        }
+    }
+}

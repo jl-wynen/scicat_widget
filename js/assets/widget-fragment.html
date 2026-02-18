@@ -1,3 +1,36 @@
 <form>
-
+  <div class="tabs">
+    <nav class="header">
+      <div class="logo-scicat"></div>
+      <div class="tab-buttons" role="tablist">
+        <button id="tab-button-dataset" type="button" role="tab" aria-selected="true" aria-controls="tab-dataset">
+          Dataset
+        </button>
+        <button id="tab-button-files" type="button" role="tab" aria-selected="false" aria-controls="tab-files"
+                tabindex="-1">
+          Files (0)
+        </button>
+        <button id="tab-button-attachments" type="button" role="tab" aria-selected="false"
+                aria-controls="tab-attachments"
+                tabindex="-1">
+          Attachments (0)
+        </button>
+      </div>
+      <div class="widget-controls">
+        <button type="submit">Upload dataset</button>
+      </div>
+    </nav>
+    <div class="tab-content">
+      <div id="tab-dataset" role="tabpanel" tabindex="0" aria-labelledby="tab-button-dataset">
+        The dataset
+      </div>
+      <div id="tab-files" role="tabpanel" tabindex="0" aria-labelledby="tab-button-files" class="hidden">
+        Files files files
+      </div>
+      <div id="tab-attachments" role="tabpanel" tabindex="0" aria-labelledby="tab-button-attachments"
+           class="hidden">
+        Attach tahT!
+      </div>
+    </div>
+  </div>
 </form>

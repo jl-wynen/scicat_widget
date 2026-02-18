@@ -1,117 +1,87 @@
-import scicatLogo from "./assets/SciCat_logo_icon.svg";
-
-export interface Tab {
-    label: HTMLElement;
-    element: HTMLElement;
-}
-
 export class Tabs {
-    public readonly element: HTMLElement;
-    private readonly tabButtonsContainer: HTMLElement;
-    private readonly tabs: Tab[];
+    private constructor(
+        private readonly buttons: HTMLButtonElement[],
+        private readonly panels: HTMLElement[],
+        private readonly tabNames: string[],
+    ) {
+        for (let i = 0; i < this.buttons.length; i++) {
+            const button = this.buttons[i];
+            button.addEventListener("click", this.selectTab.bind(this, i));
+            button.addEventListener("keydown", this.onKeyDown.bind(this, i));
+        }
+    }
 
-    constructor(tabs: Tab[], right: HTMLElement[], scicatUrl: string) {
-        const [element, tabButtonsContainer, tabPanes, rightContainer] = makeTabs(
-            tabs,
-            (index) => this.selectTab(index),
-            scicatUrl,
-        );
-        this.element = element;
-        this.tabButtonsContainer = tabButtonsContainer;
-        this.tabs = tabPanes.map((tab, index) => {
-            return { label: tabs[index].label, element: tab };
+    static attachTo(element: HTMLElement) {
+        const buttons: HTMLButtonElement[] = [];
+        const panels: HTMLElement[] = [];
+        const tabNames: string[] = [];
+
+        element.querySelectorAll("[role='tabpanel']").forEach((panel) => {
+            const tabName = panel.id.split("-")[1];
+
+            const button = element.querySelector(`[aria-controls="${panel.id}"]`);
+            if (button === null) {
+                throw new Error(`No button found for tab panel ${panel.id}`);
+            }
+
+            buttons.push(button as HTMLButtonElement);
+            panels.push(panel as HTMLElement);
+            tabNames.push(tabName);
         });
 
-        insertExtraTopContent(rightContainer, right);
-        this.selectTab(0);
+        return new Tabs(buttons, panels, tabNames);
+    }
+
+    getButton(name: string): HTMLButtonElement {
+        return this.buttons[this.tabNames.indexOf(name)];
     }
 
     private selectTab(index: number) {
-        const buttons = this.tabButtonsContainer.querySelectorAll(".cean-tab-button");
-        buttons.forEach((btn, i) => {
-            if (i === index) {
-                btn.classList.add("cean-tab-button-active");
-            } else {
-                btn.classList.remove("cean-tab-button-active");
-            }
-        });
+        for (let i = 0; i < this.buttons.length; i++) {
+            const button = this.buttons[i];
+            const panel = this.panels[i];
+            const isSelected = i == index;
 
-        this.tabs.forEach((tab, i) => {
-            if (i === index) {
-                tab.element.style.visibility = "visible";
+            button.setAttribute("aria-selected", isSelected ? "true" : "false");
+            if (isSelected) {
+                button.removeAttribute("tabindex");
+                panel.classList.remove("hidden");
+                // panel.focus();
             } else {
-                tab.element.style.visibility = "hidden";
+                button.setAttribute("tabindex", "-1");
+                panel.classList.add("hidden");
             }
-        });
+        }
     }
-}
 
-function makeTabs(
-    tabs: Tab[],
-    selectTab: (index: number) => void,
-    scicatUrl: string,
-): [HTMLElement, HTMLElement, HTMLElement[], HTMLElement] {
-    const container = document.createElement("div");
-    container.classList.add("cean-tabs");
+    private onKeyDown(index: number, event: KeyboardEvent) {
+        let handled = false;
 
-    const buttonContainer = document.createElement("div");
-    buttonContainer.classList.add("cean-tab-buttons");
-    container.appendChild(buttonContainer);
+        const selectIndex = (i: number) => {
+            this.selectTab(i);
+            this.buttons[i].focus();
+            handled = true;
+        };
 
-    const leftContainer = document.createElement("div");
-    leftContainer.classList.add("cean-tab-buttons-left");
-    leftContainer.appendChild(createSciCatLogo(scicatUrl));
-    buttonContainer.appendChild(leftContainer);
+        const n = this.buttons.length;
+        switch (event.key) {
+            case "ArrowRight":
+                selectIndex(Math.min(index + 1, n - 1));
+                break;
+            case "ArrowLeft":
+                selectIndex(Math.max(index - 1, 0));
+                break;
+            case "Home":
+                selectIndex(0);
+                break;
+            case "End":
+                selectIndex(n - 1);
+                break;
+        }
 
-    const middleContainer = document.createElement("div");
-    middleContainer.classList.add("cean-tab-buttons-middle");
-    buttonContainer.appendChild(middleContainer);
-
-    const rightContainer = document.createElement("div");
-    rightContainer.classList.add("cean-tab-buttons-right");
-    buttonContainer.appendChild(rightContainer);
-
-    const contentContainer = document.createElement("div");
-    contentContainer.classList.add("cean-tab-content");
-    container.appendChild(contentContainer);
-
-    const tabPanes = fillTabs(middleContainer, contentContainer, tabs, selectTab);
-
-    return [container, buttonContainer, tabPanes, rightContainer];
-}
-
-function fillTabs(
-    buttonContainer: HTMLElement,
-    contentContainer: HTMLElement,
-    tabs: Tab[],
-    selectTab: (index: number) => void,
-): HTMLElement[] {
-    const tabPanes: HTMLElement[] = [];
-    tabs.forEach((tab, index) => {
-        const button = document.createElement("button");
-        button.appendChild(tab.label);
-        button.classList.add("cean-tab-button");
-        button.addEventListener("click", () => selectTab(index));
-        buttonContainer.appendChild(button);
-
-        const pane = document.createElement("div");
-        pane.classList.add("cean-tab-pane");
-        pane.appendChild(tab.element);
-        tabPanes.push(pane);
-
-        contentContainer.appendChild(pane);
-    });
-    return tabPanes;
-}
-
-function insertExtraTopContent(buttonContainer: HTMLElement, right: HTMLElement[]) {
-    right.forEach((el) => buttonContainer.appendChild(el));
-}
-
-function createSciCatLogo(scicatUrl: string): HTMLAnchorElement {
-    const anchor = document.createElement("a");
-    anchor.href = scicatUrl;
-    anchor.target = "_blank";
-    anchor.innerHTML = scicatLogo;
-    return anchor;
+        if (handled) {
+            event.preventDefault();
+            event.stopPropagation();
+        }
+    }
 }

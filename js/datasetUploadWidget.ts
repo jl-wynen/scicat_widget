@@ -3,7 +3,7 @@ import type { AnyModel, RenderProps } from "@anywidget/types";
 import { Tabs } from "./tabs.ts";
 import { Instrument, Proposal, Techniques } from "./models.ts";
 import { BackendComm } from "./comm.ts";
-import { styleSheet,widgetTemplate } from "./assets.ts";
+import { styleSheet, widgetTemplate } from "./assets.ts";
 
 interface WidgetModel {
     initial: object;
@@ -33,7 +33,6 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 
     shadow.adoptedStyleSheets = [styleSheet];
 
-
     el.addEventListener(
         "keydown",
         (e) => {
@@ -45,6 +44,17 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         },
         true,
     );
+
+    const tabs = Tabs.attachTo(shadow.firstElementChild as HTMLElement);
 }
+
+// TODO use
+// function createSciCatLogo(scicatUrl: string): HTMLAnchorElement {
+//     const anchor = document.createElement("a");
+//     anchor.href = scicatUrl;
+//     anchor.target = "_blank";
+//     anchor.innerHTML = scicatLogo;
+//     return anchor;
+// }
 
 export default { render };
