@@ -4,6 +4,8 @@ import { Tabs } from "./tabs.ts";
 import { Instrument, Proposal, Techniques } from "./models.ts";
 import { BackendComm } from "./comm.ts";
 import { styleSheet, widgetTemplate } from "./assets.ts";
+import { imageLink } from "./components/links.ts";
+import scicatLogo from "./assets/SciCat_logo_icon.svg";
 
 interface WidgetModel {
     initial: object;
@@ -19,19 +21,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     const comm = new BackendComm(model);
 
     const fragment = widgetTemplate.content.cloneNode(true) as DocumentFragment;
-
-    // Check if shadowRoot already exists (useful for hot-reloading)
-    let shadow = el.shadowRoot;
-    if (!shadow) {
-        // Need mode: open to access shadow above
-        shadow = el.attachShadow({ mode: "open" });
-        shadow.appendChild(fragment);
-    } else {
-        // Clear existing content if hot-reloading
-        shadow.replaceChildren(fragment);
-    }
-
-    shadow.adoptedStyleSheets = [styleSheet];
+    const shadow = getOrAttachShadow(el, fragment);
 
     el.addEventListener(
         "keydown",
@@ -46,15 +36,29 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     );
 
     const tabs = Tabs.attachTo(shadow.firstElementChild as HTMLElement);
+    shadow.querySelectorAll(".logo-scicat").forEach((parent) => {
+        parent.replaceChildren(imageLink(model.get("scicatUrl"), scicatLogo));
+    });
 }
 
-// TODO use
-// function createSciCatLogo(scicatUrl: string): HTMLAnchorElement {
-//     const anchor = document.createElement("a");
-//     anchor.href = scicatUrl;
-//     anchor.target = "_blank";
-//     anchor.innerHTML = scicatLogo;
-//     return anchor;
-// }
+function getOrAttachShadow(
+    parent: HTMLElement,
+    fragment: DocumentFragment,
+): ShadowRoot {
+    // Check if shadowRoot already exists (e.g., after hot-reloading)
+    let shadow = parent.shadowRoot;
+    if (!shadow) {
+        // Mode: open so the line above can retrieve the shadow
+        shadow = parent.attachShadow({ mode: "open" });
+        shadow.appendChild(fragment);
+    } else {
+        // Clear existing content if hot-reloading
+        shadow.replaceChildren(fragment);
+    }
+
+    shadow.adoptedStyleSheets = [styleSheet];
+
+    return shadow;
+}
 
 export default { render };
