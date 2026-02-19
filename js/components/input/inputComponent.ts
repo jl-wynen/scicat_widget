@@ -2,32 +2,29 @@ export abstract class InputComponent {
     readonly id: string;
     readonly required: boolean;
 
-    protected readonly inputElement: HTMLInputElement | HTMLTextAreaElement;
-    protected readonly statusElement: HTMLDivElement;
     protected readonly wrapClassName: string;
+    protected readonly statusElement: HTMLDivElement;
 
-    protected constructor(
-        inputElement: HTMLInputElement | HTMLTextAreaElement,
-        wrapClassName:string,
-    ) {
-        this.id = inputElement.id;
-        this.required = inputElement.required;
-
-        this.inputElement = inputElement;
+    protected constructor(rawInputElement: HTMLElement) {
+        this.id = rawInputElement.id;
+        this.required =
+            "required" in rawInputElement &&
+            (rawInputElement as HTMLInputElement).required;
+        this.wrapClassName = rawInputElement.className;
 
         this.statusElement = document.createElement("div");
         this.statusElement.id = `${this.id}-status`;
-
-        this.wrapClassName = wrapClassName;
     }
 
     abstract get value(): unknown;
 
-    wrapElements(): HTMLDivElement {
+    abstract wrapElements(): HTMLDivElement;
+
+    protected wrapElementsWith(mainElement: HTMLElement): HTMLDivElement {
         const wrap = document.createElement("div");
         wrap.className = this.wrapClassName;
         wrap.classList.add("input-wrap");
-        wrap.append(this.inputElement, this.statusElement);
+        wrap.append(mainElement, this.statusElement);
         return wrap;
     }
 

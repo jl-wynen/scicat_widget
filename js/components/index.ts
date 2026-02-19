@@ -2,11 +2,13 @@ import { fieldInfo } from "../assets";
 import { InputComponent } from "./input/inputComponent.ts";
 import { TextInput } from "./input/textInput.ts";
 import { DatetimeInput } from "./input/datetimeInput.ts";
+import { PeopleInput } from "./input/peopleInput.ts";
 
 type InputCtor = new (rawInputElement: HTMLInputElement) => InputComponent;
 const registry: Record<string, InputCtor> = {
     text: TextInput,
     date: DatetimeInput,
+    people: PeopleInput,
 };
 
 function componentClass(type: string): InputCtor {
@@ -19,7 +21,10 @@ export function attachInputComponents(shadow: ShadowRoot): Map<string, InputComp
     const components = new Map();
 
     for (const rawInputElement of shadow.querySelectorAll("input")) {
-        const ctor = componentClass(rawInputElement.type);
+        const type =
+            rawInputElement.getAttribute("data-custom-type") || rawInputElement.type;
+
+        const ctor = componentClass(type);
         const inputComponent = new ctor(rawInputElement);
         components.set(inputComponent.id, inputComponent);
 

@@ -1,7 +1,7 @@
 import { InputComponent } from "./inputComponent.ts";
 
 export class DatetimeInput extends InputComponent {
-    // Use super.inputElement for the date and this.timeElement for the time.
+    private readonly dateElement: HTMLInputElement;
     private readonly timeElement: HTMLInputElement;
 
     constructor(rawInputElement: HTMLInputElement) {
@@ -17,12 +17,13 @@ export class DatetimeInput extends InputComponent {
         timeElement.step = "1";
         InputComponent.suppressEnter(timeElement);
 
-        super(dateElement, rawInputElement.className);
+        super(rawInputElement);
+        this.dateElement = dateElement;
         this.timeElement = timeElement;
     }
 
     get value(): Date | null {
-        const dateVal = this.inputElement.value;
+        const dateVal = this.dateElement.value;
         if (dateVal === "") return null;
 
         const timeVal = this.timeElement.value || "00:00:00";
@@ -31,7 +32,7 @@ export class DatetimeInput extends InputComponent {
 
     wrapElements(): HTMLDivElement {
         const datetimeWrap = document.createElement("div");
-        datetimeWrap.append(this.inputElement, this.timeElement);
+        datetimeWrap.append(this.dateElement, this.timeElement);
 
         const wrap = document.createElement("div");
         wrap.className = this.wrapClassName;

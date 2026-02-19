@@ -1,14 +1,21 @@
 import { InputComponent } from "./inputComponent.ts";
 
 export class TextInput extends InputComponent {
+    protected readonly inputElement: HTMLInputElement | HTMLTextAreaElement;
+
     constructor(rawInputElement: HTMLInputElement) {
-        super(TextInput.makeInputElement(rawInputElement), rawInputElement.className);
+        super(rawInputElement);
+        this.inputElement = TextInput.makeInputElement(rawInputElement);
     }
 
     get value(): string | null {
         const val = this.inputElement.value.trim();
         if (val === "") return null;
         return val;
+    }
+
+    wrapElements(): HTMLDivElement {
+        return this.wrapElementsWith(this.inputElement);
     }
 
     private static makeInputElement(
