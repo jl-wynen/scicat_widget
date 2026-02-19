@@ -31,9 +31,12 @@ export function attachInputComponents(shadow: ShadowRoot): Map<string, InputComp
 }
 
 function setLabel(parent: DocumentFragment, name: string) {
-    const label = parent.querySelector(`label[for="${name}"]`);
+    const label = parent.querySelector(
+        `label[for="${name}"]`,
+    ) as HTMLLabelElement | null;
     const info = fieldInfo(name);
     if (label !== null && info !== null) {
         label.textContent = info.label;
+        label.title = info.description;
     }
 }
