@@ -22,7 +22,7 @@
     </nav>
     <div class="tab-content">
       <div id="tab-dataset" role="tabpanel" aria-labelledby="tab-button-dataset">
-        <fieldset class="input-grid">
+        <fieldset class="input-grid general-info">
           <label for="datasetName"></label><input id="datasetName" type="text" required class="grid-span-3">
           <label for="description"></label><input id="description" type="text" data-multiline="true"
                                                   class="grid-span-3">
@@ -36,13 +36,68 @@
             <label for="endTime"></label><input id="endTime" type="date" class="datetime-input">
           </div>
         </fieldset>
+
+        <div class="form-columns">
+          <fieldset class="input-grid">
+            <label for="principalInvestigator"></label><input id="principalInvestigator" type="text" required>
+            <label for="contactEmail"></label><input id="contactEmail" type="text" required>
+          </fieldset>
+
+          <fieldset class="input-grid">
+            <label for="ownerGroup"></label><input id="ownerGroup" type="text" required>
+            <label for="accessGroups"></label><input id="accessGroups" type="text">
+            <label for="license"></label><input id="license" type="text">
+          </fieldset>
+
+          <fieldset class="input-grid">
+            <label for="techniques"></label><input id="techniques" type="text">
+            <label for="usedSoftware"></label><input id="usedSoftware" type="text">
+            <label for="sampleId"></label><input id="sampleId" type="text">
+          </fieldset>
+
+          <fieldset class="input-grid">
+            <label for="type"></label><input id="type" type="text">
+            <label for="keywords"></label><input id="keywords" type="text">
+          </fieldset>
+        </div>
+
+        <fieldset>
+          <legend>Scientific metadata</legend>
+          <table class="scientific-metadata">
+            <thead>
+            <tr>
+              <th>Name</th>
+              <th>Value</th>
+              <th>Unit</th>
+              <th></th>
+            </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </fieldset>
       </div>
+
       <div id="tab-files" role="tabpanel" aria-labelledby="tab-button-files" class="hidden">
-        Files files files
+        <div></div>
+        <fieldset class="input-grid">
+          <label for="sourceFolder"></label><input id="sourceFolder" type="text" required>
+        </fieldset>
+        <fieldset>
+          Input file path
+        </fieldset>
+        <div>
+          Loaded files go here
+        </div>
       </div>
+
       <div id="tab-attachments" role="tabpanel" aria-labelledby="tab-button-attachments"
            class="hidden">
-        Attach tahT!
+        <fieldset>
+          Input file path
+        </fieldset>
+        <div>
+          Loaded attachments go here
+        </div>
       </div>
     </div>
   </div>
