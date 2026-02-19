@@ -29,9 +29,12 @@
           <label for="proposalId"></label><input id="proposalId" type="text" class="grid-span-3">
           <label for="instrumentId"></label><input id="instrumentId" type="text">
           <label for="creationLocation"></label><input id="creationLocation" type="text" required>
-          <label for="runNumber"></label><input id="runNumber" type="text">
-          <label for="startTime"></label><input id="startTime" type="date">
-          <label for="endTime"></label><input id="endTime" type="date">
+          <label for="runNumber"></label>
+          <div class="input-grid grid-span-3 run-info-row">
+            <input id="runNumber" type="text">
+            <label for="startTime"></label><input id="startTime" type="date" class="datetime-input">
+            <label for="endTime"></label><input id="endTime" type="date" class="datetime-input">
+          </div>
         </fieldset>
       </div>
       <div id="tab-files" role="tabpanel" aria-labelledby="tab-button-files" class="hidden">

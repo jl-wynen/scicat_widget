@@ -2,7 +2,7 @@ import { InputComponent } from "./inputComponent.ts";
 
 export class TextInput extends InputComponent {
     constructor(rawInputElement: HTMLInputElement) {
-        super(TextInput.makeInputElement(rawInputElement));
+        super(TextInput.makeInputElement(rawInputElement), rawInputElement.className);
     }
 
     get value(): string | null {

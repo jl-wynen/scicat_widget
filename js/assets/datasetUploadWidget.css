@@ -106,6 +106,12 @@ label:has(+ div input:required)::after {
     color: var(--jp-error-color2);
 }
 
+input, select, textarea {
+    /* make all input elements use all available space */
+    width: 100%;
+    box-sizing: border-box;
+}
+
 .input-grid {
     display: grid;
     column-gap: 12px;
@@ -119,4 +125,25 @@ label:has(+ div input:required)::after {
     .grid-span-3 {
         grid-column: span 3;
     }
+}
+
+.run-info-row {
+    grid-template-columns:
+        1fr
+        max-content max-content
+        max-content max-content;
+
+    & > *:nth-child(2n+1) {
+        /* Ensure input columns can shrink and inputs don't overflow */
+        min-width: 0;
+    }
+}
+
+/* use :first-child so this does not apply to the status element */
+.datetime-input > div:first-child {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 0;
+    row-gap: 10px;
+    align-items: start;
 }

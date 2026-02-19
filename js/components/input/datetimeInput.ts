@@ -17,7 +17,7 @@ export class DatetimeInput extends InputComponent {
         timeElement.step = "1";
         InputComponent.suppressEnter(timeElement);
 
-        super(dateElement);
+        super(dateElement, rawInputElement.className);
         this.timeElement = timeElement;
     }
 
@@ -34,7 +34,8 @@ export class DatetimeInput extends InputComponent {
         datetimeWrap.append(this.inputElement, this.timeElement);
 
         const wrap = document.createElement("div");
-        wrap.className = "input-wrap";
+        wrap.className = this.wrapClassName;
+        wrap.classList.add("input-wrap");
         wrap.append(datetimeWrap, this.statusElement);
         return wrap;
     }
