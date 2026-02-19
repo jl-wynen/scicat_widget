@@ -14,6 +14,7 @@ export abstract class InputComponent {
 
         this.statusElement = document.createElement("div");
         this.statusElement.id = `${this.id}-status`;
+        this.statusElement.className = "status";
     }
 
     abstract get value(): unknown;
@@ -26,6 +27,19 @@ export abstract class InputComponent {
         wrap.classList.add("input-wrap");
         wrap.append(mainElement, this.statusElement);
         return wrap;
+    }
+
+    protected addValidationListener(element: HTMLInputElement|HTMLTextAreaElement) {
+        const listener = () => {
+            console.log("validation changed", element.id, element.validity.valid);
+            if (!element.validity.valid) {
+                this.statusElement.textContent = element.validationMessage;
+            } else {
+                this.statusElement.textContent = "";
+            }
+        };
+        element.addEventListener("input", listener)
+        element.addEventListener("blur", listener)
     }
 
     protected static provisionInputElementFrom(

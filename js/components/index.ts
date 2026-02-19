@@ -7,6 +7,7 @@ import { PeopleInput } from "./input/peopleInput.ts";
 type InputCtor = new (rawInputElement: HTMLInputElement) => InputComponent;
 const registry: Record<string, InputCtor> = {
     text: TextInput,
+    email: TextInput,
     date: DatetimeInput,
     people: PeopleInput,
 };

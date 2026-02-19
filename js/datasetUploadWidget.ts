@@ -28,6 +28,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         "keydown",
         (e) => {
             if (e.key === "Enter" && e.shiftKey) {
+                (shadow.querySelector("button[type='submit']") as HTMLButtonElement).click();
                 // Make sure that shift+enter does not re-run the notebook cell.
                 e.stopPropagation();
                 e.preventDefault();
@@ -42,14 +43,20 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     });
     const inputs = attachInputComponents(shadow);
 
+    const form = shadow.querySelector("form") as HTMLFormElement;
+
     // TODO
     shadow.querySelector("button[type='submit']")?.addEventListener("click", (e) => {
         console.log("submitting form with ");
         for (const [name, element] of inputs) {
             console.log("  ", name, element.value);
         }
-        e.stopPropagation();
-        e.preventDefault();
+        if (form.checkValidity()) {
+            // TODO custom submit
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        // else: browser default to show validation errors
     });
 }
 

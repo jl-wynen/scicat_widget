@@ -107,9 +107,19 @@ label:has(+ div input:required)::after {
 }
 
 input, select, textarea {
-    /* make all input elements use all available space */
+    /* Make all input elements use all available space */
     width: 100%;
     box-sizing: border-box;
+}
+
+.status {
+    display: none;
+    color: var(--jp-error-color2);
+}
+
+/* The second pattern matches datetime inputs */
+:invalid + .status, div:has(> :invalid) + .status {
+    display: block;
 }
 
 fieldset {

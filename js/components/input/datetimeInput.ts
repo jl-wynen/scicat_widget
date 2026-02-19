@@ -20,6 +20,7 @@ export class DatetimeInput extends InputComponent {
         super(rawInputElement);
         this.dateElement = dateElement;
         this.timeElement = timeElement;
+        this.addValidationListener(this.dateElement);
     }
 
     get value(): Date | null {

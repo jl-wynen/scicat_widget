@@ -5,7 +5,14 @@ export class TextInput extends InputComponent {
 
     constructor(rawInputElement: HTMLInputElement) {
         super(rawInputElement);
+
         this.inputElement = TextInput.makeInputElement(rawInputElement);
+        // The trim listener must come before the validation listener,
+        // so the validation can detect empty strings after trimming.
+        this.inputElement.addEventListener("blur", () => {
+            this.inputElement.value = this.inputElement.value.trim();
+        });
+        this.addValidationListener(this.inputElement);
     }
 
     get value(): string | null {
