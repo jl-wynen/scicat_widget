@@ -28,7 +28,9 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         "keydown",
         (e) => {
             if (e.key === "Enter" && e.shiftKey) {
-                (shadow.querySelector("button[type='submit']") as HTMLButtonElement).click();
+                (
+                    shadow.querySelector("button[type='submit']") as HTMLButtonElement
+                ).click();
                 // Make sure that shift+enter does not re-run the notebook cell.
                 e.stopPropagation();
                 e.preventDefault();
@@ -47,16 +49,19 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 
     // TODO
     shadow.querySelector("button[type='submit']")?.addEventListener("click", (e) => {
-        console.log("submitting form with ");
-        for (const [name, element] of inputs) {
-            console.log("  ", name, element.value);
-        }
+        console.log("submit buton clicked", e.target);
         if (form.checkValidity()) {
             // TODO custom submit
             e.stopPropagation();
             e.preventDefault();
         }
         // else: browser default to show validation errors
+        // TODO error from source folder input: "invalid form control not focusable" (because hidden?)
+
+        console.log("submitting form with ");
+        for (const [name, element] of inputs) {
+            console.log("  ", name, element.value);
+        }
     });
 }
 

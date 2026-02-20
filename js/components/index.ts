@@ -18,10 +18,12 @@ function componentClass(type: string): InputCtor {
     return ctor;
 }
 
-export function attachInputComponents(shadow: ShadowRoot): Map<string, InputComponent> {
+export function attachInputComponents(
+    fragment: DocumentFragment | HTMLElement,
+): Map<string, InputComponent> {
     const components = new Map();
 
-    for (const rawInputElement of shadow.querySelectorAll("input")) {
+    for (const rawInputElement of fragment.querySelectorAll("input")) {
         const type =
             rawInputElement.getAttribute("data-custom-type") || rawInputElement.type;
 
@@ -29,17 +31,18 @@ export function attachInputComponents(shadow: ShadowRoot): Map<string, InputComp
         const inputComponent = new ctor(rawInputElement);
         components.set(inputComponent.id, inputComponent);
 
-        setLabel(shadow, inputComponent.id);
+        setLabel(fragment, inputComponent.id);
         rawInputElement.replaceWith(inputComponent.wrapElements());
     }
 
     return components;
 }
 
-function setLabel(parent: DocumentFragment, name: string) {
-    const label = parent.querySelector(
-        `label[for="${name}"]`,
-    ) as HTMLLabelElement | null;
+function setLabel(parent: DocumentFragment | HTMLElement, id: string) {
+    // Extract the raw name if it is prefixed with a parent ID or some UUID.
+    // E.g., `owners-abc123-name` is replaced with `name`.
+    const name = id.replace(/^(.*-)?([^-]+)$/, "$2");
+    const label = parent.querySelector(`label[for="${id}"]`) as HTMLLabelElement | null;
     const info = fieldInfo(name);
     if (label !== null && info !== null) {
         label.textContent = info.label;

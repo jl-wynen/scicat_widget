@@ -1,6 +1,9 @@
+import { Validator } from "../../validation.ts";
+
 export abstract class InputComponent {
     readonly id: string;
     readonly required: boolean;
+    customValidator: Validator<any> | null = null; // TODO generic
 
     protected readonly wrapClassName: string;
     protected readonly statusElement: HTMLDivElement;
@@ -29,17 +32,25 @@ export abstract class InputComponent {
         return wrap;
     }
 
-    protected addValidationListener(element: HTMLInputElement|HTMLTextAreaElement) {
+    protected addValidationListener(element: HTMLInputElement | HTMLTextAreaElement) {
         const listener = () => {
-            console.log("validation changed", element.id, element.validity.valid);
+            if (this.customValidator) {
+                const message = this.customValidator(this.value);
+                if (message) {
+                    element.setCustomValidity(message);
+                } else {
+                    element.setCustomValidity("");
+                }
+            }
+
             if (!element.validity.valid) {
                 this.statusElement.textContent = element.validationMessage;
             } else {
                 this.statusElement.textContent = "";
             }
         };
-        element.addEventListener("input", listener)
-        element.addEventListener("blur", listener)
+        element.addEventListener("input", listener);
+        element.addEventListener("blur", listener);
     }
 
     protected static provisionInputElementFrom(
