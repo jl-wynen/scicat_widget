@@ -5,7 +5,7 @@ import { Instrument, Proposal, Techniques } from "./models.ts";
 import { BackendComm } from "./comm.ts";
 import { styleSheet, widgetTemplate } from "./assets";
 import { imageLink } from "./components/links.ts";
-import scicatLogo from "./assets/SciCat_logo_icon.svg";
+import scicatLogo from "./assets/img/SciCat_logo_icon.svg";
 import { attachInputComponents } from "./components";
 
 interface WidgetModel {

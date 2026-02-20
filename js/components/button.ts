@@ -1,3 +1,9 @@
+import trashCan from "../assets/img/trash-can.svg";
+
+const icons: Record<string, string> = {
+    trashCan,
+};
+
 /**
  * Create a button with text.
  * @param text Button text.
@@ -16,7 +22,7 @@ export function textButton(
 
 /**
  * Create a button with an icon.
- * @param icon Name of a Fontawesome icon.
+ * @param icon Name of an icon.
  * @param callback Callback to be invoked when the button is clicked.
  * @param title Optional button title.
  */
@@ -26,7 +32,7 @@ export function iconButton(
     title?: string,
 ): HTMLButtonElement {
     const iconElement = document.createElement("i");
-    iconElement.className = `fa fa-${icon}`;
+    iconElement.innerHTML = icons[icon];
 
     const button = createEmptyButton(callback, title);
     button.classList.add("icon-button");
@@ -40,7 +46,7 @@ export function iconButton(
  * @param callback Callback to be invoked when the button is clicked.
  */
 export function removeButton(callback: () => void): HTMLButtonElement {
-    const button = iconButton("trash", callback, "Remove item");
+    const button = iconButton("trashCan", callback, "Remove item");
     button.classList.add("remove-button");
     button.setAttribute("tabindex", "-1");
     return button;

@@ -101,6 +101,38 @@ button[type="submit"] {
     }
 }
 
+.icon-button {
+    /* Set the size based on the text size to roughly match input elements. */
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: center;
+
+    background: none;
+    border: none;
+
+    svg {
+        fill: var(--jp-ui-font-color1);
+        width: 1em;
+        height: 1em;
+        display: block;
+    }
+}
+
+.remove-button {
+    &:hover svg {
+        fill: var(--jp-error-color1);
+    }
+
+    &:active svg {
+        fill: var(--jp-error-color2);
+    }
+}
+
 label:has(+ div input:required)::after {
     content: " *";
     color: var(--jp-error-color2);
@@ -180,12 +212,7 @@ fieldset {
 }
 
 .person {
-    margin: .3em 0;
-    display: grid;
-    grid-template-columns: 1fr max-content;
-    column-gap: 12px;
-    row-gap: 10px;
-    align-items: start;
+    grid-template-columns: max-content 1fr max-content;
 }
 
 table.scientific-metadata {

@@ -63,21 +63,23 @@ class PersonInput {
 
         this.fieldset = document.createElement("fieldset");
         this.fieldset.id = this.id;
-        this.fieldset.className = "person";
-        this.fieldset.innerHTML = `<div class="input-grid">
-<label for="${this.id}-personName"></label>
-<input id="${this.id}-personName" type="text" required>
-<label for="${this.id}-personEmail"></label>
-<input id="${this.id}-personEmail" type="email">
-<label for="${this.id}-personORCID"></label>
-<input id="${this.id}-personORCID" type="text">
-</div>`;
+        this.fieldset.className = "person input-grid";
+        this.fieldset.innerHTML = `
+<label for="${this.id}-personName" style="grid-column: 1"></label>
+<input id="${this.id}-personName" type="text" required style="grid-column: 2">
+<button id="removeButtonPlaceholder"></button> 
+<label for="${this.id}-personEmail" style="grid-column: 1"></label>
+<input id="${this.id}-personEmail" type="email" style="grid-column: 2">
+<label for="${this.id}-personORCID" style="grid-column: 1"></label>
+<input id="${this.id}-personORCID" type="text" style="grid-column: 2">
+`;
 
-        this.fieldset.appendChild(
-            removeButton(() => {
-                onRemove(this.id);
-            }),
-        );
+        const b = removeButton(() => {
+            console.log("clicked");
+            onRemove(this.id);
+        });
+        b.setAttribute("grid-column", "3");
+        this.fieldset.querySelector("#removeButtonPlaceholder")!.replaceWith(b);
 
         this.inputs = attachInputComponents(this.fieldset) as Map<string, TextInput>;
         this.inputs.get(`${this.id}-personORCID`)!.customValidator = validateOrcid;
