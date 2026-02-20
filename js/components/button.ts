@@ -1,7 +1,9 @@
-import trashCan from "../assets/img/trash-can.svg";
+import trashCanIcon from "../assets/img/trash-can.svg";
+import plusIcon from "../assets/img/plus.svg";
 
 const icons: Record<string, string> = {
-    trashCan,
+    plus: plusIcon,
+    trashCan: trashCanIcon,
 };
 
 /**

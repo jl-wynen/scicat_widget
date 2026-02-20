@@ -43,7 +43,18 @@ export class TextInput extends InputComponent<string> {
 
             return textarea;
         } else {
-            return InputComponent.provisionInputElementFrom(rawInputElement);
+            const inputElement = document.createElement("input");
+            inputElement.id = rawInputElement.id;
+            inputElement.type = rawInputElement.type;
+            inputElement.required = rawInputElement.required;
+
+            inputElement.addEventListener("keydown", (event: KeyboardEvent) => {
+                if (event.code === "Enter" || event.code === "NumpadEnter") {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+            });
+            return inputElement;
         }
     }
 }

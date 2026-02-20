@@ -105,14 +105,15 @@ button[type="submit"] {
     /* Set the size based on the text size to roughly match input elements. */
     font-size: 1rem;
     line-height: 1;
-    padding: 0;
+    padding: 0.1rem;
 
     display: inline-flex;
     align-items: center;
     justify-content: center;
     align-self: center;
 
-    background: none;
+    background: var(--jp-input-background);
+    color: var(--jp-ui-font-color1);
     border: none;
 
     svg {
@@ -121,9 +122,24 @@ button[type="submit"] {
         height: 1em;
         display: block;
     }
+
+    &:hover {
+        background: var(--jp-input-hover-background);
+
+        svg {
+            fill: var(--jp-ui-font-color0);
+        }
+    }
+
+    &:active {
+        box-shadow: none;
+        background: var(--jp-input-active-background);
+    }
 }
 
 .remove-button {
+    background: none;
+
     &:hover svg {
         fill: var(--jp-error-color1);
     }
@@ -213,6 +229,44 @@ fieldset {
 
 .person {
     grid-template-columns: max-content 1fr max-content;
+}
+
+.input-and-button {
+    column-gap: 8px;
+    grid-template-columns:
+        1fr max-content;
+}
+
+ul.input-items {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+
+    li {
+        display: flex;
+        align-items: center;
+        background: var(--jp-layout-color2);
+        padding: 2px 8px;
+        gap: 4px;
+        border: var(--jp-border-width) solid var(--jp-layout-color3);
+        border-radius: var(--jp-border-radius);
+
+        span {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        button {
+            padding: 0;
+            background: none;
+            min-height: unset;
+            font-size: 0.8em;
+        }
+    }
 }
 
 table.scientific-metadata {

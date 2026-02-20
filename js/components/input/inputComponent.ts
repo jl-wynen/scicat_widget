@@ -58,24 +58,6 @@ export abstract class InputComponent<T> {
         element.addEventListener("blur", listener);
     }
 
-    protected static provisionInputElementFrom(
-        rawInputElement: HTMLInputElement,
-    ): HTMLInputElement {
-        const inputElement = document.createElement("input");
-        inputElement.id = rawInputElement.id;
-        inputElement.type = rawInputElement.type;
-        inputElement.required = rawInputElement.required;
-
-        inputElement.addEventListener("keydown", (event: KeyboardEvent) => {
-            if (event.code === "Enter" || event.code === "NumpadEnter") {
-                event.preventDefault();
-                event.stopPropagation();
-            }
-        });
-
-        return inputElement;
-    }
-
     protected static suppressEnter(element: HTMLElement) {
         element.addEventListener("keydown", (event: KeyboardEvent) => {
             if (event.code === "Enter" || event.code === "NumpadEnter") {

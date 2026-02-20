@@ -3,6 +3,7 @@ import { InputComponent } from "./input/inputComponent.ts";
 import { TextInput } from "./input/textInput.ts";
 import { DatetimeInput } from "./input/datetimeInput.ts";
 import { PeopleInput } from "./input/peopleInput.ts";
+import { MultiTextInput } from "./input/multiTextInput.ts";
 
 type InputCtor = new (rawInputElement: HTMLInputElement) => InputComponent<any>;
 const registry: Record<string, InputCtor> = {
@@ -10,6 +11,7 @@ const registry: Record<string, InputCtor> = {
     email: TextInput,
     date: DatetimeInput,
     people: PeopleInput,
+    "text-list": MultiTextInput,
 };
 
 function componentClass(type: string): InputCtor {
