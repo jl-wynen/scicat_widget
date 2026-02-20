@@ -1,6 +1,6 @@
 import { InputComponent } from "./inputComponent.ts";
 
-export class TextInput extends InputComponent {
+export class TextInput extends InputComponent<string> {
     protected readonly inputElement: HTMLInputElement | HTMLTextAreaElement;
 
     constructor(rawInputElement: HTMLInputElement) {

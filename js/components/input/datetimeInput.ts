@@ -1,6 +1,6 @@
 import { InputComponent } from "./inputComponent.ts";
 
-export class DatetimeInput extends InputComponent {
+export class DatetimeInput extends InputComponent<Date> {
     private readonly dateElement: HTMLInputElement;
     private readonly timeElement: HTMLInputElement;
 

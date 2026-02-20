@@ -4,7 +4,7 @@ import { TextInput } from "./input/textInput.ts";
 import { DatetimeInput } from "./input/datetimeInput.ts";
 import { PeopleInput } from "./input/peopleInput.ts";
 
-type InputCtor = new (rawInputElement: HTMLInputElement) => InputComponent;
+type InputCtor = new (rawInputElement: HTMLInputElement) => InputComponent<any>;
 const registry: Record<string, InputCtor> = {
     text: TextInput,
     email: TextInput,
@@ -20,7 +20,7 @@ function componentClass(type: string): InputCtor {
 
 export function attachInputComponents(
     fragment: DocumentFragment | HTMLElement,
-): Map<string, InputComponent> {
+): Map<string, InputComponent<unknown>> {
     const components = new Map();
 
     for (const rawInputElement of fragment.querySelectorAll("input")) {

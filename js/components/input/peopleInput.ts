@@ -5,7 +5,7 @@ import { attachInputComponents } from "../index.ts";
 import { TextInput } from "./textInput.ts";
 import { validateOrcid } from "../../validation.ts";
 
-export class PeopleInput extends InputComponent {
+export class PeopleInput extends InputComponent<Person[]> {
     private peopleComponents: Map<string, PersonInput>;
     private readonly peopleContainer: HTMLDivElement;
 

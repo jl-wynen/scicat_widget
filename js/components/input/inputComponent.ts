@@ -1,9 +1,9 @@
 import { Validator } from "../../validation.ts";
 
-export abstract class InputComponent {
+export abstract class InputComponent<T> {
     readonly id: string;
     readonly required: boolean;
-    customValidator: Validator<any> | null = null; // TODO generic
+    customValidator: Validator<T> | null = null;
 
     protected readonly wrapClassName: string;
     protected readonly statusElement: HTMLDivElement;
@@ -20,7 +20,7 @@ export abstract class InputComponent {
         this.statusElement.className = "status";
     }
 
-    abstract get value(): unknown;
+    abstract get value(): T | null;
 
     abstract wrapElements(): HTMLDivElement;
 
@@ -35,7 +35,12 @@ export abstract class InputComponent {
     protected addValidationListener(element: HTMLInputElement | HTMLTextAreaElement) {
         const listener = () => {
             if (this.customValidator) {
-                const message = this.customValidator(this.value);
+                const value = this.value;
+                if (value === null) {
+                    element.setCustomValidity("");
+                    return;
+                }
+                const message = this.customValidator(value);
                 if (message) {
                     element.setCustomValidity(message);
                 } else {
