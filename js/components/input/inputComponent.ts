@@ -6,7 +6,7 @@ export abstract class InputComponent<T> {
     customValidator: Validator<T> | null = null;
 
     protected readonly wrapClassName: string;
-    protected readonly statusElement: HTMLDivElement;
+    protected readonly statusElement: HTMLOutputElement;
 
     protected constructor(rawInputElement: HTMLElement) {
         this.id = rawInputElement.id;
@@ -15,7 +15,7 @@ export abstract class InputComponent<T> {
             (rawInputElement as HTMLInputElement).required;
         this.wrapClassName = rawInputElement.className;
 
-        this.statusElement = document.createElement("div");
+        this.statusElement = document.createElement("output");
         this.statusElement.id = `${this.id}-status`;
         this.statusElement.className = "status";
     }
