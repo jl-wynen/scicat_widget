@@ -21,9 +21,9 @@ export class DatasetWidget {
     private readonly inputWidgets: Map<string, InputWidget<any>>;
 
     constructor(
-        proposals: [Proposal],
-        instruments: [Instrument],
-        accessGroups: [string],
+        proposals: Proposal[],
+        instruments: Instrument[],
+        accessGroups: string[],
         techniques: Techniques,
     ) {
         const container = document.createElement("div");
@@ -65,8 +65,8 @@ export class DatasetWidget {
 
 function createGeneralInfoPanel(
     inputWidgets: Map<string, InputWidget<any>>,
-    proposals: [Proposal],
-    instruments: [Instrument],
+    proposals: Proposal[],
+    instruments: Instrument[],
     container: HTMLElement,
 ): HTMLElement {
     const create = createAndAppend.bind(null, inputWidgets);
@@ -123,8 +123,8 @@ function createGeneralInfoPanel(
 
 function createOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
-    accessGroups: [string],
-    proposals: [Proposal],
+    accessGroups: string[],
+    proposals: Proposal[],
     container: HTMLElement,
 ): HTMLElement {
     const columns = document.createElement("section");
@@ -138,7 +138,7 @@ function createOwnerPanel(
 
 function createHumanOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
-    proposals: [Proposal],
+    proposals: Proposal[],
     container: HTMLElement,
 ): HTMLDivElement {
     const columns = document.createElement("div");
@@ -180,8 +180,8 @@ function createHumanOwnerPanel(
 
 function createTechnicalOwnerPanel(
     inputWidgets: Map<string, InputWidget<any>>,
-    accessGroups: [string],
-    proposals: [Proposal],
+    accessGroups: string[],
+    proposals: Proposal[],
     container: HTMLElement,
 ): HTMLDivElement {
     const columns = document.createElement("div");
@@ -245,8 +245,8 @@ function createScientificMetadataPanel(
 function createInstrumentsWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
-    instruments: [Instrument],
-    proposals: [Proposal],
+    instruments: Instrument[],
+    proposals: Proposal[],
 ) {
     const instrumentChoices = instruments
         .map((instrument) => {
@@ -300,7 +300,7 @@ function createInstrumentsWidget(
 function createProposalsWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
-    proposals: [Proposal],
+    proposals: Proposal[],
 ): InputWidget<any> {
     const proposalChoices = proposals
         .map((proposal) => {
@@ -336,8 +336,8 @@ function createProposalsWidget(
 function createOwnerGroupWidget(
     inputWidgets: Map<string, InputWidget<any>>,
     parent: HTMLElement,
-    accessGroups: [string],
-    proposals: [Proposal],
+    accessGroups: string[],
+    proposals: Proposal[],
     container: HTMLElement,
 ): InputWidget<any> {
     const ownerChoices = accessGroups.sort().map((group) => {

@@ -19,7 +19,7 @@ export class FilesWidget {
     constructor(
         comm: BackendComm,
         nFilesTabElement: HTMLSpanElement,
-        instruments: [Instrument],
+        instruments: Instrument[],
         topContainer: HTMLElement,
     ) {
         this.comm = comm;
@@ -231,7 +231,7 @@ class SingleFileWidget {
 }
 
 function createSourceFolderInput(
-    instruments: [Instrument],
+    instruments: Instrument[],
     topContainer: HTMLElement,
 ): [HTMLElement, InputWidget<string>] {
     const section = document.createElement("section");
