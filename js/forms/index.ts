@@ -1,2 +1,2 @@
-export { createFormElement, createInputWithLabel } from "./util";
+export { createLabelFor } from "./util";
 export { DatasetOverview } from "./datasetOverview";

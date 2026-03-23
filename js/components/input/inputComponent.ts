@@ -1,23 +1,37 @@
 import { Validator } from "../../validation.ts";
 
+export interface InputOptions<T> {
+    required?: boolean;
+    validator?: Validator<T>;
+}
+
 /**
  * Base class for input widgets.
  */
 export abstract class InputComponent<T> {
-    protected readonly key: string;
+    /// A predicatable key for the input, e.g., 'dattasetName'.
+    private readonly _key: string;
+    /// A unique ID for the input, used as `element.id`.
+    private readonly inputId: string;
     protected readonly statusElement: HTMLOutputElement;
     protected readonly wrapElement: HTMLDivElement;
 
     readonly required: boolean;
-    customValidator: Validator<T> | null = null;
+    customValidator: Validator<T> | null;
     isValid: () => boolean;
 
-    protected constructor(inputElement: HTMLElement & { required?: boolean }) {
-        this.key = inputElement.id;
-        this.required = inputElement.required ?? false;
+    protected constructor(
+        key: string,
+        inputElement: HTMLElement,
+        options: InputOptions<T>,
+    ) {
+        this._key = key;
+        this.inputId = inputElement.id;
+        this.required = options.required ?? false;
+        this.customValidator = options.validator ?? null;
 
         this.statusElement = document.createElement("output");
-        this.statusElement.id = `${this.key}-status`;
+        this.statusElement.id = `${inputElement.id}-status`;
         this.statusElement.className = "cean-status";
 
         this.wrapElement = wrapElementsWith(inputElement, this.statusElement);
@@ -25,8 +39,12 @@ export abstract class InputComponent<T> {
         this.isValid = () => this.statusElement.validity.valid;
     }
 
-    get inputKey(): string {
-        return this.key;
+    get key(): string {
+        return this._key;
+    }
+
+    get id(): string {
+        return this.inputId;
     }
 
     get container(): HTMLDivElement {

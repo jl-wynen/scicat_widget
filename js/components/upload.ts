@@ -27,8 +27,9 @@ export class UploadComponent {
 
     createButton() {
         const button = document.createElement("button");
+        button.type = "submit";
         button.textContent = "Upload dataset";
-        button.classList.add("cean-upload-button", "jupyter-button");
+        button.classList.add("cean-button", "jupyter-button");
         button.addEventListener("click", () => {
             this.askDoUpload();
         });

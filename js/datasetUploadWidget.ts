@@ -8,7 +8,12 @@ import { Instrument, Proposal, Techniques } from "./models.ts";
 import { BackendComm } from "./comm.ts";
 // import { GatherResult, UploadWidget } from "./widgets/upload.ts";
 // import { AttachmentsWidget } from "./attachmentsWidget.ts";
-import { InputComponent } from "./components/input";
+import {
+    InputComponent,
+    TextInput,
+    MultiTextInput,
+    DatetimeInput,
+} from "./components/input";
 import { DatasetOverview } from "./forms";
 import { UploadComponent } from "./components";
 
@@ -77,7 +82,38 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 }
 
 function createInputs(): Map<string, InputComponent<unknown>> {
-    return new Map();
+    const inputList = [
+        new TextInput("datasetName", { required: true }),
+        new TextInput("description", { multiline: true }),
+        new TextInput("proposalId", {}),
+        new TextInput("instrumentId", {}),
+        new TextInput("creationLocation", {}),
+        new TextInput("runNumber", {}),
+        new DatetimeInput("startTime", {}),
+        new DatetimeInput("endTime", {}),
+        new TextInput("principalInvestigator", { required: true }),
+        new TextInput("contactEmail", { required: true }),
+        new TextInput("owners", {}),
+        new TextInput("ownerGroup", { required: true }),
+        new TextInput("accessGroups", {}),
+        new TextInput("license", {}),
+        new TextInput("techniques", {}),
+        new TextInput("usedSoftware", {}),
+        new TextInput("sampleId", {}),
+        new TextInput("type", { required: true }),
+        new MultiTextInput("keywords", {}),
+        new TextInput("relationships", {}),
+        new TextInput("scientificMetadata", {}),
+        new TextInput("sourceFolder", { required: true }),
+        new TextInput("files", {}),
+        new TextInput("attachments", {}),
+    ];
+
+    const inputs = new Map();
+    for (const input of inputList) {
+        inputs.set(input.key, input);
+    }
+    return inputs;
 }
 
 //

@@ -3,7 +3,7 @@ import { BackendComm, ResLoadImage } from "./comm.ts";
 import { GatherResult } from "./components/upload.ts";
 import { FileInputWidget, StringInputWidget } from "./inputWidgets.ts";
 import { removeButton } from "./components/button.ts";
-import { createInputWithLabel } from "./forms";
+// import { createInputWithLabel } from "./forms";
 
 export class AttachmentsWidget {
     readonly element: HTMLDivElement;

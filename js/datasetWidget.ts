@@ -11,11 +11,10 @@ import {
     StringListInputWidget,
     TechniquesInputWidget,
 } from "./inputWidgets";
-import { createInputWithLabel } from "./forms";
+// import { createInputWithLabel } from "./forms";
 import { Instrument, Proposal, Techniques } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 import { GatherResult } from "./widgets/upload.ts";
-// import { validateEmail } from "./validation.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;

@@ -1,7 +1,7 @@
 // TODO remove
 import { FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
 import { removeButton } from "./components";
-import { createInputWithLabel } from "./forms";
+// import { createInputWithLabel } from "./forms";
 import { humanSize } from "./components";
 import { BackendComm } from "./comm.ts";
 import { GatherResult } from "./components/upload.ts";

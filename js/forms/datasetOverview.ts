@@ -14,9 +14,9 @@ export class DatasetOverview {
         config: Config,
     ) {
         const tabs = assembleTabs(
-            new MetadataOverview(),
-            new Files(),
-            new Attachments(),
+            new MetadataOverview(widgets),
+            new Files(widgets),
+            new Attachments(widgets),
             uploader.createButton(),
             config,
         );

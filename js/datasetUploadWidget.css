@@ -74,7 +74,164 @@ button[role="tab"] {
     margin-left: 0.5em;
 }
 
-.cean-upload-button {
+fieldset.cean-fields {
+    margin: 0.4em 0;
+}
+
+.cean-input-grid {
+    display: grid;
+    column-gap: 12px;
+    row-gap: 10px;
+    align-items: start;
+    /* This can be overridden in specialised grids */
+    grid-template-columns: max-content 1fr;
+
+    .cean-grid-span-3 {
+        grid-column: span 3;
+    }
+}
+
+
+.cean-general-info {
+    grid-template-columns:
+        max-content 1fr
+        max-content 1fr;
+
+    textarea {
+        resize: vertical;
+    }
+}
+
+.cean-run-info-row {
+    grid-template-columns:
+        1fr
+        max-content max-content
+        max-content max-content;
+
+    & > *:nth-child(2n+1) {
+        /* Ensure input columns can shrink and inputs don't overflow */
+        min-width: 0;
+    }
+}
+
+.cean-form-columns {
+    display: grid;
+    grid-template-columns: 3fr 2fr;
+    column-gap: 1em;
+    align-items: start;
+}
+
+@media (width <= 600px) {
+    .cean-form-columns {
+        grid-template-columns: 1fr;
+    }
+}
+
+label:has(+ div input:required)::after {
+    content: " *";
+    color: var(--jp-error-color2);
+}
+
+input.cean-input, select.cean-input, textarea.cean-input {
+    /* Make all input elements use all available space */
+    width: 100%;
+    box-sizing: border-box;
+    border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
+    background: var(--jp-cell-editor-background);
+    color: var(--jp-content-font-color1);
+
+    &:focus-visible {
+        outline: none;
+    }
+
+    &:focus {
+        border-color: var(--jp-input-active-border-color);
+        background-color: var(--jp-input-active-background);
+    }
+
+    &:hover:not(:disabled) {
+        border-color: var(--jp-input-active-border-color);
+    }
+
+    &::selection {
+        background-color: var(--jp-editor-selected-focused-background);
+    }
+
+}
+
+.cean-datetime-input {
+    display: grid;
+    grid-template-columns: max-content max-content;
+    column-gap: 0;
+    row-gap: 10px;
+    align-items: start;
+}
+
+.cean-input-and-button {
+    column-gap: 8px;
+    grid-template-columns:
+        1fr max-content;
+}
+
+/* The second pattern matches datetime inputs */
+:invalid + .status, div:has(> :invalid) + .status {
+    display: block;
+}
+
+.status {
+    display: none;
+    color: var(--jp-error-color2);
+}
+
+.cean-button {
+    background: var(--jp-input-background);
+    color: var(--jp-ui-font-color1);
+    border-radius: var(--jp-border-radius);
+    border: none;
+    cursor: pointer;
+
+    &:hover {
+        background: var(--jp-input-hover-background);
+        color: var(--jp-ui-font-color0);
+    }
+
+    &[disabled="true"] {
+        background: var(--jp-input-background);
+        color: var(--jp-ui-font-color2);
+        cursor: unset;
+    }
+
+    &:active {
+        box-shadow: 0 0 0 1px var(--jp-input-active-border-color);
+    }
+
+    i + span {
+        /* Margin for buttons with icon and text */
+        margin-left: 0.5em;
+    }
+}
+
+.cean-icon-button {
+    &:active {
+        box-shadow: none;
+        background: var(--jp-input-active-background);
+    }
+}
+
+.cean-remove-button {
+    background: none;
+
+    &:hover {
+        color: var(--jp-error-color1);
+        background: none;
+    }
+
+    &:active {
+        color: var(--jp-error-color2);
+    }
+}
+
+.cean-button[type="submit"] {
     /* SciCat brand color */
     background: #27aae1;
     color: var(--jp-ui-inverse-font-color1);
@@ -82,6 +239,31 @@ button[role="tab"] {
     &:hover {
         background: #3ec2fa;
         box-shadow: none !important;
+    }
+}
+
+ul.cean-input-items {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+
+    li {
+        display: flex;
+        align-items: center;
+        background: var(--jp-layout-color2);
+        padding: 2px 8px;
+        gap: 4px;
+        border: var(--jp-border-width) solid var(--jp-layout-color3);
+        border-radius: var(--jp-border-radius);
+
+        span {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 }
 

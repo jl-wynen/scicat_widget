@@ -1,4 +1,4 @@
-const FA_ICONS = ["plus", "trashCan"];
+const FA_ICONS = ["plus", "trash"];
 
 const CUSTOM_ICONS: Record<string, string> = {};
 
@@ -48,7 +48,7 @@ export function iconButton(
  * @param callback Callback to be invoked when the button is clicked.
  */
 export function removeButton(callback: () => void): HTMLButtonElement {
-    const button = iconButton("trashCan", callback, "Remove item");
+    const button = iconButton("trash", callback, "Remove item");
     button.classList.add("cean-remove-button");
     button.setAttribute("tabindex", "-1");
     return button;
@@ -77,6 +77,7 @@ export function iconTextButton(
 function createEmptyButton(callback: () => void, title?: string): HTMLButtonElement {
     const button = document.createElement("button");
     button.type = "button";
+    button.classList.add("cean-button");
     if (title !== undefined) button.title = title;
     button.addEventListener("click", callback);
     return button;
