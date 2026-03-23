@@ -1,5 +1,3 @@
-import isEmail from "validator/lib/isEmail";
-
 /**
  * Function to validate input values.
  *
@@ -7,17 +5,6 @@ import isEmail from "validator/lib/isEmail";
  * @returns An error message if the value is invalid, or `null` if it's valid.
  */
 export type Validator<T> = (value: T) => string | null;
-
-/**
- * Validate email addresses.
- *
- * @param email The string address to validate.
- * @returns An error message if the email is invalid, or `null` if it's valid.
- */
-export function validateEmail(email: string): string | null {
-    if (isEmail(email)) return null;
-    return "Invalid email address";
-}
 
 /**
  * Validate ORCID iDs.

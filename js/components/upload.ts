@@ -2,8 +2,9 @@ import { BackendComm, FieldError, ResUploadDataset } from "../comm";
 import { simpleLink, textElement } from "./output.ts";
 import { textButton } from "./button.ts";
 import { Dialog } from "./dialog.ts";
+import { Config } from "../config.ts";
 
-export class UploadWidget {
+export class UploadComponent {
     private readonly comm: BackendComm;
     private readonly scicatUrl: string;
     private readonly skipConfirmation: boolean;
@@ -12,15 +13,10 @@ export class UploadWidget {
     private readonly key = crypto.randomUUID();
     private dialog: Dialog;
 
-    constructor(
-        comm: BackendComm,
-        scicatUrl: string,
-        skipConfirmation: boolean,
-        gatherData: () => GatherResult,
-    ) {
+    constructor(comm: BackendComm, config: Config, gatherData: () => GatherResult) {
         this.comm = comm;
-        this.scicatUrl = scicatUrl;
-        this.skipConfirmation = skipConfirmation;
+        this.scicatUrl = config.scicatUrl;
+        this.skipConfirmation = config.skipConfirmation;
         this.gatherData = gatherData;
 
         this.dialog = new Dialog();

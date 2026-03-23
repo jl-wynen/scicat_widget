@@ -1,6 +1,5 @@
-import { humanSize } from "../widgets/output.ts";
+import { humanSize, iconTextButton } from "../components";
 import { InputWidget } from "./inputWidget.ts";
-import { iconTextButton } from "../widgets/button.ts";
 import { StringInputWidget } from "./stringInputWidget.ts";
 import { BackendComm, ResBrowseFiles, ResInspectFile } from "../comm.ts";
 

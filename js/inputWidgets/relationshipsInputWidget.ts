@@ -1,8 +1,8 @@
 import { InputWidget } from "./inputWidget";
-import { removeButton } from "../widgets/button.ts";
+import { removeButton } from "../components/button.ts";
 import { ComboboxInputWidget, Choice } from "./comboboxInputWidget.ts";
 import { StringInputWidget } from "./stringInputWidget.ts";
-import { createInputWithLabel } from "../forms.ts";
+import { createInputWithLabel } from "../forms";
 
 export type Relationship = {
     relationship: string;

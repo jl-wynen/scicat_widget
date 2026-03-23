@@ -1,9 +1,10 @@
+// TODO remove
 import { FileInputWidget, InputWidget, StringInputWidget } from "./inputWidgets.ts";
-import { removeButton } from "./widgets/button.ts";
-import { createInputWithLabel } from "./forms.ts";
-import { humanSize } from "./widgets/output.ts";
+import { removeButton } from "./components";
+import { createInputWithLabel } from "./forms";
+import { humanSize } from "./components";
 import { BackendComm } from "./comm.ts";
-import { GatherResult } from "./widgets/upload.ts";
+import { GatherResult } from "./components/upload.ts";
 import { Instrument } from "./models.ts";
 
 export class FilesWidget {
@@ -28,14 +29,15 @@ export class FilesWidget {
         const element = document.createElement("div");
         element.classList.add("cean-files-widget");
 
-        element.appendChild(this.createSummary());
-        const [sourceFolderSection, folder] = createSourceFolderInput(
-            instruments,
-            topContainer,
-        );
-        this.sourceFolderInput = folder;
-        element.appendChild(sourceFolderSection);
-        element.appendChild(this.createFileWidgets());
+        // TODO
+        // element.appendChild(this.createSummary());
+        // const [sourceFolderSection, folder] = createSourceFolderInput(
+        //     instruments,
+        //     topContainer,
+        // );
+        // this.sourceFolderInput = folder;
+        // element.appendChild(sourceFolderSection);
+        // element.appendChild(this.createFileWidgets());
 
         this.element = element;
     }

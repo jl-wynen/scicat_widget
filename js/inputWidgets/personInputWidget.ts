@@ -2,7 +2,7 @@ import { InputWidget } from "./inputWidget";
 import { Person } from "../models";
 import { createInputWithLabel } from "../forms";
 import { StringInputWidget } from "./stringInputWidget.ts";
-import { validateEmail, validateOrcid } from "../validation";
+import { validateOrcid } from "../validation";
 
 type PersonWidgets = {
     name: InputWidget<string>;

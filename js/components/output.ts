@@ -1,3 +1,4 @@
+/** Format a size in bytes as a human-readable string. */
 export function humanSize(size: number | null): HTMLSpanElement {
     const span = document.createElement("span");
     if (size === null) {
@@ -15,6 +16,15 @@ export function humanSize(size: number | null): HTMLSpanElement {
 export function simpleLink(href: string): string {
     const display = href.replace(/^https?:\/\/|\/$/g, "");
     return `<a href="${href}" target=_blank>${display}</a>`;
+}
+
+/** Create a link with an image */
+export function imageLink(href: string, imageHTML: string): HTMLAnchorElement {
+    const anchor = document.createElement("a");
+    anchor.href = href;
+    anchor.target = "_blank";
+    anchor.innerHTML = imageHTML;
+    return anchor;
 }
 
 /** Create an element containing text. */

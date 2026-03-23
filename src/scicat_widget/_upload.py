@@ -9,6 +9,7 @@ from scitacean import PID, Client, Dataset, File, model
 def upload_dataset(
     client: Client, widget_data: dict[str, object]
 ) -> Dataset | UploadError:
+    # TODO check instrument, seem to be NOne
     dataset = make_dataset_from_widget_data(widget_data)
     try:
         return client.upload_new_dataset_now(dataset)

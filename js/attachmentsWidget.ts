@@ -1,8 +1,9 @@
+// TODO remove
 import { BackendComm, ResLoadImage } from "./comm.ts";
-import { GatherResult } from "./widgets/upload.ts";
+import { GatherResult } from "./components/upload.ts";
 import { FileInputWidget, StringInputWidget } from "./inputWidgets.ts";
-import { removeButton } from "./widgets/button.ts";
-import { createInputWithLabel } from "./forms.ts";
+import { removeButton } from "./components/button.ts";
+import { createInputWithLabel } from "./forms";
 
 export class AttachmentsWidget {
     readonly element: HTMLDivElement;
@@ -15,29 +16,30 @@ export class AttachmentsWidget {
         this.comm = comm;
         this.nAttachmentsTabElement = nAttachmentsTabElement;
 
-        const [newPathLabel, newPathWidget] = createInputWithLabel(
-            crypto.randomUUID(),
-            FileInputWidget,
-            [comm],
-            "New attachment",
-        ) as [HTMLLabelElement, FileInputWidget];
-        newPathWidget.container.addEventListener("input-updated", () => {
-            if (newPathWidget.size && newPathWidget.value) {
-                this.addAttachmentWidget(newPathWidget.value);
-                newPathWidget.value = null;
-                newPathWidget.clear();
-            }
-        });
-        const newPanel = document.createElement("section");
-        newPanel.classList.add("cean-input-panel");
-        newPanel.append(newPathLabel, newPathWidget.container);
-
-        this.attachmentsGrid = document.createElement("section");
-        this.attachmentsGrid.classList.add("cean-attachments-grid", "cean-input-panel");
+        // TODO
+        // const [newPathLabel, newPathWidget] = createInputWithLabel(
+        //     crypto.randomUUID(),
+        //     FileInputWidget,
+        //     [comm],
+        //     "New attachment",
+        // ) as [HTMLLabelElement, FileInputWidget];
+        // newPathWidget.container.addEventListener("input-updated", () => {
+        //     if (newPathWidget.size && newPathWidget.value) {
+        //         this.addAttachmentWidget(newPathWidget.value);
+        //         newPathWidget.value = null;
+        //         newPathWidget.clear();
+        //     }
+        // });
+        // const newPanel = document.createElement("section");
+        // newPanel.classList.add("cean-input-panel");
+        // newPanel.append(newPathLabel, newPathWidget.container);
+        //
+        // this.attachmentsGrid = document.createElement("section");
+        // this.attachmentsGrid.classList.add("cean-attachments-grid", "cean-input-panel");
 
         this.element = document.createElement("div");
         this.element.classList.add("cean-attachments-widget");
-        this.element.append(newPanel, this.attachmentsGrid);
+        // this.element.append(newPanel, this.attachmentsGrid);
     }
 
     gatherData(): GatherResult {

@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidget";
-import { iconButton, removeButton } from "../widgets/button.ts";
+import { iconButton, removeButton } from "../components/button.ts";
 
 export class StringListInputWidget extends InputWidget<string[]> {
     private readonly itemsContainer: HTMLDivElement;

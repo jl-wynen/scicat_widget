@@ -51,6 +51,18 @@
         "label": "Owner group",
         "description": "The group that owns the dataset in SciCat and the data on disk. As uploader, you need to be a member of this group."
     },
+    "personEmail": {
+        "label": "Email",
+        "description": "Email address of the person."
+    },
+    "personName": {
+        "label": "Name",
+        "description": "Name of the person."
+    },
+    "personORCID": {
+        "label": "ORCID",
+        "description": "ORCID iD of the person."
+    },
     "principalInvestigator": {
         "label": "PI",
         "description": "Principal investigator of the proposal."

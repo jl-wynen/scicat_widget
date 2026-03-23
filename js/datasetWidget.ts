@@ -1,3 +1,4 @@
+// TODO remove
 import {
     CheckboxInputWidget,
     ComboboxInputWidget,
@@ -10,11 +11,11 @@ import {
     StringListInputWidget,
     TechniquesInputWidget,
 } from "./inputWidgets";
-import { createInputWithLabel } from "./forms.ts";
+import { createInputWithLabel } from "./forms";
 import { Instrument, Proposal, Techniques } from "./models";
 import { Choice } from "./inputWidgets/comboboxInputWidget.ts";
 import { GatherResult } from "./widgets/upload.ts";
-import { validateEmail } from "./validation.ts";
+// import { validateEmail } from "./validation.ts";
 
 export class DatasetWidget {
     element: HTMLDivElement;
@@ -38,11 +39,11 @@ export class DatasetWidget {
                 container,
             ),
         );
-        container.appendChild(
-            createOwnerPanel(this.inputWidgets, accessGroups, proposals, container),
-        );
-        container.appendChild(createMiscPanel(this.inputWidgets, techniques));
-        container.appendChild(createScientificMetadataPanel(this.inputWidgets));
+        // container.appendChild(
+        //     createOwnerPanel(this.inputWidgets, accessGroups, proposals, container),
+        // );
+        // container.appendChild(createMiscPanel(this.inputWidgets, techniques));
+        // container.appendChild(createScientificMetadataPanel(this.inputWidgets));
 
         this.element = container;
     }

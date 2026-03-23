@@ -33,7 +33,7 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     accessGroups = traitlets.List(trait=traitlets.Unicode()).tag(sync=True)
     techniques = traitlets.Dict(trait=traitlets.Any()).tag(sync=True)
     scicatUrl = traitlets.Unicode().tag(sync=True)
-    skipConfirm = traitlets.Bool().tag(sync=True)
+    skipConfirmation = traitlets.Bool().tag(sync=True)
 
     def __init__(self, client: Client, /, *, skip_confirm: bool = False) -> None:
         initial, instruments, proposals, access_groups = _collect_initial_data(client)
@@ -46,7 +46,7 @@ class DatasetUploadWidget(anywidget.AnyWidget):
             accessGroups=access_groups,
             techniques=_load_techniques(),
             scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
-            skipConfirm=skip_confirm,
+            skipConfirmation=skip_confirm,
             client=client,  # TODO create client here if not given
         )
         self.client = client
