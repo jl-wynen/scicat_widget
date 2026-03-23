@@ -1,5 +1,5 @@
 import { InputWidget } from "./inputWidgets/inputWidget";
-import { fieldInfo } from "./assets.ts";
+import { fieldInfo } from "./assets";
 
 /**
  * Create an element for a form.
