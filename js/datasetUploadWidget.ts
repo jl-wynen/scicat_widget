@@ -1,4 +1,4 @@
-import type { RenderProps } from "@anywidget/types";
+import type { AnyModel, RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
 // import { DatasetWidget } from "./datasetWidget.ts";
 // import { Tabs } from "./tabs.ts";
@@ -9,11 +9,13 @@ import { BackendComm } from "./comm.ts";
 // import { GatherResult, UploadWidget } from "./widgets/upload.ts";
 // import { AttachmentsWidget } from "./attachmentsWidget.ts";
 import {
+    ComboboxInput,
     DatetimeInput,
     InputComponent,
     MultiTextInput,
     TextInput,
 } from "./components/input";
+import { Choice } from "./components/input/comboboxInput.ts";
 import { DatasetOverview } from "./forms";
 import { UploadComponent } from "./components";
 
@@ -39,7 +41,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         return {};
     });
 
-    const inputs = createInputs();
+    const inputs = createInputs(model);
     const datasetOverview = new DatasetOverview(inputs, uploader, config);
     el.appendChild(datasetOverview.element);
 
@@ -81,11 +83,17 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     // );
 }
 
-function createInputs(): Map<string, InputComponent<unknown>> {
+function createInputs(
+    model: AnyModel<WidgetModel>,
+): Map<string, InputComponent<unknown>> {
     const inputList = [
         new TextInput("datasetName", { required: true }),
         new TextInput("description", { multiline: true }),
-        new TextInput("proposalId", {}),
+        new ComboboxInput(
+            "proposalId",
+            makeProposalChoices(model.get("proposals")),
+            {},
+        ),
         new TextInput("instrumentId", {}),
         new TextInput("creationLocation", {}),
         new TextInput("runNumber", {}),
@@ -97,7 +105,11 @@ function createInputs(): Map<string, InputComponent<unknown>> {
         new TextInput("ownerGroup", { required: true }),
         new TextInput("accessGroups", {}),
         new TextInput("license", {}),
-        new TextInput("techniques", {}),
+        new ComboboxInput(
+            "techniques",
+            makeTechniqueChoices(model.get("techniques")),
+            {},
+        ),
         new TextInput("usedSoftware", {}),
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
@@ -114,6 +126,20 @@ function createInputs(): Map<string, InputComponent<unknown>> {
         inputs.set(input.key, input);
     }
     return inputs;
+}
+
+function makeProposalChoices(proposals: Proposal[]): Choice[] {
+    return (
+        proposals
+            .map((proposal) => {
+                return { key: proposal.id, text: proposal.title };
+            })
+            .sort((a, b) => a.key.localeCompare(b.key)) ?? []
+    );
+}
+
+function makeTechniqueChoices(techniques: Techniques): Choice[] {
+    return [];
 }
 
 //

@@ -1,4 +1,4 @@
-const FA_ICONS = ["plus", "trash"];
+const FA_ICONS = ["chevron-down", "plus", "trash"];
 
 const CUSTOM_ICONS: Record<string, string> = {};
 

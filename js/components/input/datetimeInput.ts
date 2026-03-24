@@ -7,6 +7,7 @@ export class DatetimeInput extends InputComponent<Date> {
     constructor(key: string, options: InputOptions<Date>) {
         const dateElement = document.createElement("input");
         dateElement.id = crypto.randomUUID();
+        dateElement.name = key;
         dateElement.type = "date";
         dateElement.required = options.required ?? false;
         dateElement.classList.add("cean-input");

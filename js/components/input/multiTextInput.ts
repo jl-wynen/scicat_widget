@@ -6,7 +6,7 @@ export class MultiTextInput extends InputComponent<string[]> {
     itemsList: HTMLUListElement;
 
     constructor(key: string, options: InputOptions<string[]>) {
-        const [inputElement, itemsList, addButton] = createElements();
+        const [inputElement, itemsList, addButton] = createElements(key);
         const inputRow = document.createElement("div");
         inputRow.className = "cean-input-grid cean-input-and-button";
         inputRow.append(inputElement, addButton);
@@ -35,9 +35,12 @@ export class MultiTextInput extends InputComponent<string[]> {
     }
 }
 
-function createElements(): [HTMLInputElement, HTMLUListElement, HTMLButtonElement] {
+function createElements(
+    key: string,
+): [HTMLInputElement, HTMLUListElement, HTMLButtonElement] {
     const inputElement = document.createElement("input");
     inputElement.id = crypto.randomUUID();
+    inputElement.name = key;
     inputElement.type = "text";
     inputElement.placeholder = "Add new item...";
     inputElement.className = "cean-input";

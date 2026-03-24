@@ -16,6 +16,7 @@ export class TextInput extends InputComponent<string> {
     constructor(key: string, options: Options) {
         const inputElement = makeInputElement(options);
         inputElement.id = crypto.randomUUID();
+        inputElement.name = key;
         inputElement.required = options.required ?? false;
         inputElement.classList.add("cean-input");
 

@@ -167,6 +167,67 @@ input.cean-input, select.cean-input, textarea.cean-input {
     align-items: start;
 }
 
+.cean-combobox {
+    position: relative;
+
+    datalist {
+        position: absolute;
+        z-index: 10;
+        display: none;
+        width: 100%;
+        box-sizing: border-box;
+        border: var(--jp-border-width) solid var(--jp-input-border-color);
+        border-top: none;
+        background-color: var(--jp-notebook-select-background);
+
+        max-height: 16rem;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+
+    option {
+        cursor: pointer;
+        user-select: none;
+        padding: 0.1em 0.5em;
+
+        &:hover {
+            background-color: var(--jp-editor-selected-background);
+        }
+
+        & span {
+            padding-right: 0.5em;
+        }
+
+        &.cean-active {
+            background-color: var(--jp-layout-color2);
+        }
+
+        &.cean-selected {
+            background-color: var(--jp-editor-selected-focused-background);
+            font-weight: bold;
+        }
+    }
+
+    .cean-icon-button {
+        position: absolute;
+        right: 0;
+        /*top: 50%;*/
+        /*transform: translateY(-50%);*/
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        height: fit-content;
+        color: var(--jp-ui-font-color2);
+        cursor: default;
+        background: unset;
+
+        &:hover {
+            background: unset;
+            color: var(--jp-ui-font-color2);
+        }
+    }
+}
+
 .cean-input-and-button {
     column-gap: 8px;
     grid-template-columns:
