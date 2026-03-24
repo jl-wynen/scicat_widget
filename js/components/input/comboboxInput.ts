@@ -84,6 +84,10 @@ export class ComboboxInput extends InputComponent<string> {
         this.searchBar.value = value ?? "";
     }
 
+    get options(): HTMLCollectionOf<HTMLOptionElement> {
+        return this.datalist.options;
+    }
+
     private open() {
         this.datalist.style.display = "block";
         // TODO disable filter based on options
@@ -112,10 +116,10 @@ function removeActive(datalist: HTMLDataListElement) {
 
 function defaultRenderChoice(choice: Choice): HTMLElement {
     const key = document.createElement("span");
-    key.className = "cean-key";
+    key.className = "cean-item-key";
     key.textContent = choice.key;
     const label = document.createElement("span");
-    label.className = "cean-label";
+    label.className = "cean-item-text";
     label.textContent = choice.text;
 
     const wrap = document.createElement("div");
@@ -188,7 +192,9 @@ function createDatalist(
             }
             option.selected = true;
             option.classList.add("cean-selected");
-            datalist.dispatchEvent(new SelectedEvent(option.value, option.textContent));
+            datalist.dispatchEvent(
+                new SelectedEvent(option.value, option.textContent, { bubbles: true }),
+            );
         });
     }
 
@@ -251,20 +257,19 @@ function filterOptions(filter: string, datalist: HTMLDataListElement) {
     }
 }
 
-class SelectedEvent extends Event {
+export class SelectedEvent extends Event {
     readonly key: string;
     readonly text: string;
 
-    constructor(key: string, text: string) {
-        super("selected-option");
+    constructor(key: string, text: string, options?: EventInit) {
+        super("selected-option", options);
         this.key = key;
         this.text = text;
     }
 }
 
 function createChevron(searchBar: HTMLInputElement): HTMLElement {
-    const chevron = iconButton("chevron-down", () => {
+    return iconButton("chevron-down", () => {
         searchBar.focus();
     });
-    return chevron;
 }

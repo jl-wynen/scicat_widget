@@ -228,6 +228,44 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-item-key {
+    color: var(--jp-content-font-color3);
+    font-family: monospace;
+}
+
+.cean-techniques-item {
+    display: flex;
+    background: var(--jp-layout-color2);
+    padding: 2px 8px;
+    border: var(--jp-border-width) solid var(--jp-layout-color3);
+    border-radius: var(--jp-border-radius);
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .cean-item-key {
+            color: var(--jp-content-link-color);
+            font-family: unset;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--jp-content-link-color);
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .cean-button {
+        padding: 0;
+        background: none;
+        min-height: unset;
+        font-size: 0.8em;
+    }
+}
+
+
 .cean-input-and-button {
     column-gap: 8px;
     grid-template-columns:

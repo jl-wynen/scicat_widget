@@ -13,6 +13,7 @@ import {
     DatetimeInput,
     InputComponent,
     MultiTextInput,
+    TechniquesInput,
     TextInput,
 } from "./components/input";
 import { Choice } from "./components/input/comboboxInput.ts";
@@ -105,11 +106,7 @@ function createInputs(
         new TextInput("ownerGroup", { required: true }),
         new TextInput("accessGroups", {}),
         new TextInput("license", {}),
-        new ComboboxInput(
-            "techniques",
-            makeTechniqueChoices(model.get("techniques")),
-            {},
-        ),
+        new TechniquesInput("techniques", model.get("techniques")),
         new TextInput("usedSoftware", {}),
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
@@ -136,10 +133,6 @@ function makeProposalChoices(proposals: Proposal[]): Choice[] {
             })
             .sort((a, b) => a.key.localeCompare(b.key)) ?? []
     );
-}
-
-function makeTechniqueChoices(techniques: Techniques): Choice[] {
-    return [];
 }
 
 //
