@@ -96,7 +96,7 @@ function createInputs(
             makeProposalChoices(model.get("proposals")),
             {},
         ),
-        new TextInput("instrumentId", {}),
+        makeInstrumentInput(model.get("instruments")),
         new TextInput("creationLocation", {}),
         new TextInput("runNumber", {}),
         new DatetimeInput("startTime", {}),
@@ -134,6 +134,25 @@ function makeProposalChoices(proposals: Proposal[]): Choice[] {
             })
             .sort((a, b) => a.key.localeCompare(b.key)) ?? []
     );
+}
+
+function makeInstrumentInput(instruments: Instrument[]): ComboboxInput {
+    const choices = instruments
+        .map((instrument) => {
+            return {
+                key: instrument.id,
+                text: instrument.uniqueName,
+            };
+        })
+        .sort((a, b) => a.text.localeCompare(b.text));
+
+    const renderChoice = (choice: Choice) => {
+        const el = document.createElement("div");
+        el.textContent = choice.text;
+        return el;
+    };
+
+    return new ComboboxInput("instrumentId", choices, { renderChoice });
 }
 
 //
