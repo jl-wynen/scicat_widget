@@ -2,6 +2,7 @@ import { InputComponent, InputOptions } from "./inputComponent.ts";
 
 export interface Options extends InputOptions<string> {
     multiline?: boolean;
+    type?: "text" | "email";
 }
 
 /**
@@ -49,7 +50,6 @@ function makeInputElement(options: Options): HTMLInputElement | HTMLTextAreaElem
                 event.stopPropagation();
             }
         });
-
         return textarea;
     } else {
         const inputElement = document.createElement("input");
@@ -59,6 +59,7 @@ function makeInputElement(options: Options): HTMLInputElement | HTMLTextAreaElem
                 event.stopPropagation();
             }
         });
+        inputElement.type = options.type ?? "text";
         return inputElement;
     }
 }

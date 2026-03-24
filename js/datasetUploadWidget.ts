@@ -1,4 +1,4 @@
-import type { AnyModel, RenderProps } from "@anywidget/types";
+import type { RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
 // import { DatasetWidget } from "./datasetWidget.ts";
 // import { Tabs } from "./tabs.ts";
@@ -9,10 +9,10 @@ import { BackendComm } from "./comm.ts";
 // import { GatherResult, UploadWidget } from "./widgets/upload.ts";
 // import { AttachmentsWidget } from "./attachmentsWidget.ts";
 import {
-    InputComponent,
-    TextInput,
-    MultiTextInput,
     DatetimeInput,
+    InputComponent,
+    MultiTextInput,
+    TextInput,
 } from "./components/input";
 import { DatasetOverview } from "./forms";
 import { UploadComponent } from "./components";
@@ -92,7 +92,7 @@ function createInputs(): Map<string, InputComponent<unknown>> {
         new DatetimeInput("startTime", {}),
         new DatetimeInput("endTime", {}),
         new TextInput("principalInvestigator", { required: true }),
-        new TextInput("contactEmail", { required: true }),
+        new TextInput("contactEmail", { required: true, type: "email" }),
         new TextInput("owners", {}),
         new TextInput("ownerGroup", { required: true }),
         new TextInput("accessGroups", {}),
