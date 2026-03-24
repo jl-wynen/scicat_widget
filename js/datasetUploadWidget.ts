@@ -13,6 +13,7 @@ import {
     DatetimeInput,
     InputComponent,
     MultiTextInput,
+    PeopleInput,
     TechniquesInput,
     TextInput,
 } from "./components/input";
@@ -102,7 +103,7 @@ function createInputs(
         new DatetimeInput("endTime", {}),
         new TextInput("principalInvestigator", { required: true }),
         new TextInput("contactEmail", { required: true, type: "email" }),
-        new TextInput("owners", {}),
+        new PeopleInput("owners", {}),
         new TextInput("ownerGroup", { required: true }),
         new TextInput("accessGroups", {}),
         new TextInput("license", {}),

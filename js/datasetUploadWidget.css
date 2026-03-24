@@ -127,7 +127,7 @@ fieldset.cean-fields {
     }
 }
 
-label:has(+ div input:required)::after {
+label.cean-required::after {
     content: " *";
     color: var(--jp-error-color2);
 }

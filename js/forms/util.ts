@@ -8,8 +8,8 @@ import { fieldInfo } from "../assets";
  * @param label Optional label text.
  * @param title Optional title text.
  */
-export function createLabelFor(
-    component: InputComponent<unknown>,
+export function createLabelFor<T>(
+    component: InputComponent<T>,
     label?: string,
     title?: string,
 ): HTMLLabelElement {
@@ -21,6 +21,10 @@ export function createLabelFor(
 
     const t = title ?? info?.description;
     if (t) el.title = t;
+
+    if (component.required) {
+        el.classList.add("cean-required");
+    }
 
     return el;
 }
