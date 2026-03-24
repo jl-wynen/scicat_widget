@@ -4,19 +4,21 @@ import { Attachments } from "./attachments.ts";
 import { Files } from "./files.ts";
 import { MetadataOverview } from "./metadataOverview.ts";
 import { Config } from "../config.ts";
+import { BackendComm } from "../comm.ts";
 
 export class DatasetOverview {
     private readonly container: HTMLElement;
 
     constructor(
-        widgets: Map<string, InputComponent<unknown>>,
+        inputs: Map<string, InputComponent<unknown>>,
         uploader: UploadComponent,
+        comm: BackendComm,
         config: Config,
     ) {
         const tabs = assembleTabs(
-            new MetadataOverview(widgets),
-            new Files(widgets),
-            new Attachments(widgets),
+            new MetadataOverview(inputs),
+            new Files(inputs, comm, true),
+            new Attachments(inputs),
             uploader.createButton(),
             config,
         );

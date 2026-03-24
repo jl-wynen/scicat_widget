@@ -265,6 +265,36 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-file-input {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+
+    button {
+        margin-left: 1em;
+        background: var(--jp-layout-color3);
+
+        &:hover {
+            background: var(--jp-layout-color1);
+        }
+    }
+}
+
+.cean-single-file-input {
+    display: flex;
+    background: var(--jp-layout-color2);
+    padding: 2px 8px;
+    border: var(--jp-border-width) solid var(--jp-layout-color3);
+    border-radius: var(--jp-border-radius);
+
+    > div {
+        width: 100%;
+        padding-right: 1em;
+    }
+
+    .cean-button {
+        align-self: flex-start;
+    }
+}
 
 .cean-input-and-button {
     column-gap: 8px;

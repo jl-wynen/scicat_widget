@@ -44,7 +44,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     });
 
     const inputs = createInputs(model);
-    const datasetOverview = new DatasetOverview(inputs, uploader, config);
+    const datasetOverview = new DatasetOverview(inputs, uploader, comm, config);
     el.appendChild(datasetOverview.element);
 
     el.addEventListener(
