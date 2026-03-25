@@ -7,6 +7,7 @@ export class Files {
     readonly element: HTMLDivElement;
     private readonly summary = new Summary();
     private readonly filesContainer: HTMLFieldSetElement;
+    private readonly filesInputs: FileInput[] = [];
     private readonly comm: BackendComm;
 
     constructor(
@@ -31,20 +32,33 @@ export class Files {
     }
 
     private updateSummary() {
-        // TODO
-        // this.summary.nFiles = this.files.length;
-        // this.summary.totalSize = this.totalSize;
+        const files = this.filesInputs.filter((f) => f.value);
+        this.summary.totalSize = files.reduce((sum, f) => sum + (f.size ?? 0), 0);
+        this.summary.nFiles = files.length;
     }
 
     private addFileInput() {
-        this.filesContainer.append(
-            createFileInput(this.comm, () => {
-                this.onInputRemoved();
-            }),
+        const [container, fileInput, remotePathInput] = createFileInput(
+            this.comm,
+            (x) => {
+                this.onInputRemoved(x);
+            },
         );
+        container.addEventListener("input-updated", () => {
+            this.updateSummary();
+        });
+        fileInput.container.addEventListener("file-inspected", (e: Event) => {
+            const event = e as CustomEvent;
+            const payload = event.detail.payload;
+            remotePathInput.placeholder = payload.remotePath ?? null;
+        });
+        this.filesInputs.push(fileInput);
+        this.filesContainer.append(container);
     }
 
-    private onInputRemoved() {
+    private onInputRemoved(fileInput: FileInput) {
+        fileInput.destroy();
+        this.filesInputs.splice(this.filesInputs.indexOf(fileInput), 1);
         this.updateSummary();
         if (
             this.filesContainer.querySelectorAll(".cean-single-file-input").length === 0
@@ -120,13 +134,13 @@ function createFilesContainer(): HTMLFieldSetElement {
 
 function createFileInput(
     comm: BackendComm,
-    onInputRemoved: () => void,
-): HTMLFieldSetElement {
+    onInputRemoved: (x: FileInput) => void,
+): [HTMLFieldSetElement, FileInput, TextInput] {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "cean-single-file-input";
 
-    const localPathInput = new FileInput("localPath", comm, {});
-    const localPathLabel = createLabelFor(localPathInput);
+    const fileInput = new FileInput("localPath", comm, {});
+    const localPathLabel = createLabelFor(fileInput);
 
     const remotePathInput = new TextInput("remotePath", {});
     const remotePathLabel = createLabelFor(remotePathInput);
@@ -135,16 +149,16 @@ function createFileInput(
     inputContainer.classList.add("cean-input-grid");
     inputContainer.append(
         localPathLabel,
-        localPathInput.container,
+        fileInput.container,
         remotePathLabel,
         remotePathInput.container,
     );
 
     const button = removeButton(() => {
         fieldset.remove();
-        onInputRemoved();
+        onInputRemoved(fileInput);
     });
 
     fieldset.append(inputContainer, button);
-    return fieldset;
+    return [fieldset, fileInput, remotePathInput];
 }

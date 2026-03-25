@@ -40,6 +40,10 @@ export class TextInput extends InputComponent<string> {
     setSilent(value: string | null): void {
         this.inputElement.value = value ?? "";
     }
+
+    set placeholder(v: string | null) {
+        this.inputElement.placeholder = v ?? "";
+    }
 }
 
 function makeInputElement(options: Options): HTMLInputElement | HTMLTextAreaElement {

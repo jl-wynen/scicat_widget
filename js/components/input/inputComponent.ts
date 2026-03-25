@@ -13,6 +13,7 @@ export abstract class InputComponent<T> {
     private readonly _key: string;
     /// A unique ID for the input, used as `element.id`.
     private readonly inputId: string;
+    private readonly baseInputElement: HTMLElement;
     protected readonly statusElement: HTMLOutputElement;
     protected readonly wrapElement: HTMLDivElement;
 
@@ -30,13 +31,22 @@ export abstract class InputComponent<T> {
         this.required = options.required ?? false;
         this.customValidator = options.validator ?? null;
 
+        this.baseInputElement = inputElement;
         this.statusElement = document.createElement("output");
         this.statusElement.id = `${inputElement.id}-status`;
         this.statusElement.className = "cean-status";
 
         this.wrapElement = wrapElementsWith(inputElement, this.statusElement);
 
-        this.isValid = () => this.statusElement.validity.valid;
+        this.isValid = () => {
+            if (
+                inputElement instanceof HTMLInputElement ||
+                inputElement instanceof HTMLTextAreaElement
+            ) {
+                return inputElement.validity.valid;
+            }
+            return true;
+        };
     }
 
     get key(): string {
@@ -66,10 +76,39 @@ export abstract class InputComponent<T> {
      * Consumers may listen to any ancestor (the event bubbles).
      */
     updated(userTriggered: boolean = true): void {
+        // TODO do we need userTriggered?
         if (this.isValid()) {
             this.container.dispatchEvent(
                 new UpdateEvent(this.key, this.value, userTriggered, { bubbles: true }),
             );
+        }
+    }
+
+    validate() {
+        const element = this.baseInputElement;
+        if (
+            !(
+                element instanceof HTMLInputElement ||
+                element instanceof HTMLTextAreaElement
+            )
+        ) {
+            return; // Element does not support validation
+        }
+
+        if (this.customValidator) {
+            const value = this.value;
+            if (value === null) {
+                element.setCustomValidity("");
+                return;
+            }
+            const message = this.customValidator(value);
+            element.setCustomValidity(message || "");
+        }
+
+        if (!element.validity.valid) {
+            this.statusElement.textContent = element.validationMessage;
+        } else {
+            this.statusElement.textContent = "";
         }
     }
 
@@ -83,25 +122,7 @@ export abstract class InputComponent<T> {
      */
     protected addValidationListener(element: HTMLInputElement | HTMLTextAreaElement) {
         const listener = () => {
-            if (this.customValidator) {
-                const value = this.value;
-                if (value === null) {
-                    element.setCustomValidity("");
-                    return;
-                }
-                const message = this.customValidator(value);
-                if (message) {
-                    element.setCustomValidity(message);
-                } else {
-                    element.setCustomValidity("");
-                }
-            }
-
-            if (!element.validity.valid) {
-                this.statusElement.textContent = element.validationMessage;
-            } else {
-                this.statusElement.textContent = "";
-            }
+            this.validate();
         };
         element.addEventListener("input", listener);
         element.addEventListener("blur", listener);
