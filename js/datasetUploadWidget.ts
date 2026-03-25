@@ -100,7 +100,7 @@ function createInputs(
         new TextInput("principalInvestigator", { required: true }),
         new TextInput("contactEmail", { required: true, type: "email" }),
         new PeopleInput("owners", {}),
-        new TextInput("ownerGroup", { required: true }),
+        makeOwnerGroupInput(model.get("accessGroups")),
         new MultiTextInput("accessGroups", {}),
         new TextInput("license", {}),
         new TechniquesInput("techniques", model.get("techniques")),
@@ -151,12 +151,38 @@ function makeInstrumentInput(instruments: Instrument[]): ComboboxInput | TextInp
             .sort((a, b) => a.text.localeCompare(b.text));
 
         const renderChoice = (choice: Choice) => {
-            const el = document.createElement("div");
+            const el = document.createElement("span");
+            el.className = "cean-item-text";
             el.textContent = choice.text;
             return el;
         };
 
         return new ComboboxInput("instrumentId", choices, { renderChoice });
+    }
+}
+
+function makeOwnerGroupInput(accessGroups: string[]): ComboboxInput | TextInput {
+    if (accessGroups.length == 0) {
+        return new TextInput("ownerGroup", { required: true });
+    } else {
+        const choices =
+            accessGroups
+                .map((group) => {
+                    return { key: group, text: group };
+                })
+                .sort((a, b) => a.key.localeCompare(b.key)) ?? [];
+
+        const renderChoice = (choice: Choice) => {
+            const el = document.createElement("span");
+            el.className = "cean-item-text";
+            el.textContent = choice.text;
+            return el;
+        };
+
+        return new ComboboxInput("ownerGroup", choices, {
+            required: true,
+            renderChoice,
+        });
     }
 }
 
