@@ -38,6 +38,7 @@
 button[role="tab"] {
     background: none;
     border: none;
+    border-radius: 0;
     padding: 8px 16px;
     cursor: pointer;
     color: var(--jp-ui-font-color2);
