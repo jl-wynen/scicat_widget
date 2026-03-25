@@ -105,7 +105,7 @@ function createInputs(
         new TextInput("contactEmail", { required: true, type: "email" }),
         new PeopleInput("owners", {}),
         new TextInput("ownerGroup", { required: true }),
-        new TextInput("accessGroups", {}),
+        new MultiTextInput("accessGroups", {}),
         new TextInput("license", {}),
         new TechniquesInput("techniques", model.get("techniques")),
         new TextInput("usedSoftware", {}),
