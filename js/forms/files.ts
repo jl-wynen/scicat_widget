@@ -7,7 +7,7 @@ export class Files {
     readonly element: HTMLDivElement;
     private readonly summary = new Summary();
     private readonly filesContainer: HTMLFieldSetElement;
-    private readonly filesInputs: FileInput[] = [];
+    private readonly fileInputs: FileInput[] = [];
     private readonly comm: BackendComm;
 
     constructor(
@@ -32,7 +32,7 @@ export class Files {
     }
 
     private updateSummary() {
-        const files = this.filesInputs.filter((f) => f.value);
+        const files = this.fileInputs.filter((f) => f.value);
         this.summary.totalSize = files.reduce((sum, f) => sum + (f.size ?? 0), 0);
         this.summary.nFiles = files.length;
     }
@@ -46,19 +46,22 @@ export class Files {
         );
         container.addEventListener("input-updated", () => {
             this.updateSummary();
+            if (this.fileInputs[this.fileInputs.length - 1].value) {
+                this.addFileInput();
+            }
         });
         fileInput.container.addEventListener("file-inspected", (e: Event) => {
             const event = e as CustomEvent;
             const payload = event.detail.payload;
             remotePathInput.placeholder = payload.remotePath ?? null;
         });
-        this.filesInputs.push(fileInput);
+        this.fileInputs.push(fileInput);
         this.filesContainer.append(container);
     }
 
     private onInputRemoved(fileInput: FileInput) {
         fileInput.destroy();
-        this.filesInputs.splice(this.filesInputs.indexOf(fileInput), 1);
+        this.fileInputs.splice(this.fileInputs.indexOf(fileInput), 1);
         this.updateSummary();
         if (
             this.filesContainer.querySelectorAll(".cean-single-file-input").length === 0
@@ -136,6 +139,8 @@ function createFileInput(
     comm: BackendComm,
     onInputRemoved: (x: FileInput) => void,
 ): [HTMLFieldSetElement, FileInput, TextInput] {
+    const baseId = crypto.randomUUID();
+
     const fieldset = document.createElement("fieldset");
     fieldset.className = "cean-single-file-input";
 

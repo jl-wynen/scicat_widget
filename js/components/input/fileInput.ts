@@ -11,6 +11,7 @@ export class FileInput extends InputComponent<string> {
     private readonly textInput: TextInput;
 
     private readonly comm: BackendComm;
+    private readonly commId: string = crypto.randomUUID();
     private debounceTimer: ReturnType<typeof setTimeout> | null = null;
     private previousValue: string | null = null;
     private validationResult: string | null = null;
@@ -24,7 +25,7 @@ export class FileInput extends InputComponent<string> {
             "folder-open",
             "Browse",
             () => {
-                comm.sendReqBrowseFiles(key, {});
+                comm.sendReqBrowseFiles(this.commId, {});
             },
             "Browse files",
         );
@@ -51,10 +52,10 @@ export class FileInput extends InputComponent<string> {
             e.stopPropagation(); // Handle text updates internally
         }) as EventListener);
 
-        comm.onResInspectFile(key, (payload) => {
+        comm.onResInspectFile(this.commId, (payload) => {
             this.applyInspectionResult(payload);
         });
-        comm.onResBrowseFiles(key, (payload) => {
+        comm.onResBrowseFiles(this.commId, (payload) => {
             this.applySelectedFile(payload);
         });
 
@@ -64,8 +65,8 @@ export class FileInput extends InputComponent<string> {
     }
 
     destroy() {
-        this.comm.offResInspectFile(this.key);
-        this.comm.offResBrowseFiles(this.key);
+        this.comm.offResInspectFile(this.commId);
+        this.comm.offResBrowseFiles(this.commId);
     }
 
     get id(): string {
@@ -101,7 +102,7 @@ export class FileInput extends InputComponent<string> {
             this.textInput.validate();
             this.updated();
         } else if (value !== this.previousValue) {
-            this.comm.sendReqInspectFile(this.key, {
+            this.comm.sendReqInspectFile(this.commId, {
                 filename: value,
             });
         }
