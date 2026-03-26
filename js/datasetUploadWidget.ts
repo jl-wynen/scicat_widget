@@ -12,6 +12,7 @@ import {
     ComboboxInput,
     DatetimeInput,
     InputComponent,
+    MultiFileInput,
     MultiTextInput,
     PeopleInput,
     TechniquesInput,
@@ -43,8 +44,8 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         return {};
     });
 
-    const inputs = createInputs(model);
-    const datasetOverview = new DatasetOverview(inputs, uploader, comm, config);
+    const inputs = createInputs(model, comm);
+    const datasetOverview = new DatasetOverview(inputs, uploader, config);
     el.appendChild(datasetOverview.element);
 
     el.addEventListener(
@@ -87,6 +88,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 
 function createInputs(
     model: AnyModel<WidgetModel>,
+    comm: BackendComm,
 ): Map<string, InputComponent<unknown>> {
     const inputList = [
         new TextInput("datasetName", { required: true }),
@@ -111,7 +113,7 @@ function createInputs(
         new TextInput("relationships", {}),
         new TextInput("scientificMetadata", {}),
         new TextInput("sourceFolder", { required: true }),
-        new TextInput("files", {}),
+        new MultiFileInput("files", comm, {}),
         new TextInput("attachments", {}),
     ];
 

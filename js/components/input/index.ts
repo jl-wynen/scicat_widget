@@ -6,3 +6,4 @@ export { ComboboxInput } from "./comboboxInput.ts";
 export { TechniquesInput } from "./techniquesInput.ts";
 export { PeopleInput } from "./peopleInput.ts";
 export { FileInput } from "./fileInput.ts";
+export { MultiFileInput } from "./multiFileInput.ts";
