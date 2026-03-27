@@ -50,7 +50,6 @@ export function iconButton(
 export function removeButton(callback: () => void): HTMLButtonElement {
     const button = iconButton("trash", callback, "Remove item");
     button.classList.add("cean-remove-button");
-    button.setAttribute("tabindex", "-1");
     return button;
 }
 
