@@ -44,6 +44,13 @@ export class ComboboxInput extends InputComponent<string> {
         this.searchBar = searchBar;
 
         this.searchBar.addEventListener("focus", this.open.bind(this));
+        this.searchBar.addEventListener("keydown", (e: KeyboardEvent) => {
+            if (e.code === "Tab") {
+                // Focus moves to the next element.
+                // Cannot use blur events as that would trigger when the user clicks into the datalist.
+                this.close();
+            }
+        });
 
         this.datalist.addEventListener("selected-option", ((event: SelectedEvent) => {
             this.close();
@@ -187,6 +194,7 @@ function createDatalist(
     const datalist = document.createElement("datalist");
     datalist.id = crypto.randomUUID();
     datalist.role = "listbox";
+    datalist.tabIndex = -1;
 
     for (const choice of choices) {
         const option = document.createElement("option");
