@@ -78,12 +78,24 @@ export abstract class InputComponent<T> {
      * Consumers may listen to any ancestor (the event bubbles).
      */
     updated(userTriggered: boolean = true) {
+        console.log("updated", this.key, this.id, this.value);
         // TODO do we need userTriggered?
         if (this.isValid()) {
             this.container.dispatchEvent(
                 new UpdateEvent(this.key, this.value, userTriggered, { bubbles: true }),
             );
         }
+    }
+
+    protected triggerUpdatesFrom(element: HTMLInputElement | HTMLTextAreaElement) {
+        element.addEventListener("blur", () => {
+            this.updated(true);
+        });
+        element.addEventListener("keydown", ((event: KeyboardEvent) => {
+            if (event.key == "Enter" || event.key == "NumpadEnter") {
+                this.updated(true);
+            }
+        }) as EventListener);
     }
 
     validate() {

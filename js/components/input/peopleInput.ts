@@ -1,4 +1,4 @@
-import { InputComponent, InputOptions } from "./inputComponent.ts";
+import { InputComponent, InputOptions, UpdateEvent } from "./inputComponent.ts";
 import { Person } from "../../models.ts";
 import { removeButton, textButton } from "../button.ts";
 import { Options as TextInputOptions, TextInput } from "./textInput.ts";
@@ -58,6 +58,9 @@ export class PeopleInput extends InputComponent<Person[]> {
 
     private addPerson() {
         const personInput = new PersonInput(this.removePerson.bind(this));
+        personInput.element.addEventListener("input-updated", () => {
+            this.updated();
+        });
         this.peopleComponents.set(personInput.id, personInput);
         this.peopleContainer.append(personInput.element);
     }
@@ -68,6 +71,7 @@ export class PeopleInput extends InputComponent<Person[]> {
         if (this.peopleComponents.size === 0) {
             this.addPerson();
         }
+        this.updated();
     }
 }
 
@@ -84,6 +88,17 @@ class PersonInput {
         this.nameInput = nameInput;
         this.emailInput = emailInput;
         this.orcidInput = orcidInput;
+
+        for (const el of [
+            nameInput.container,
+            emailInput.container,
+            orcidInput.container,
+        ]) {
+            el.addEventListener("input-updated", ((e: UpdateEvent) => {
+                e.stopPropagation();
+                this.fieldset.dispatchEvent(new UpdateEvent(this.id, this.value, true));
+            }) as EventListener);
+        }
     }
 
     get value(): Person | null {

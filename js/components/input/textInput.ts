@@ -28,6 +28,7 @@ export class TextInput extends InputComponent<string> {
         this.inputElement.addEventListener("blur", () => {
             this.inputElement.value = this.inputElement.value.trim();
         });
+        this.triggerUpdatesFrom(this.inputElement);
         this.addValidationListener(this.inputElement);
     }
 
@@ -56,7 +57,7 @@ function makeInputElement(options: Options): HTMLInputElement | HTMLTextAreaElem
         textarea.addEventListener("keydown", (event: KeyboardEvent) => {
             if (event.code === "Enter" || event.code === "NumpadEnter") {
                 // Do not propagate to form, use the default to insert a line break.
-                event.stopPropagation();
+                event.stopImmediatePropagation();
             }
         });
         return textarea;

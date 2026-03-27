@@ -6,7 +6,9 @@ export class MultiTextInput extends InputComponent<string[]> {
     itemsList: HTMLUListElement;
 
     constructor(key: string, options: InputOptions<string[]>) {
-        const [inputElement, itemsList, addButton] = createElements(key);
+        const [inputElement, itemsList, addButton] = createElements(key, () => {
+            this.updated();
+        });
         const inputRow = document.createElement("div");
         inputRow.className = "cean-input-grid cean-input-and-button";
         inputRow.append(inputElement, addButton);
@@ -37,6 +39,7 @@ export class MultiTextInput extends InputComponent<string[]> {
 
 function createElements(
     key: string,
+    onUpdate: () => void,
 ): [HTMLInputElement, HTMLUListElement, HTMLButtonElement] {
     const inputElement = document.createElement("input");
     inputElement.id = crypto.randomUUID();
@@ -60,7 +63,8 @@ function createElements(
         });
         if (exists !== undefined) return;
 
-        itemsList.append(createItem(value));
+        itemsList.append(createItem(value, onUpdate));
+        onUpdate();
     }
 
     inputElement.addEventListener("keydown", (event: KeyboardEvent) => {
@@ -77,7 +81,7 @@ function createElements(
     return [inputElement, itemsList, addButton];
 }
 
-function createItem(text: string): HTMLLIElement {
+function createItem(text: string, onRemove: () => void): HTMLLIElement {
     const item = document.createElement("li");
 
     const label = document.createElement("span");
@@ -86,6 +90,7 @@ function createItem(text: string): HTMLLIElement {
 
     const b = removeButton(() => {
         item.remove();
+        onRemove();
     });
 
     item.append(label, b);

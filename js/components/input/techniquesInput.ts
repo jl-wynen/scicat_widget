@@ -49,11 +49,13 @@ export class TechniquesInput extends InputComponent<string[]> {
         this.combobox.setSilent(null);
         if (!this.selectionContainer.querySelector(`[data-key="${key}"]`)) {
             this.selectionContainer.append(this.createItem(key));
+            this.updated();
         }
     }
 
     private removeItem(key: string) {
         this.selectionContainer.querySelector(`[data-key="${key}"]`)?.remove();
+        this.updated();
     }
 
     private createItem(key: string): HTMLDivElement {

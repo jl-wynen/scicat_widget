@@ -49,12 +49,18 @@ export class ComboboxInput extends InputComponent<string> {
                 // Focus moves to the next element.
                 // Cannot use blur events as that would trigger when the user clicks into the datalist.
                 this.close();
+                this.updated();
+            } else if (e.code == "Enter" || e.code == "NumpadEnter") {
+                this.updated();
             }
         });
 
         this.datalist.addEventListener("selected-option", ((event: SelectedEvent) => {
             this.close();
-            this.searchBar.value = event.text;
+            if (event.text !== this.searchBar.value) {
+                this.searchBar.value = event.text;
+                this.updated();
+            }
         }) as EventListener);
         this.datalist.addEventListener("blur", () => {
             this.close();
@@ -80,12 +86,7 @@ export class ComboboxInput extends InputComponent<string> {
     }
 
     get value(): string | null {
-        for (const option of this.datalist.options) {
-            if (option.selected) {
-                return option.value;
-            }
-        }
-        return null;
+        return this.searchBar.value;
     }
 
     setSilent(value: string | null) {
@@ -161,8 +162,9 @@ function createSearchBar(
 
     let currentFocus: number | null = null;
     searchBar.addEventListener("input", () => {
-        currentFocus = null;
         openCombobox(); // This filters and ensures that the list is visible
+        currentFocus = firstVisibleOption(datalist);
+        selectActive(datalist, currentFocus);
     });
     searchBar.addEventListener("keydown", (event: KeyboardEvent) => {
         if (event.code === "ArrowUp") {
@@ -183,6 +185,15 @@ function createSearchBar(
     });
 
     return searchBar;
+}
+
+function firstVisibleOption(datalist: HTMLDataListElement): number | null {
+    for (let i = 0; i < datalist.options.length; ++i) {
+        if (datalist.options[i].style.display !== "none") {
+            return i;
+        }
+    }
+    return null;
 }
 
 function createDatalist(
