@@ -88,7 +88,6 @@ export class MultiFileInput extends InputComponent<File[]> {
             },
         );
         fileInput.setSilent(initialValue.localPath);
-        remotePathInput.setSilent(initialValue.remotePath ?? null);
 
         container.addEventListener("input-updated", () => {
             this.updated();
