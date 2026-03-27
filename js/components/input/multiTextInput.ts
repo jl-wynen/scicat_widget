@@ -72,6 +72,7 @@ function createElements(
     });
 
     const addButton = iconButton("plus", addItem, "Add item");
+    addButton.tabIndex = -1;
 
     return [inputElement, itemsList, addButton];
 }
