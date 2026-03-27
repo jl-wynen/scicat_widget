@@ -87,6 +87,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     // );
 }
 
+// TODO call destroy at the end
 function createInputs(
     model: AnyModel<WidgetModel>,
     comm: BackendComm,

@@ -49,6 +49,8 @@ export abstract class InputComponent<T> {
         };
     }
 
+    destroy() {}
+
     get key(): string {
         return this._key;
     }
@@ -63,7 +65,7 @@ export abstract class InputComponent<T> {
 
     abstract get value(): T | null;
 
-    abstract setSilent(value: T | null);
+    abstract setSilent(value: T | null): void;
 
     setSignaling(value: T | null, userTriggered: boolean = true) {
         this.setSilent(value);
