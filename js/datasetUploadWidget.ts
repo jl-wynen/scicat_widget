@@ -85,9 +85,14 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     //     },
     //     true,
     // );
+
+    return () => {
+        for (const input of inputs.values()) {
+            input.destroy();
+        }
+    };
 }
 
-// TODO call destroy at the end
 function createInputs(
     model: AnyModel<WidgetModel>,
     comm: BackendComm,
