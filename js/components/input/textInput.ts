@@ -37,8 +37,12 @@ export class TextInput extends InputComponent<string> {
         return val;
     }
 
-    setSilent(value: string | null): void {
+    setSilent(value: string | null) {
         this.inputElement.value = value ?? "";
+    }
+
+    get placeholder(): string {
+        return this.inputElement.placeholder;
     }
 
     set placeholder(v: string | null) {

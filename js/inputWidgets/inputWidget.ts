@@ -72,7 +72,7 @@ export abstract class InputWidget<T> {
      * On success, emit an `UpdateEvent` with this widget's key and current value.
      * Consumers may listen to any ancestor (the event bubbles).
      */
-    updated(userTriggered: boolean = true): void {
+    updated(userTriggered: boolean = true) {
         if (this.validate()) {
             this.container.dispatchEvent(
                 new UpdateEvent(this.key, this.value, userTriggered, { bubbles: true }),
@@ -83,7 +83,7 @@ export abstract class InputWidget<T> {
     /** Callback for every input event.
      * Validates the input.
      */
-    private rawUpdate(): void {
+    private rawUpdate() {
         this.validate();
     }
 
@@ -106,7 +106,7 @@ export abstract class InputWidget<T> {
         otherKey: string,
         handler: (widget: InputWidget<T>, value: U | null) => void,
         target: Document | HTMLElement = document,
-    ): void {
+    ) {
         // Call the provided handler on events:
         const listener = this.inputUpdatedListener(otherKey, handler);
         target.addEventListener("input-updated", listener);

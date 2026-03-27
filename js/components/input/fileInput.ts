@@ -16,8 +16,7 @@ export class FileInput extends InputComponent<string> {
     private previousValue: string | null = null;
     private validationResult: string | null = null;
 
-    private size_: number | null = null;
-    private creationTime_: Date | null = null;
+    private inspectionResult_: ResInspectFile | null = null;
 
     constructor(key: string, comm: BackendComm, options: InputOptions<string>) {
         const textInput = new TextInput(key, options);
@@ -81,11 +80,19 @@ export class FileInput extends InputComponent<string> {
         }
     }
 
-    get size(): number | null {
-        return this.size_;
+    get inspectionResult(): ResInspectFile | null {
+        return this.inspectionResult_;
     }
 
-    setSilent(value: string | null): void {
+    get size(): number | null {
+        if (this.inspectionResult_) {
+            return this.inspectionResult_.size ?? null;
+        } else {
+            return null;
+        }
+    }
+
+    setSilent(value: string | null) {
         this.textInput.setSilent(value);
         this.inspectFile();
     }
@@ -95,8 +102,7 @@ export class FileInput extends InputComponent<string> {
         if (!value) {
             this.previousValue = null;
             this.validationResult = null;
-            this.size_ = null;
-            this.creationTime_ = null;
+            this.inspectionResult_ = null;
             this.validationResult = null;
             this.statusElement.replaceChildren();
             this.textInput.validate();
@@ -112,13 +118,15 @@ export class FileInput extends InputComponent<string> {
         this.validationResult = result.error ?? null;
         this.previousValue = this.value;
         if (result.success) {
-            this.size_ = result.size ?? null;
-            this.creationTime_ = new Date(result.creationTime ?? "");
+            this.inspectionResult_ = result;
             this.validationResult = null;
-            renderFileStats(this.statusElement, this.size_, this.creationTime_);
+            renderFileStats(
+                this.statusElement,
+                result.size ?? 0,
+                new Date(result.creationTime ?? ""),
+            );
         } else {
-            this.size_ = null;
-            this.creationTime_ = null;
+            this.inspectionResult_ = null;
             this.validationResult = result.error ?? "unknown error";
             this.statusElement.replaceChildren();
         }

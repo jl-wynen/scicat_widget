@@ -12,6 +12,7 @@ import {
     ComboboxInput,
     DatetimeInput,
     InputComponent,
+    MultiAttachmentInput,
     MultiFileInput,
     MultiTextInput,
     PeopleInput,
@@ -114,7 +115,7 @@ function createInputs(
         new TextInput("scientificMetadata", {}),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
-        new TextInput("attachments", {}),
+        new MultiAttachmentInput("attachments", comm),
     ];
 
     const inputs = new Map();

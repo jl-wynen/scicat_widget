@@ -1,3 +1,8 @@
+export type Attachment = {
+    localPath: string;
+    caption: string;
+};
+
 export type File = {
     localPath: string;
     remotePath?: string;

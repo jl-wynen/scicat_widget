@@ -30,7 +30,7 @@ export class MultiTextInput extends InputComponent<string[]> {
         return values;
     }
 
-    setSilent(value: string[] | null): void {
+    setSilent(value: string[] | null) {
         this.itemsList.replaceChildren(...(value ?? []).map(createItem));
     }
 }

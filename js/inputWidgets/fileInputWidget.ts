@@ -99,7 +99,7 @@ export class FileInputWidget extends InputWidget<string> {
     }
 
     /** Update this and the contained string input. */
-    private updated_(): void {
+    private updated_() {
         this.stringInput.updated();
         this.updated();
     }

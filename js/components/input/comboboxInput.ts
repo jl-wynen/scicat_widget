@@ -1,5 +1,4 @@
 import { InputComponent, InputOptions } from "./inputComponent.ts";
-// import chevronIcon from "../../assets/img/chevron-down.svg";
 import { iconButton } from "../button.ts";
 
 export type Choice = {

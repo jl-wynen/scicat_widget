@@ -43,7 +43,7 @@ export class DatetimeInput extends InputComponent<Date> {
         return new Date(`${dateVal}T${timeVal}`);
     }
 
-    setSilent(value: Date | null): void {
+    setSilent(value: Date | null) {
         if (!value) {
             this.dateElement.value = "";
             this.timeElement.value = "";

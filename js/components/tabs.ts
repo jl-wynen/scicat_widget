@@ -99,7 +99,7 @@ export class CountSpanElement {
         this.set(0);
     }
 
-    set(value: number): void {
+    set(value: number) {
         this.element.textContent = `(${value})`;
     }
 }

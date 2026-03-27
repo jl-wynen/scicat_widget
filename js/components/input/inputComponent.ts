@@ -63,9 +63,9 @@ export abstract class InputComponent<T> {
 
     abstract get value(): T | null;
 
-    abstract setSilent(value: T | null): void;
+    abstract setSilent(value: T | null);
 
-    setSignaling(value: T | null, userTriggered: boolean = true): void {
+    setSignaling(value: T | null, userTriggered: boolean = true) {
         this.setSilent(value);
         this.updated(userTriggered);
     }
@@ -75,7 +75,7 @@ export abstract class InputComponent<T> {
      * On success, emit an `UpdateEvent` with this widget's key and current value.
      * Consumers may listen to any ancestor (the event bubbles).
      */
-    updated(userTriggered: boolean = true): void {
+    updated(userTriggered: boolean = true) {
         // TODO do we need userTriggered?
         if (this.isValid()) {
             this.container.dispatchEvent(
