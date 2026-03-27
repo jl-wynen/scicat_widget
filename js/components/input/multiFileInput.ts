@@ -1,7 +1,7 @@
 import { File } from "../../models.ts";
 import { BackendComm } from "../../comm.ts";
 import { removeButton } from "../index.ts";
-import { FileInput, InputComponent, TextInput, UpdateEvent } from "./index.ts";
+import { FileInput, InputComponent, TextInput } from "./index.ts";
 import { InputOptions } from "./inputComponent.ts";
 import { createLabelFor } from "../../forms";
 
@@ -25,11 +25,12 @@ export class MultiFileInput extends InputComponent<File[]> {
         this.selectedContainer = selectedContainer;
         this.comm = comm;
 
-        this.newFileInput.container.addEventListener("input-updated", ((
-            e: UpdateEvent,
-        ) => {
-            if (this.newFileInput.value === null) return;
-            this.addFileInput(this.newFileInput.value);
+        this.newFileInput.container.addEventListener("input-updated", (() => {
+            const localPath = this.newFileInput.value;
+            const data = this.newFileInput.inspectionResult;
+            if (localPath === null || data === null) return;
+            this.addFileInput({ localPath, remotePath: data.remotePath });
+            this.newFileInput.setSilent(null);
         }) as EventListener);
     }
 
