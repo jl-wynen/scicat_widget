@@ -19,6 +19,8 @@ export class ComboboxInput extends InputComponent<string> {
     private readonly datalist: HTMLDataListElement;
     private readonly searchBar: HTMLInputElement;
 
+    private readonly closeListener: (e: PointerEvent) => void;
+
     constructor(key: string, choices: Choice[], options: Options) {
         const datalist = createDatalist(choices, options.renderChoice);
         const searchBar = createSearchBar(
@@ -47,14 +49,22 @@ export class ComboboxInput extends InputComponent<string> {
             this.close();
             this.searchBar.value = event.text;
         }) as EventListener);
+        this.datalist.addEventListener("blur", () => {
+            this.close();
+        });
 
-        document.addEventListener("click", (e) => {
+        this.closeListener = (e: PointerEvent) => {
             if (!e.composedPath().includes(container)) {
                 this.close();
             }
-        });
+        };
+        document.addEventListener("click", this.closeListener);
 
         this.addValidationListener(this.searchBar);
+    }
+
+    destroy() {
+        document.removeEventListener("click", this.closeListener);
     }
 
     /** Override to provide the actual input field's id. */
@@ -268,7 +278,9 @@ export class SelectedEvent extends Event {
 }
 
 function createChevron(searchBar: HTMLInputElement): HTMLElement {
-    return iconButton("chevron-down", () => {
+    const button = iconButton("chevron-down", () => {
         searchBar.focus();
     });
+    button.tabIndex = -1;
+    return button;
 }
