@@ -8,6 +8,7 @@ export type ResInspectFile = {
     success: boolean;
     size?: number;
     creationTime?: string;
+    remotePath?: string;
     error?: string;
 };
 
