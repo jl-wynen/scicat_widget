@@ -106,6 +106,7 @@ function renderSelectedItem(key: string, text: string, prefix: string): HTMLDivE
     keyAnchor.text = key;
     keyAnchor.href = `${prefix}/${key}`;
     keyAnchor.target = "_blank";
+    keyAnchor.tabIndex = -1;
     keyAnchor.classList.add("cean-item-key");
 
     const textSpan = document.createElement("span");
