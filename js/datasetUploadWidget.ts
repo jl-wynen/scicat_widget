@@ -87,7 +87,7 @@ function createInputs(
         new MultiTextInput("accessGroups", {}),
         new TextInput("license", {}),
         new TechniquesInput("techniques", model.get("techniques")),
-        new TextInput("usedSoftware", {}),
+        new MultiTextInput("usedSoftware", {}),
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
         new MultiTextInput("keywords", {}),
