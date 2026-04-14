@@ -1,10 +1,14 @@
 import { InputComponent, MultiFileInput } from "../components/input";
 import { createLabelFor } from "./util.ts";
 import { humanSize } from "../components";
+import { CountSpanElement } from "../components/tabs.ts";
 
 export class Files {
+    private readonly filesInput: MultiFileInput;
     readonly element: HTMLDivElement;
     private readonly summary = new Summary();
+
+    private updateListener?: () => void = undefined;
 
     constructor(
         inputs: Map<string, InputComponent<unknown>>,
@@ -18,18 +22,37 @@ export class Files {
             if (sourceFolder) this.element.append(sourceFolder);
         }
 
-        const filesInput = inputs.get("files") as MultiFileInput;
-        if (filesInput) {
-            this.element.append(filesInput.container);
-            filesInput.container.addEventListener("input-updated", () => {
-                this.summary.nFiles = filesInput.nFiles;
-                this.summary.totalSize = filesInput.totalSize;
+        this.filesInput = inputs.get("files") as MultiFileInput;
+        if (this.filesInput) {
+            this.element.append(this.filesInput.container);
+            this.filesInput.container.addEventListener("input-updated", () => {
+                this.summary.nFiles = this.filesInput.nFiles;
+                this.summary.totalSize = this.filesInput.totalSize;
             });
             // Initial update
-            this.summary.nFiles = filesInput.nFiles;
-            this.summary.totalSize = filesInput.totalSize;
+            this.summary.nFiles = this.filesInput.nFiles;
+            this.summary.totalSize = this.filesInput.totalSize;
         } else {
             this.element.append(document.createTextNode("Input 'files' not found"));
+        }
+    }
+
+    setCountIn(element: CountSpanElement) {
+        this.updateListener = () => {
+            element.set(this.filesInput.nFiles);
+        };
+        this.filesInput.container.addEventListener(
+            "input-updated",
+            this.updateListener,
+        );
+    }
+
+    destroy() {
+        if (this.updateListener !== undefined) {
+            this.filesInput.container.removeEventListener(
+                "input-updated",
+                this.updateListener,
+            );
         }
     }
 }

@@ -62,6 +62,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     // }
     //
     return () => {
+        datasetOverview.destroy();
         for (const input of inputs.values()) {
             input.destroy();
         }

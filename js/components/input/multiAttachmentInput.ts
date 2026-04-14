@@ -1,4 +1,4 @@
-import { InputComponent, InputOptions } from "./inputComponent.ts";
+import { InputComponent, InputOptions, UpdateEvent } from "./inputComponent.ts";
 import { Attachment, File } from "../../models.ts";
 import { BackendComm, ResLoadImage } from "../../comm.ts";
 import { FileInput } from "./fileInput.ts";
@@ -24,7 +24,12 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
         this.attachments = [];
         this.comm = comm;
 
-        this.newAttachmentInput.container.addEventListener("input-updated", (() => {
+        this.newAttachmentInput.container.addEventListener("input-updated", ((
+            event: UpdateEvent,
+        ) => {
+            // Do not signal update until the file has been loaded.
+            event.stopPropagation();
+
             const data = this.newAttachmentInput.inspectionResult;
             if (data === null) return;
             if (data.success) {
@@ -33,7 +38,6 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
         }) as EventListener);
 
         this.comm.onResLoadImage(this.key, (response) => {
-            console.log("loaded", response);
             this.handleLoadImage(response);
         });
     }
@@ -56,6 +60,10 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
                 return { localPath, caption };
             }) || null
         );
+    }
+
+    get nAttachments(): number {
+        return this.attachments.length;
     }
 
     private clear() {
@@ -86,6 +94,7 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
             this.attachments.push(view);
             this.attachmentsContainer.append(view.container);
         }
+        this.updated();
     }
 
     private removeAttachment(view: AttachmentView) {
@@ -93,6 +102,7 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
         if (index !== -1) {
             this.attachments.splice(index, 1);
         }
+        this.updated();
     }
 }
 
