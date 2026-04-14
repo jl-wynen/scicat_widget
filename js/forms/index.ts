@@ -1,2 +1,2 @@
-export { createLabelFor } from "./util";
+export { createLabelFor, outputLeftOverflow } from "./util";
 export { DatasetOverview } from "./datasetOverview";

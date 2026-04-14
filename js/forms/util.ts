@@ -28,3 +28,28 @@ export function createLabelFor<T>(
 
     return el;
 }
+
+/**
+ * Create an output element that overflows on the left side.
+ *
+ * This requires the parent to restrict its size, e.g., with `min-width: 0`
+ * to trigger the overflow.
+ *
+ * @param textContent Text to display.
+ */
+export function outputLeftOverflow(textContent: string): HTMLOutputElement {
+    // The overflow happens via the <output> element and its class.
+    // So <output> uses a right-to-left direction. But that breaks punctuation.
+    // To fix this, the text content is in a nested <bdo> with left-to-right direction.
+
+    const bdo = document.createElement("bdo");
+    bdo.dir = "ltr";
+    bdo.textContent = textContent;
+    bdo.title = textContent;
+
+    const el = document.createElement("output");
+    el.classList = "cean-left-overflow";
+    el.dir = "rtl";
+    el.append(bdo);
+    return el;
+}

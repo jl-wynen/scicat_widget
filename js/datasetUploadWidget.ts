@@ -96,7 +96,7 @@ function createInputs(
         new ScientificMetadataInput("scientificMetadata", {}),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
-        new MultiAttachmentInput("attachments", comm),
+        new MultiAttachmentInput("attachments", comm, {}),
     ];
 
     const inputs = new Map();

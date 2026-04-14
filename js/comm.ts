@@ -6,6 +6,7 @@ export type ReqInspectFile = {
 
 export type ResInspectFile = {
     success: boolean;
+    filename: string;
     size?: number;
     creationTime?: string;
     remotePath?: string;
@@ -27,11 +28,13 @@ export type FieldError = {
 
 export type ReqLoadImage = {
     path: string;
+    caption?: string;
 };
 
 export type ResLoadImage = {
-    image?: string;
+    path: string;
     caption?: string;
+    image?: string;
     error?: string;
 };
 

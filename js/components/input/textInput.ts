@@ -3,6 +3,7 @@ import { InputComponent, InputOptions } from "./inputComponent.ts";
 export interface Options extends InputOptions<string> {
     multiline?: boolean;
     type?: "text" | "email";
+    placeholder?: string;
 }
 
 /**
@@ -22,6 +23,7 @@ export class TextInput extends InputComponent<string> {
 
         super(key, inputElement, options);
         this.inputElement = inputElement;
+        this.inputElement.placeholder = options.placeholder ?? "";
 
         // The trim listener must come before the validation listener,
         // so the validation can detect empty strings after trimming.

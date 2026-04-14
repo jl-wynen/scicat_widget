@@ -160,6 +160,31 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
 }
 
+ul.cean-input-items {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+
+    li {
+        display: flex;
+        align-items: center;
+        background: var(--jp-layout-color2);
+        padding: 2px 8px;
+        gap: 4px;
+        border: var(--jp-border-width) solid var(--jp-layout-color3);
+        border-radius: var(--jp-border-radius);
+
+        span {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
 .cean-datetime-input {
     display: grid;
     grid-template-columns: max-content max-content;
@@ -338,6 +363,59 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-attachment-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
+    gap: 16px;
+    padding: 16px;
+}
+
+.cean-attachment-view {
+    border: 1px solid var(--jp-border-color1);
+    background-color: var(--jp-layout-color2);
+    border-radius: 4px;
+    padding: 0.4em;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    position: relative;
+    overflow: hidden;
+    font-size: 0.85em;
+    min-width: 0; /* Limit the size to trigger overflow in the path output. */
+
+    .cean-remove-button {
+        position: absolute;
+        top: 2px;
+        right: 4px;
+    }
+
+    .cean-image-container {
+        aspect-ratio: 1 / 1;
+        border: 1px dashed var(--jp-border-color2);
+        border-radius: 4px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 0;
+        background-color: var(--jp-layout-color1);
+        font-size: var(--jp-ui-font-size3);
+
+        img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .cean-bad-image-placeholder {
+            color: var(--jp-content-font-color2);
+        }
+
+        &:has(.cean-bad-image-placeholder) {
+            background-color: var(--jp-layout-color3);
+        }
+    }
+
+}
+
 .cean-input-and-button {
     column-gap: 8px;
     grid-template-columns:
@@ -352,6 +430,16 @@ input.cean-input, select.cean-input, textarea.cean-input {
 .status {
     display: none;
     color: var(--jp-error-color2);
+}
+
+.cean-left-overflow {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    text-align: left;
 }
 
 .cean-button {
@@ -410,31 +498,6 @@ input.cean-input, select.cean-input, textarea.cean-input {
     &:hover {
         background: #3ec2fa;
         box-shadow: none !important;
-    }
-}
-
-ul.cean-input-items {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-
-    li {
-        display: flex;
-        align-items: center;
-        background: var(--jp-layout-color2);
-        padding: 2px 8px;
-        gap: 4px;
-        border: var(--jp-border-width) solid var(--jp-layout-color3);
-        border-radius: var(--jp-border-radius);
-
-        span {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
     }
 }
 

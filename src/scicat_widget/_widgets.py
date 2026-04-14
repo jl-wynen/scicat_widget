@@ -152,7 +152,7 @@ def _inspect_file(
             "remotePath": file.remote_path.posix,
         }
     except FileNotFoundError:
-        payload = {"success": False, "error": "File not found"}
+        payload = {"success": False, "error": "File not found", **input_payload}
     widget.send(
         {
             "type": "res:inspect-file",
@@ -200,13 +200,17 @@ def _load_image(
     except FileNotFoundError:
         payload = {"error": "File not found"}
     else:
-        payload = {"image": thumbnail.serialize(), "caption": path.stem}
+        payload = {
+            "image": thumbnail.serialize(),
+            "caption": input_payload.get("caption", path.stem),
+        }
 
     widget.send(
         {
             "type": "res:load-image",
             "key": key,
-            "payload": payload,
+            # Echo the input to identify the element that the request came from.
+            "payload": {**payload, **input_payload},
         }
     )
 

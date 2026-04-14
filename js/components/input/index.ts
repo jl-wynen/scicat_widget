@@ -7,6 +7,5 @@ export { TechniquesInput } from "./techniquesInput.ts";
 export { PeopleInput } from "./peopleInput.ts";
 export { ScientificMetadataInput } from "./scientificMetadataInput.ts";
 export { FileInput } from "./fileInput.ts";
-export { AttachmentInput } from "./attachmentInput.ts";
 export { MultiAttachmentInput } from "./multiAttachmentInput.ts";
 export { MultiFileInput } from "./multiFileInput.ts";
