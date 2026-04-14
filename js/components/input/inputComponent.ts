@@ -78,7 +78,6 @@ export abstract class InputComponent<T> {
      * Consumers may listen to any ancestor (the event bubbles).
      */
     updated(userTriggered: boolean = true) {
-        console.log("updated", this.key, this.id, this.value);
         // TODO do we need userTriggered?
         if (this.isValid()) {
             this.container.dispatchEvent(

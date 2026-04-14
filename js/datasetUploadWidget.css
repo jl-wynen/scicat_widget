@@ -266,6 +266,47 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-scientific-metadata table {
+    width: 100%;
+    border-collapse: collapse;
+
+    th:last-child,
+    td:last-child {
+        width: 1%;
+        white-space: nowrap;
+        border: none;
+        padding: 0;
+    }
+
+    td:not(:last-child) {
+        border: 1px solid var(--jp-border-color1);
+
+        &:hover {
+            box-shadow: inset 0 0 0 var(--jp-border-width) var(--jp-input-active-border-color);
+        }
+
+        &:focus-within {
+            background: var(--jp-input-active-background);
+            /* use box-shadow instead of border to apply to all 4 edges (because of border-collapse) */
+            box-shadow: inset 0 0 0 var(--jp-border-width) var(--jp-input-active-border-color);
+        }
+    }
+
+    input {
+        width: 100%;
+        border: none !important;
+        background: unset !important;
+
+        &:focus-visible {
+            outline: none;
+        }
+    }
+
+    button {
+        margin: 0 0 0 1rem;
+    }
+}
+
 .cean-file-input {
     display: grid;
     grid-template-columns: 1fr max-content;

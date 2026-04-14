@@ -10,6 +10,7 @@ import {
     MultiFileInput,
     MultiTextInput,
     PeopleInput,
+    ScientificMetadataInput,
     TechniquesInput,
     TextInput,
 } from "./components/input";
@@ -92,7 +93,7 @@ function createInputs(
         new TextInput("type", { required: true }),
         new MultiTextInput("keywords", {}),
         new TextInput("relationships", {}),
-        new TextInput("scientificMetadata", {}),
+        new ScientificMetadataInput("scientificMetadata", {}),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
         new MultiAttachmentInput("attachments", comm),

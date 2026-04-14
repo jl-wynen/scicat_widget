@@ -5,6 +5,7 @@ export { MultiTextInput } from "./multiTextInput.ts";
 export { ComboboxInput } from "./comboboxInput.ts";
 export { TechniquesInput } from "./techniquesInput.ts";
 export { PeopleInput } from "./peopleInput.ts";
+export { ScientificMetadataInput } from "./scientificMetadataInput.ts";
 export { FileInput } from "./fileInput.ts";
 export { AttachmentInput } from "./attachmentInput.ts";
 export { MultiAttachmentInput } from "./multiAttachmentInput.ts";
