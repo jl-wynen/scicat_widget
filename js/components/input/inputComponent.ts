@@ -78,12 +78,35 @@ export abstract class InputComponent<T> {
      * Consumers may listen to any ancestor (the event bubbles).
      */
     updated(userTriggered: boolean = true) {
-        // TODO do we need userTriggered?
         if (this.isValid()) {
             this.container.dispatchEvent(
                 new UpdateEvent(this.key, this.value, userTriggered, { bubbles: true }),
             );
         }
+    }
+
+    /**
+     * Register a listener that reacts to "input-updated" events from another input.
+     */
+    listenToInput<U = unknown>(
+        target: InputComponent<U>,
+        handler: (self: InputComponent<T>, value: U | null) => void,
+    ) {
+        // Call the provided handler on events:
+        const listener = ((value: U | null) => {
+            handler(this, value);
+        }) as EventListener;
+        target.container.addEventListener("input-updated", listener);
+
+        // Remove the handler when `this` is updated manually:
+        const removeListener = (e: Event) => {
+            const event = e as UpdateEvent;
+            if (event.userTriggered) {
+                target.container.removeEventListener("input-updated", listener);
+                this.container.removeEventListener("input-updated", removeListener);
+            }
+        };
+        this.container.addEventListener("input-updated", removeListener);
     }
 
     protected triggerUpdatesFrom(element: HTMLInputElement | HTMLTextAreaElement) {

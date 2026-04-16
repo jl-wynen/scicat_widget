@@ -28,23 +28,15 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     _css = _STATIC_PATH / "datasetUploadWidget.css"
 
     initial = traitlets.Dict().tag(sync=True)
-    instruments = traitlets.List(trait=traitlets.Any()).tag(sync=True)
-    proposals = traitlets.List(trait=traitlets.Any()).tag(sync=True)
-    accessGroups = traitlets.List(trait=traitlets.Unicode()).tag(sync=True)
-    techniques = traitlets.Dict(trait=traitlets.Any()).tag(sync=True)
+    staticData = traitlets.Dict().tag(sync=True)
     scicatUrl = traitlets.Unicode().tag(sync=True)
     skipConfirmation = traitlets.Bool().tag(sync=True)
 
     def __init__(self, client: Client, /, *, skip_confirm: bool = False) -> None:
-        initial, instruments, proposals, access_groups = _collect_initial_data(client)
+        initial, static = _collect_initial_data(client)
         super().__init__(
             initial=initial,
-            instruments=[
-                _serialize_instrument(instrument) for instrument in instruments
-            ],
-            proposals=[_serialize_proposal(proposal) for proposal in proposals],
-            accessGroups=access_groups,
-            techniques=_load_techniques(),
+            staticData=static,
             scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
             skipConfirmation=skip_confirm,
             client=client,  # TODO create client here if not given
@@ -79,11 +71,21 @@ class DatasetUploadWidget(anywidget.AnyWidget):
 
 def _collect_initial_data(
     client: Client | None = None,
-) -> tuple[dict[str, Any], list[Instrument], list[ProposalOverview], list[str]]:
+) -> tuple[dict[str, Any], dict[str, Any]]:
     if client is None:
-        return {}, [], [], []
-    data, instruments, proposals, access_groups = _download_scicat_data(client)
-    return data, instruments, proposals, access_groups
+        return {}, {}
+    initial_data, instruments, proposals, access_groups = _download_scicat_data(client)
+
+    static_data = {
+        "instruments": [
+            _serialize_instrument(instrument) for instrument in instruments
+        ],
+        "proposals": [_serialize_proposal(proposal) for proposal in proposals],
+        "accessGroups": access_groups,
+        "techniques": _load_techniques(),
+    }
+
+    return initial_data, static_data
 
 
 def _download_scicat_data(

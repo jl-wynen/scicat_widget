@@ -1,6 +1,6 @@
-import type { AnyModel, RenderProps } from "@anywidget/types";
+import type { RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
-import { Instrument, Proposal, Techniques } from "./models.ts";
+import { Instrument, Proposal, StaticData } from "./models.ts";
 import { BackendComm } from "./comm.ts";
 import {
     ComboboxInput,
@@ -20,10 +20,7 @@ import { UploadComponent } from "./components";
 
 interface WidgetModel {
     initial: object;
-    instruments: Instrument[];
-    proposals: Proposal[];
-    accessGroups: string[];
-    techniques: Techniques;
+    staticData: StaticData;
     scicatUrl: string;
     skipConfirmation: boolean;
 }
@@ -33,6 +30,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         scicatUrl: model.get("scicatUrl"),
         skipConfirmation: model.get("skipConfirmation"),
     };
+    const staticData = model.get("staticData");
 
     const comm = new BackendComm(model);
 
@@ -40,7 +38,8 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         return {};
     });
 
-    const inputs = createInputs(model, comm);
+    const inputs = createInputs(staticData, comm);
+    connectInputs(inputs, staticData);
     const datasetOverview = new DatasetOverview(inputs, uploader, config);
     el.appendChild(datasetOverview.element);
 
@@ -70,14 +69,14 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 }
 
 function createInputs(
-    model: AnyModel<WidgetModel>,
+    staticData: StaticData,
     comm: BackendComm,
 ): Map<string, InputComponent<unknown>> {
     const inputList = [
         new TextInput("datasetName", { required: true }),
         new TextInput("description", { multiline: true }),
-        makeProposalInput(model.get("proposals")),
-        makeInstrumentInput(model.get("instruments")),
+        makeProposalInput(staticData.proposals),
+        makeInstrumentInput(staticData.instruments),
         new TextInput("creationLocation", {}),
         new TextInput("runNumber", {}),
         new DatetimeInput("startTime", {}),
@@ -85,10 +84,10 @@ function createInputs(
         new TextInput("principalInvestigator", { required: true }),
         new TextInput("contactEmail", { required: true, type: "email" }),
         new PeopleInput("owners", {}),
-        makeOwnerGroupInput(model.get("accessGroups")),
+        makeOwnerGroupInput(staticData.accessGroups),
         new MultiTextInput("accessGroups", {}),
         new TextInput("license", {}),
-        new TechniquesInput("techniques", model.get("techniques")),
+        new TechniquesInput("techniques", staticData.techniques),
         new MultiTextInput("usedSoftware", {}),
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
@@ -105,6 +104,25 @@ function createInputs(
         inputs.set(input.key, input);
     }
     return inputs;
+}
+
+function connectInputs(
+    inputs: Map<string, InputComponent<any>>,
+    staticData: StaticData,
+) {
+    inputs
+        .get("ownerGroup")
+        ?.listenToInput(
+            inputs.get("proposalId")!,
+            (ownerGroup: InputComponent<string>, proposal: Proposal | null) => {
+                const proposalId = proposal?.id ?? "";
+                const group =
+                    staticData.accessGroups.find((group) => {
+                        return group == proposalId;
+                    }) ?? "";
+                ownerGroup.setSignaling(group, false);
+            },
+        );
 }
 
 function makeProposalInput(proposals: Proposal[]): ComboboxInput | TextInput {

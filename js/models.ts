@@ -37,3 +37,10 @@ export type Techniques = {
     prefix: string;
     techniques: Technique[];
 };
+
+export type StaticData = {
+    instruments: Instrument[];
+    proposals: Proposal[];
+    accessGroups: string[];
+    techniques: Techniques;
+};
