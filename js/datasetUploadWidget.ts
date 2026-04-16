@@ -34,12 +34,13 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 
     const comm = new BackendComm(model);
 
+    const inputs = createInputs(staticData, comm);
+    connectInputs(inputs, staticData);
+
     const uploader = new UploadComponent(comm, config, () => {
         return {};
     });
 
-    const inputs = createInputs(staticData, comm);
-    connectInputs(inputs, staticData);
     const datasetOverview = new DatasetOverview(inputs, uploader, config);
     el.appendChild(datasetOverview.element);
 

@@ -1,6 +1,14 @@
 import { InputComponent, InputOptions } from "./inputComponent.ts";
 import { iconButton } from "../button.ts";
 
+/*
+TODO Better display = search
+ - Do not use textContent for search
+ -  Do not insert textContent into search bar
+ - Use Choice.text
+        Can be stored in the option with option.label = choice.text
+ */
+
 export type Choice = {
     key: string;
     text: string;
@@ -8,7 +16,6 @@ export type Choice = {
 
 export interface Options extends InputOptions<string> {
     renderChoice?: (choice: Choice) => HTMLElement;
-    allowArbitrary?: boolean;
     filter?: boolean;
 }
 
@@ -19,6 +26,7 @@ export class ComboboxInput extends InputComponent<string> {
     private readonly datalist: HTMLDataListElement;
     private readonly searchBar: HTMLInputElement;
 
+    private error: string = "";
     private readonly closeListener: (e: PointerEvent) => void;
 
     constructor(key: string, choices: Choice[], options: Options) {
@@ -35,6 +43,7 @@ export class ComboboxInput extends InputComponent<string> {
         );
 
         const container = document.createElement("div");
+        container.id = crypto.randomUUID();
         container.className = "cean-combobox";
         container.append(searchBar, datalist, createChevron(searchBar));
 
@@ -48,10 +57,9 @@ export class ComboboxInput extends InputComponent<string> {
             if (e.code === "Tab") {
                 // Focus moves to the next element.
                 // Cannot use blur events as that would trigger when the user clicks into the datalist.
-                this.close();
-                this.updated();
+                this.blur();
             } else if (e.code == "Enter" || e.code == "NumpadEnter") {
-                this.updated();
+                this.selectActive();
             }
         });
 
@@ -59,16 +67,20 @@ export class ComboboxInput extends InputComponent<string> {
             this.close();
             if (event.text !== this.searchBar.value) {
                 this.searchBar.value = event.text;
+                this.error = "";
                 this.updated();
             }
         }) as EventListener);
-        this.datalist.addEventListener("blur", () => {
-            this.close();
-        });
+        this.datalist.addEventListener("blur", this.blur.bind(this));
 
         this.closeListener = (e: PointerEvent) => {
             if (!e.composedPath().includes(container)) {
-                this.close();
+                if (
+                    this.datalist.style.display !== "none" ||
+                    document.activeElement === this.searchBar
+                ) {
+                    this.blur();
+                }
             }
         };
         document.addEventListener("click", this.closeListener);
@@ -86,23 +98,109 @@ export class ComboboxInput extends InputComponent<string> {
     }
 
     get value(): string | null {
-        return this.searchBar.value;
+        return this.getSelected()?.value || null;
     }
 
     setSilent(value: string | null) {
+        deselectAll(this.datalist);
         for (const option of this.datalist.options) {
             if (option.value == value) {
                 option.selected = true;
                 option.classList.add("cean-selected");
                 this.searchBar.value = option.textContent;
+                this.error = "";
+                this.validate();
                 return;
             }
         }
         this.searchBar.value = value ?? "";
+        this.error = value === null || value === "" ? "" : "Value not recognized";
+        this.validate();
     }
 
     get options(): HTMLCollectionOf<HTMLOptionElement> {
         return this.datalist.options;
+    }
+
+    validate() {
+        // Override base class validate because baseInputElement does not
+        // support validation. So build it around searchBar instead.
+        this.searchBar.setCustomValidity(this.error);
+        if (!this.searchBar.validity.valid) {
+            this.statusElement.textContent = this.searchBar.validationMessage;
+        } else {
+            this.statusElement.textContent = "";
+        }
+    }
+
+    private getActive(): HTMLOptionElement | null {
+        for (const option of this.datalist.options) {
+            if (option.classList.contains("cean-active")) {
+                return option;
+            }
+        }
+        return null;
+    }
+
+    private getSelected(): HTMLOptionElement | null {
+        for (const option of this.datalist.options) {
+            if (option.selected) {
+                return option;
+            }
+        }
+        return null;
+    }
+
+    private findExactTextMatch(text: string): HTMLOptionElement | null {
+        const normalized = text.trim();
+        for (const option of this.datalist.options) {
+            if (option.textContent.trim() === normalized) {
+                return option;
+            }
+        }
+        return null;
+    }
+
+    private selectActive() {
+        const active = this.getActive();
+        if (active !== null) {
+            this.close();
+            this.error = "";
+            this.setSignaling(active.value);
+            this.validate();
+        }
+        // else: do nothing, keep dropdown open
+    }
+
+    private blur() {
+        this.close();
+        const selected = this.getSelected();
+        const text = this.searchBar.value.trim();
+        if (!text) {
+            // no search, remove selection
+            deselectAll(this.datalist);
+            this.searchBar.value = "";
+            this.error = "";
+            if (selected !== null) this.updated();
+        } else if (selected !== null && this.searchBar.value === selected.textContent) {
+            // valid search, keep selection
+            this.error = "";
+        } else {
+            const match = this.findExactTextMatch(text);
+            if (match !== null) {
+                deselectAll(this.datalist);
+                match.selected = true;
+                match.classList.add("cean-selected");
+                this.searchBar.value = match.textContent;
+                this.error = "";
+                this.updated();
+            } else {
+                deselectAll(this.datalist);
+                this.error = "Value not recognized";
+            }
+        }
+        // else: do nothing, keep current selection
+        this.validate();
     }
 
     private open() {
@@ -156,7 +254,6 @@ function createSearchBar(
     searchBar.type = "text";
     searchBar.role = "combobox";
     searchBar.autocomplete = "off";
-    // searchBar.list = ""; // TODO
     searchBar.placeholder = "Select ...";
     searchBar.className = "cean-input";
 
@@ -206,6 +303,7 @@ function createDatalist(
     datalist.id = crypto.randomUUID();
     datalist.role = "listbox";
     datalist.tabIndex = -1;
+    datalist.style.display = "none";
 
     for (const choice of choices) {
         const option = document.createElement("option");
@@ -214,10 +312,7 @@ function createDatalist(
         datalist.appendChild(option);
 
         option.addEventListener("click", () => {
-            for (const opt of datalist.options) {
-                opt.selected = false;
-                opt.classList.remove("cean-selected");
-            }
+            deselectAll(datalist);
             option.selected = true;
             option.classList.add("cean-selected");
             datalist.dispatchEvent(
@@ -227,6 +322,13 @@ function createDatalist(
     }
 
     return datalist;
+}
+
+function deselectAll(datalist: HTMLDataListElement) {
+    for (const option of datalist.options) {
+        option.selected = false;
+        option.classList.remove("cean-selected");
+    }
 }
 
 function findNextOption(
