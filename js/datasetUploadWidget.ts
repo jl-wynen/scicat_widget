@@ -111,19 +111,119 @@ function connectInputs(
     inputs: Map<string, InputComponent<any>>,
     staticData: StaticData,
 ) {
-    inputs
-        .get("ownerGroup")
-        ?.listenToInput(
-            inputs.get("proposalId")!,
-            (ownerGroup: InputComponent<string>, proposal: Proposal | null) => {
-                const proposalId = proposal?.id ?? "";
-                const group =
-                    staticData.accessGroups.find((group) => {
-                        return group == proposalId;
-                    }) ?? "";
-                ownerGroup.setSignaling(group, false);
-            },
-        );
+    connectInputPair(
+        inputs,
+        "ownerGroup",
+        "proposalId",
+        (ownerGroup: InputComponent<string>, proposalId: string | null) => {
+            const group =
+                staticData.accessGroups.find((group) => {
+                    return group === proposalId;
+                }) ?? null;
+            ownerGroup.setSignaling(group, false);
+        },
+    );
+
+    connectInputPair(
+        inputs,
+        "instrumentId",
+        "proposalId",
+        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
+            if (proposal.instrumentIds.length == 1) {
+                return proposal.instrumentIds[0];
+            } else {
+                return null;
+            }
+        }),
+    );
+
+    connectInputPair(
+        inputs,
+        "creationLocation",
+        "instrumentId",
+        setterFromItemId(staticData.instruments, (instrument: Instrument) => {
+            // TODO generalize
+            return `ESS:${instrument.name.toUpperCase()}`;
+        }),
+    );
+
+    connectInputPair(
+        inputs,
+        "principalInvestigator",
+        "proposalId",
+        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
+            return proposal.piName;
+        }),
+    );
+
+    connectInputPair(
+        inputs,
+        "contactEmail",
+        "proposalId",
+        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
+            return proposal.piEmail;
+        }),
+    );
+
+    connectInputPair(
+        inputs,
+        "sourceFolder",
+        "proposalId",
+        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
+            const instrumentId = inputs.get("instrumentId")?.value ?? "";
+            const instrument = staticData.instruments.find((instr) => {
+                return instr.id == instrumentId;
+            });
+            if (instrument === undefined) {
+                return null;
+            }
+            // TODO generalize
+            return `/ess/data/${instrument.name.toLowerCase()}/${proposal.id}/upload`;
+        }),
+    );
+    connectInputPair(
+        inputs,
+        "sourceFolder",
+        "instrumentId",
+        setterFromItemId(staticData.instruments, (instrument: Instrument) => {
+            const proposalId = inputs.get("proposalId")?.value ?? "";
+            const proposal = staticData.proposals.find((instr) => {
+                return instr.id == proposalId;
+            });
+            if (proposal === undefined) {
+                return null;
+            }
+            // TODO generalize
+            return `/ess/data/${instrument.name.toLowerCase()}/${proposal.id}/upload`;
+        }),
+    );
+}
+
+function setterFromItemId<T, Item extends { id: string }>(
+    collection: Item[],
+    makeValue: (item: Item) => T | null,
+) {
+    return (destination: InputComponent<T>, id: string | null) => {
+        const item = collection.find((item) => {
+            return item.id == id;
+        });
+        if (item) {
+            destination.setSignaling(makeValue(item), false);
+        } else {
+            destination.setSignaling(null, false);
+        }
+    };
+}
+
+function connectInputPair<Dst, Src>(
+    inputs: Map<string, InputComponent<any>>,
+    destination: string,
+    source: string,
+    listener: (dst: InputComponent<Dst>, value: Src | null) => void,
+) {
+    const src = inputs.get(source);
+    if (src === undefined) return;
+    inputs.get(destination)?.listenToInput(src, listener);
 }
 
 function makeProposalInput(proposals: Proposal[]): ComboboxInput | TextInput {
