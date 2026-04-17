@@ -56,11 +56,8 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         true,
     );
 
-    // const initial = model.get("initial") as any;
-    // if (initial && initial.hasOwnProperty("owners")) {
-    //     datasetWidget.setValue("owners", initial.owners);
-    // }
-    //
+    setInitialData(inputs, model.get("initial"));
+
     return () => {
         datasetOverview.destroy();
         for (const input of inputs.values()) {
@@ -287,6 +284,15 @@ function makeOwnerGroupInput(accessGroups: string[]): ComboboxInput | TextInput 
             required: true,
             renderChoice,
         });
+    }
+}
+
+function setInitialData(
+    inputs: Map<string, InputComponent<any>>,
+    initialData: Record<string, any>,
+) {
+    for (const [key, value] of Object.entries(initialData)) {
+        inputs.get(key)?.setSignaling(value, false);
     }
 }
 
