@@ -94,7 +94,7 @@ export abstract class InputComponent<T> {
     ) {
         // Call the provided handler on events:
         const listener = ((event: UpdateEvent) => {
-            handler(this, event.value_as<T>());
+            handler(this, event.value_as<U>());
         }) as EventListener;
         target.container.addEventListener("input-updated", listener);
 
