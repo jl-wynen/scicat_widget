@@ -43,6 +43,10 @@
         "label": "License",
         "description": "Name of the license under which the data can be used."
     },
+    "localPath": {
+        "label": "Path",
+        "description": "File path on the file system that Python is running on ('local')."
+    },
     "owners": {
         "label": "Owners",
         "description": "People who own the dataset and its data. The owners typically have full access to the data and decide who can use it and how."
@@ -50,6 +54,18 @@
     "ownerGroup": {
         "label": "Owner group",
         "description": "The group that owns the dataset in SciCat and the data on disk. As uploader, you need to be a member of this group."
+    },
+    "personEmail": {
+        "label": "Email",
+        "description": "Email address of the person."
+    },
+    "personName": {
+        "label": "Name",
+        "description": "Name of the person."
+    },
+    "personORCID": {
+        "label": "ORCID",
+        "description": "ORCID iD of the person."
     },
     "principalInvestigator": {
         "label": "PI",
@@ -62,6 +78,10 @@
     "relationships": {
         "label": "Relationships",
         "description": "Relationships with other datasets. In particular the 'input' relationship indicates datasets that were processed to obtain the dataset you are uploading."
+    },
+    "remotePath": {
+        "label": "Remote path",
+        "description": "Target file path after upload. Relative to the source folder. Defaults to the name of the file."
     },
     "runNumber": {
         "label": "Run number",

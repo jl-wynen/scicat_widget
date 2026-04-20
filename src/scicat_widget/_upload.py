@@ -9,6 +9,7 @@ from scitacean import PID, Client, Dataset, File, model
 def upload_dataset(
     client: Client, widget_data: dict[str, object]
 ) -> Dataset | UploadError:
+    # TODO check instrument, seem to be NOne
     dataset = make_dataset_from_widget_data(widget_data)
     try:
         return client.upload_new_dataset_now(dataset)
@@ -44,8 +45,7 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     converted.update(_convert_relationships(converted.pop("relationships", None)))
     converted.update(_convert_scientific_metadata(data.get("scientificMetadata", [])))
 
-    [file_meta, files] = _convert_files(data.get("files", {}))
-    converted.update(file_meta)
+    files = _convert_files(data.get("files", {}))
 
     attachments = _convert_attachments(data.get("attachments", {}))
 
@@ -108,23 +108,20 @@ def _convert_scientific_metadata(
     return {"meta": converted}
 
 
-def _convert_files(files: dict[str, Any]) -> tuple[dict[str, str], list[File]]:
-    fields = {
-        "source_folder": files.pop("sourceFolder", ""),
-    }
+def _convert_files(files: list[dict[str, str]]) -> list[File]:
     converted_files = [
         File.from_local(spec["localPath"], remote_path=spec.get("remotePath", None))
-        for spec in files.get("files", [])
+        for spec in files
     ]
-    return fields, converted_files
+    return converted_files
 
 
 def _convert_attachments(
-    attachments: dict[str, list[dict[str, str]]],
+    attachments: list[dict[str, str]],
 ) -> list[dict[str, Any]]:
     return [
         {"path": attachment.get("path", ""), "caption": attachment.get("caption", "")}
-        for attachment in attachments.get("attachments", [])
+        for attachment in attachments
     ]
 
 

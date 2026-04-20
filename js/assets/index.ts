@@ -1,4 +1,4 @@
-import fieldInfos from "./assets/fieldInfos.json";
+import fieldInfos from "./fieldInfos.json";
 
 export type FieldInfo = {
     label: string;

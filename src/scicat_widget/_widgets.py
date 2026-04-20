@@ -28,25 +28,17 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     _css = _STATIC_PATH / "datasetUploadWidget.css"
 
     initial = traitlets.Dict().tag(sync=True)
-    instruments = traitlets.List(trait=traitlets.Any()).tag(sync=True)
-    proposals = traitlets.List(trait=traitlets.Any()).tag(sync=True)
-    accessGroups = traitlets.List(trait=traitlets.Unicode()).tag(sync=True)
-    techniques = traitlets.Dict(trait=traitlets.Any()).tag(sync=True)
+    staticData = traitlets.Dict().tag(sync=True)
     scicatUrl = traitlets.Unicode().tag(sync=True)
-    skipConfirm = traitlets.Bool().tag(sync=True)
+    skipConfirmation = traitlets.Bool().tag(sync=True)
 
     def __init__(self, client: Client, /, *, skip_confirm: bool = False) -> None:
-        initial, instruments, proposals, access_groups = _collect_initial_data(client)
+        initial, static = _collect_initial_data(client)
         super().__init__(
             initial=initial,
-            instruments=[
-                _serialize_instrument(instrument) for instrument in instruments
-            ],
-            proposals=[_serialize_proposal(proposal) for proposal in proposals],
-            accessGroups=access_groups,
-            techniques=_load_techniques(),
+            staticData=static,
             scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
-            skipConfirm=skip_confirm,
+            skipConfirmation=skip_confirm,
             client=client,  # TODO create client here if not given
         )
         self.client = client
@@ -79,11 +71,21 @@ class DatasetUploadWidget(anywidget.AnyWidget):
 
 def _collect_initial_data(
     client: Client | None = None,
-) -> tuple[dict[str, Any], list[Instrument], list[ProposalOverview], list[str]]:
+) -> tuple[dict[str, Any], dict[str, Any]]:
     if client is None:
-        return {}, [], [], []
-    data, instruments, proposals, access_groups = _download_scicat_data(client)
-    return data, instruments, proposals, access_groups
+        return {}, {}
+    initial_data, instruments, proposals, access_groups = _download_scicat_data(client)
+
+    static_data = {
+        "instruments": [
+            _serialize_instrument(instrument) for instrument in instruments
+        ],
+        "proposals": [_serialize_proposal(proposal) for proposal in proposals],
+        "accessGroups": access_groups,
+        "techniques": _load_techniques(),
+    }
+
+    return initial_data, static_data
 
 
 def _download_scicat_data(
@@ -152,7 +154,7 @@ def _inspect_file(
             "remotePath": file.remote_path.posix,
         }
     except FileNotFoundError:
-        payload = {"success": False, "error": "File not found"}
+        payload = {"success": False, "error": "File not found", **input_payload}
     widget.send(
         {
             "type": "res:inspect-file",
@@ -200,13 +202,17 @@ def _load_image(
     except FileNotFoundError:
         payload = {"error": "File not found"}
     else:
-        payload = {"image": thumbnail.serialize(), "caption": path.stem}
+        payload = {
+            "image": thumbnail.serialize(),
+            "caption": input_payload.get("caption", path.stem),
+        }
 
     widget.send(
         {
             "type": "res:load-image",
             "key": key,
-            "payload": payload,
+            # Echo the input to identify the element that the request came from.
+            "payload": {**payload, **input_payload},
         }
     )
 

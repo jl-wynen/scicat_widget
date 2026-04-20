@@ -2,8 +2,9 @@ import { BackendComm, FieldError, ResUploadDataset } from "../comm";
 import { simpleLink, textElement } from "./output.ts";
 import { textButton } from "./button.ts";
 import { Dialog } from "./dialog.ts";
+import { Config } from "../config.ts";
 
-export class UploadWidget {
+export class UploadComponent {
     private readonly comm: BackendComm;
     private readonly scicatUrl: string;
     private readonly skipConfirmation: boolean;
@@ -12,15 +13,10 @@ export class UploadWidget {
     private readonly key = crypto.randomUUID();
     private dialog: Dialog;
 
-    constructor(
-        comm: BackendComm,
-        scicatUrl: string,
-        skipConfirmation: boolean,
-        gatherData: () => GatherResult,
-    ) {
+    constructor(comm: BackendComm, config: Config, gatherData: () => GatherResult) {
         this.comm = comm;
-        this.scicatUrl = scicatUrl;
-        this.skipConfirmation = skipConfirmation;
+        this.scicatUrl = config.scicatUrl;
+        this.skipConfirmation = config.skipConfirmation;
         this.gatherData = gatherData;
 
         this.dialog = new Dialog();
@@ -31,8 +27,9 @@ export class UploadWidget {
 
     createButton() {
         const button = document.createElement("button");
+        button.type = "submit";
         button.textContent = "Upload dataset";
-        button.classList.add("cean-upload-button", "jupyter-button");
+        button.classList.add("cean-button", "jupyter-button");
         button.addEventListener("click", () => {
             this.askDoUpload();
         });
@@ -124,7 +121,6 @@ ${simpleLink(this.scicatUrl)}?</p>
             },
             "Abort upload",
         );
-        abortButton.setAttribute("tabindex", "-1");
         abortButton.classList.add("jupyter-button");
         this.dialog.footer.replaceChildren(abortButton);
     }

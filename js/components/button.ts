@@ -1,3 +1,7 @@
+const FA_ICONS = ["chevron-down", "folder-open", "plus", "trash"];
+
+const CUSTOM_ICONS: Record<string, string> = {};
+
 /**
  * Create a button with text.
  * @param text Button text.
@@ -16,7 +20,7 @@ export function textButton(
 
 /**
  * Create a button with an icon.
- * @param icon Name of a Fontawesome icon.
+ * @param icon Name of an icon.
  * @param callback Callback to be invoked when the button is clicked.
  * @param title Optional button title.
  */
@@ -26,7 +30,11 @@ export function iconButton(
     title?: string,
 ): HTMLButtonElement {
     const iconElement = document.createElement("i");
-    iconElement.className = `fa fa-${icon}`;
+    if (FA_ICONS.includes(icon)) {
+        iconElement.className = `fa fa-${icon}`;
+    } else {
+        iconElement.innerHTML = CUSTOM_ICONS[icon];
+    }
 
     const button = createEmptyButton(callback, title);
     button.classList.add("cean-icon-button");
@@ -41,8 +49,7 @@ export function iconButton(
  */
 export function removeButton(callback: () => void): HTMLButtonElement {
     const button = iconButton("trash", callback, "Remove item");
-    button.classList.add("cean-button-remove");
-    button.setAttribute("tabindex", "-1");
+    button.classList.add("cean-remove-button");
     return button;
 }
 
@@ -68,6 +75,7 @@ export function iconTextButton(
 
 function createEmptyButton(callback: () => void, title?: string): HTMLButtonElement {
     const button = document.createElement("button");
+    button.type = "button";
     button.classList.add("cean-button");
     if (title !== undefined) button.title = title;
     button.addEventListener("click", callback);
