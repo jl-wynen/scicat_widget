@@ -12,7 +12,7 @@ export class FileInput extends InputComponent<string> {
 
     private readonly comm: BackendComm;
     private readonly commId: string = crypto.randomUUID();
-    private debounceTimer: ReturnType<typeof setTimeout> | null = null;
+    private debounceTimer: number | null = null;
     private previousValue: string | null = null;
     private validationResult: string | null = null;
 

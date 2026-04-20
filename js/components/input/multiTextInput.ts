@@ -33,7 +33,9 @@ export class MultiTextInput extends InputComponent<string[]> {
     }
 
     setSilent(value: string[] | null) {
-        this.itemsList.replaceChildren(...(value ?? []).map(createItem));
+        this.itemsList.replaceChildren(
+            ...(value ?? []).map((text) => createItem(text, this.updated.bind(this))),
+        );
     }
 }
 
