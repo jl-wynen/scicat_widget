@@ -1,3 +1,4 @@
+// TODO remove
 export function animateValueSet(element: HTMLElement) {
     element.animate(
         [

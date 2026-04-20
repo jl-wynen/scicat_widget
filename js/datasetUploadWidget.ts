@@ -16,7 +16,7 @@ import {
 } from "./components/input";
 import { Choice } from "./components/input/comboboxInput.ts";
 import { DatasetOverview } from "./forms";
-import { UploadComponent } from "./components";
+import { GatherResult, UploadComponent } from "./components";
 
 interface WidgetModel {
     initial: object;
@@ -38,7 +38,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     connectInputs(inputs, staticData);
 
     const uploader = new UploadComponent(comm, config, () => {
-        return {};
+        return gatherData(inputs);
     });
 
     const datasetOverview = new DatasetOverview(inputs, uploader, config);
@@ -90,7 +90,7 @@ function createInputs(
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
         new MultiTextInput("keywords", {}),
-        new TextInput("relationships", {}),
+        new MultiTextInput("relationships", {}),
         new ScientificMetadataInput("scientificMetadata", {}),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
@@ -296,21 +296,14 @@ function setInitialData(
     }
 }
 
-// function gatherData(
-//     datasetWidget: DatasetWidget,
-//     filesWidget: FilesWidget,
-//     attachmentsWidget: AttachmentsWidget,
-// ): GatherResult {
-//     const fields = datasetWidget.gatherData();
-//     const files = filesWidget.gatherData();
-//     const attachments = attachmentsWidget.gatherData();
-//     return {
-//         validationErrors:
-//             fields.validationErrors ||
-//             files.validationErrors ||
-//             attachments.validationErrors,
-//         data: { ...fields.data, files: files.data, attachments: attachments.data },
-//     };
-// }
+function gatherData(inputs: Map<string, InputComponent<any>>): GatherResult {
+    const data: Record<string, any> = {};
+    let validationErrors = false; // TODO
+    for (const [key, input] of inputs.entries()) {
+        const value = input.value;
+        if (value !== null) data[key] = value;
+    }
+    return { data, validationErrors };
+}
 
 export default { render };

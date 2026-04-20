@@ -121,7 +121,6 @@ ${simpleLink(this.scicatUrl)}?</p>
             },
             "Abort upload",
         );
-        abortButton.setAttribute("tabindex", "-1");
         abortButton.classList.add("jupyter-button");
         this.dialog.footer.replaceChildren(abortButton);
     }

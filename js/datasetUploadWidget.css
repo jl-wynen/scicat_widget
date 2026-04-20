@@ -547,3 +547,15 @@ ul.cean-input-items {
     justify-content: flex-end;
     gap: 10px;
 }
+
+.cean-warning {
+    color: var(--jp-warn-color1);
+}
+
+.cean-warning-severe {
+    background: var(--jp-warn-color2);
+    color: var(--jp-ui-inverse-font-color0);
+    padding: 0.3em 0;
+    font-variant: all-small-caps;
+    font-size: var(--jp-ui-font-size2);
+}
