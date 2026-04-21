@@ -35,7 +35,6 @@ export class MultiFileInput extends InputComponent<File[]> {
     }
 
     destroy() {
-        // TODO call from parent
         this.newFileInput.destroy();
         for (const fi of this.fileInputs) {
             fi.fileInput.destroy();
