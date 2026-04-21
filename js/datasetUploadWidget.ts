@@ -4,6 +4,7 @@ import { Instrument, Proposal, StaticData } from "./models.ts";
 import { BackendComm } from "./comm.ts";
 import {
     ComboboxInput,
+    ComboboxManualInput,
     DatetimeInput,
     InputComponent,
     MultiAttachmentInput,
@@ -223,43 +224,38 @@ function connectInputPair<Dst, Src>(
     inputs.get(destination)?.listenToInput(src, listener);
 }
 
-function makeProposalInput(proposals: Proposal[]): ComboboxInput | TextInput {
-    if (proposals.length == 0) {
-        return new TextInput("proposalId", {});
-    } else {
-        const choices =
-            proposals
-                .map((proposal) => {
-                    return { key: proposal.id, text: proposal.title };
-                })
-                .sort((a, b) => a.key.localeCompare(b.key)) ?? [];
+function makeProposalInput(proposals: Proposal[]): ComboboxManualInput {
+    const choices =
+        proposals
+            .map((proposal) => {
+                return { key: proposal.id, text: proposal.title };
+            })
+            .sort((a, b) => a.key.localeCompare(b.key)) ?? [];
 
-        return new ComboboxInput("proposalId", choices, {});
-    }
+    return new ComboboxManualInput("proposalId", choices, { fieldName: "proposal ID" });
 }
 
-function makeInstrumentInput(instruments: Instrument[]): ComboboxInput | TextInput {
-    if (instruments.length == 0) {
-        return new TextInput("instrumentId", {});
-    } else {
-        const choices = instruments
-            .map((instrument) => {
-                return {
-                    key: instrument.id,
-                    text: instrument.uniqueName,
-                };
-            })
-            .sort((a, b) => a.text.localeCompare(b.text));
+function makeInstrumentInput(instruments: Instrument[]): ComboboxManualInput {
+    const choices = instruments
+        .map((instrument) => {
+            return {
+                key: instrument.id,
+                text: instrument.uniqueName,
+            };
+        })
+        .sort((a, b) => a.text.localeCompare(b.text));
 
-        const renderChoice = (choice: Choice) => {
-            const el = document.createElement("span");
-            el.className = "cean-item-text";
-            el.textContent = choice.text;
-            return el;
-        };
+    const renderChoice = (choice: Choice) => {
+        const el = document.createElement("span");
+        el.className = "cean-item-text";
+        el.textContent = choice.text;
+        return el;
+    };
 
-        return new ComboboxInput("instrumentId", choices, { renderChoice });
-    }
+    return new ComboboxManualInput("instrumentId", choices, {
+        fieldName: "instrument ID",
+        renderChoice,
+    });
 }
 
 function makeOwnerGroupInput(accessGroups: string[]): ComboboxInput | TextInput {

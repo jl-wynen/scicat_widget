@@ -3,5 +3,11 @@ export type { TabSpec } from "./tabs.ts";
 export { Dialog } from "./dialog.ts";
 export { UploadComponent } from "./upload.ts";
 export type { GatherResult } from "./upload.ts";
-export { iconButton, textButton, iconTextButton, removeButton } from "./button.ts";
+export {
+    iconButton,
+    iconTextButton,
+    removeButton,
+    textButton,
+    toggleButton,
+} from "./button.ts";
 export { imageLink, simpleLink, humanSize, textElement } from "./output.ts";
