@@ -47,13 +47,25 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
         return items || null;
     }
 
-    setSilent(value: ScientificMetadataItem[] | null) {
+    setSilent(
+        value:
+            | ScientificMetadataItem[]
+            | Record<string, { value: string; unit?: string }>
+            | null,
+    ) {
         this.tableBody.replaceChildren();
         if (value === null) {
             this.addNewRow();
-        } else {
+        } else if (value instanceof Array) {
+            // This is data from JavaScript
             for (const item of value) {
                 this.addNewRow(item);
+            }
+        } else {
+            // This is data from Python (scientificMetadata is a dict)
+            for (const [name, entry] of Object.entries(value)) {
+                const { value, unit } = entry as { value: string; unit?: string };
+                this.addNewRow({ name, value, unit });
             }
         }
     }
