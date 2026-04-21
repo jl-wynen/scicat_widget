@@ -83,7 +83,7 @@ function createColumns(inputs: Map<string, InputComponent<unknown>>): HTMLDivEle
     relations.className = "cean-input-grid cean-fields";
     appendInput(relations, inputs, "type");
     appendInput(relations, inputs, "keywords");
-    appendInput(relations, inputs, "relationships");
+    appendInput(relations, inputs, "inputDatasets");
 
     const columns = document.createElement("div");
     columns.className = "cean-form-columns";
