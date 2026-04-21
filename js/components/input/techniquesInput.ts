@@ -42,7 +42,9 @@ export class TechniquesInput extends InputComponent<string[]> {
     }
 
     setSilent(value: string[] | null) {
-        this.selectionContainer.replaceChildren(...(value ?? []).map(this.createItem));
+        this.selectionContainer.replaceChildren(
+            ...(value ?? []).map(this.createItem.bind(this)),
+        );
     }
 
     private addItem(key: string) {
