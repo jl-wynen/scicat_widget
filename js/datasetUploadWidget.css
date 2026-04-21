@@ -86,21 +86,18 @@ fieldset.cean-fields {
     align-items: start;
     /* This can be overridden in specialised grids */
     grid-template-columns: max-content 1fr;
-
-    .cean-grid-span-3 {
-        grid-column: span 3;
-    }
 }
 
-
 .cean-general-info {
-    grid-template-columns:
-        max-content 1fr
-        max-content 1fr;
-
     textarea {
         resize: vertical;
     }
+}
+
+.cean-instrument-row {
+    grid-template-columns:
+        2fr
+        max-content 1fr;
 }
 
 .cean-run-info-row {
@@ -257,6 +254,15 @@ ul.cean-input-items {
 .cean-item-key {
     color: var(--jp-content-font-color3);
     font-family: monospace;
+}
+
+.cean-combobox-manual {
+    display: grid;
+    grid-template-columns: 1fr max-content;
+
+    label {
+        margin-left: 1ex;
+    }
 }
 
 .cean-techniques-item {
@@ -449,19 +455,21 @@ ul.cean-input-items {
     border: none;
     cursor: pointer;
 
-    &:hover {
-        background: var(--jp-input-hover-background);
-        color: var(--jp-ui-font-color0);
+    &:not(:has(:disabled)) {
+        &:hover {
+            background: var(--jp-input-hover-background);
+            color: var(--jp-ui-font-color0);
+        }
+
+        &:active {
+            box-shadow: 0 0 0 1px var(--jp-input-active-border-color);
+        }
     }
 
-    &[disabled="true"] {
+    &:has(:disabled) {
         background: var(--jp-input-background);
         color: var(--jp-ui-font-color2);
         cursor: unset;
-    }
-
-    &:active {
-        box-shadow: 0 0 0 1px var(--jp-input-active-border-color);
     }
 
     i + span {
@@ -474,6 +482,27 @@ ul.cean-input-items {
     &:active {
         box-shadow: none;
         background: var(--jp-input-active-background);
+    }
+}
+
+.cean-toggle-button {
+    /* Match the default style of buttons as much as possible: */
+    display: inline-flex;
+    align-items: center;
+    padding: 1px 6px;
+    box-sizing: border-box;
+    font-size: inherit;
+    line-height: normal;
+    font-family: inherit;
+    user-select: none;
+
+    input {
+        display: none;
+    }
+
+    &:has(input:checked) {
+        background: var(--jp-layout-color3);
+        box-shadow: 0 0 0 1px var(--jp-input-active-border-color);
     }
 }
 

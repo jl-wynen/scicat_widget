@@ -109,11 +109,16 @@ export class ComboboxInput extends InputComponent<string> {
                 option.classList.add("cean-selected");
                 this.searchBar.value = option.textContent;
                 this.error = "";
+                filterOptions(value, this.datalist);
                 this.validate();
                 return;
             }
         }
+
         this.searchBar.value = value ?? "";
+        for (const option of this.datalist.options) {
+            option.style.display = "block";
+        }
         this.error = value === null || value === "" ? "" : "Value not recognized";
         this.validate();
     }

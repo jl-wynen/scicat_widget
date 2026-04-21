@@ -1,4 +1,4 @@
-const FA_ICONS = ["chevron-down", "folder-open", "plus", "trash"];
+const FA_ICONS = ["chevron-down", "folder-open", "pen", "plus", "trash"];
 
 const CUSTOM_ICONS: Record<string, string> = {};
 
@@ -29,17 +29,9 @@ export function iconButton(
     callback: () => void,
     title?: string,
 ): HTMLButtonElement {
-    const iconElement = document.createElement("i");
-    if (FA_ICONS.includes(icon)) {
-        iconElement.className = `fa fa-${icon}`;
-    } else {
-        iconElement.innerHTML = CUSTOM_ICONS[icon];
-    }
-
     const button = createEmptyButton(callback, title);
     button.classList.add("cean-icon-button");
-    button.appendChild(iconElement);
-
+    button.appendChild(createIcon(icon));
     return button;
 }
 
@@ -73,6 +65,33 @@ export function iconTextButton(
     return button;
 }
 
+/**
+ * Create a toggle button with an icon and text.
+ * @param icon Name of a Fontawesome icon.
+ * @param text Button text.
+ * @param callback Callback to be invoked when the button is clicked.
+ * @param title Optional button title.
+ */
+export function toggleButton(
+    icon: string,
+    text: string,
+    callback: (event: Event) => void,
+    title?: string,
+): HTMLLabelElement {
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.addEventListener("change", callback);
+
+    const span = document.createElement("span");
+    span.textContent = text;
+
+    const label = document.createElement("label");
+    label.classList.add("cean-toggle-button", "cean-button");
+    label.title = title ?? "";
+    label.append(checkbox, createIcon(icon), span);
+    return label;
+}
+
 function createEmptyButton(callback: () => void, title?: string): HTMLButtonElement {
     const button = document.createElement("button");
     button.type = "button";
@@ -80,4 +99,14 @@ function createEmptyButton(callback: () => void, title?: string): HTMLButtonElem
     if (title !== undefined) button.title = title;
     button.addEventListener("click", callback);
     return button;
+}
+
+function createIcon(icon: string): HTMLElement {
+    const iconElement = document.createElement("i");
+    if (FA_ICONS.includes(icon)) {
+        iconElement.className = `fa fa-${icon}`;
+    } else {
+        iconElement.innerHTML = CUSTOM_ICONS[icon];
+    }
+    return iconElement;
 }
