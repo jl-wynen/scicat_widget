@@ -39,13 +39,13 @@ class DatasetUploadWidget(anywidget.AnyWidget):
         client: Client,
         /,
         *,
+        initial: Dataset | None = None,
         skip_confirm: bool = False,
-    ) -> None:
-        config = _build_config(client, skip_confirm=skip_confirm)
-        initial, static = _collect_initial_data(client)
+    ) -> None:config = _build_config(client, skip_confirm=skip_confirm)
+        initial_data, static = _collect_initial_data(client, initial)
         super().__init__(
             config=config.model_dump(),
-            initial=initial,
+            initial=initial_data,
             staticData=static,
             client=client,  # TODO create client here if not given
         )
@@ -109,7 +109,7 @@ def _call_field_factory(factory: Callable[..., Any], args: dict[str, Any]) -> An
 
 
 def _collect_initial_data(
-    client: Client | None = None,
+    client: Client | None = None, initial: Dataset | None = None
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     if client is None:
         return {}, {}
@@ -123,6 +123,27 @@ def _collect_initial_data(
         "accessGroups": access_groups,
         "techniques": _load_techniques(),
     }
+
+    if initial is not None:
+        # TODO also attachments and files
+        dumped = initial.make_upload_model(strict_validation=False).model_dump(
+            exclude_none=True
+        )
+        if "investigator" in dumped:
+            # fallback for old field name
+            dumped["principalInvestigator"] = dumped.pop("investigator")
+        if "techniques" in dumped:
+            # TODO reverse in upload
+            dumped["techniques"] = [
+                t["pid"].rsplit("/", 1)[-1] for t in dumped["techniques"]
+            ]
+        files = [
+            {"localPath": file.path}
+            for block in initial.make_datablock_upload_models().orig_datablocks or ()
+            for file in block.dataFileList
+        ]
+        initial_data.update(dumped)
+        initial_data["files"] = files
 
     return initial_data, static_data
 
