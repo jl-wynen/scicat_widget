@@ -91,7 +91,7 @@ function createInputs(
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
         new MultiTextInput("keywords", {}),
-        new MultiTextInput("relationships", {}),
+        new MultiTextInput("inputDatasets", {}),
         new ScientificMetadataInput("scientificMetadata", {}),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
