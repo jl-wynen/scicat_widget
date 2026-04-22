@@ -125,27 +125,63 @@ def _collect_initial_data(
     }
 
     if initial is not None:
-        # TODO also attachments and files
-        dumped = initial.make_upload_model(strict_validation=False).model_dump(
-            exclude_none=True
-        )
-        if "investigator" in dumped:
-            # fallback for old field name
-            dumped["principalInvestigator"] = dumped.pop("investigator")
-        if "techniques" in dumped:
-            # TODO reverse in upload
-            dumped["techniques"] = [
-                t["pid"].rsplit("/", 1)[-1] for t in dumped["techniques"]
-            ]
-        files = [
-            {"localPath": file.path}
-            for block in initial.make_datablock_upload_models().orig_datablocks or ()
-            for file in block.dataFileList
-        ]
-        initial_data.update(dumped)
-        initial_data["files"] = files
+        initial_data.update(_serialize_dataset(initial))
 
     return initial_data, static_data
+
+
+def _serialize_dataset(dataset: Dataset) -> dict[str, Any]:
+    # TODO reverse in upload
+    set = dataset.make_upload_model(strict_validation=False).model_dump(
+        exclude_none=True
+    )
+    if "investigator" in set:
+        # fallback for old field name
+        set["principalInvestigator"] = set.pop("investigator")
+    if "techniques" in set:
+        # TODO reverse in upload
+        set["techniques"] = [t["pid"].rsplit("/", 1)[-1] for t in set["techniques"]]
+
+    set["files"] = [
+        {"localPath": file.path}
+        for block in dataset.make_datablock_upload_models().orig_datablocks or ()
+        for file in block.dataFileList
+    ]
+    return set
+
+
+def _listify_owners(data: dict[str, Any]) -> dict[str, Any]:
+    data = dict(data)
+
+    names = _split_list_string(data.pop("owner", ""))
+    emails = _split_list_string(data.pop("ownerEmail", ""))
+    orcids = _split_list_string(data.pop("orcidOfOwner", ""))
+
+    lengths = {l for l in (len(names), len(emails), len(orcids)) if l > 0}
+    if len(lengths) != 1:
+        raise ValueError(
+            "Need an equal number of entries in 'owner', 'owner_email', and "
+            f"'orcid_of_owner'. Got {len(names)}, {len(emails)}, and {len(orcids)}"
+        )
+    n = next(iter(lengths))
+    names = names or [None] * n
+    emails = emails or [None] * n
+    orcids = orcids or [None] * n
+
+    data["owners"] = [
+        {"name": name or None, "email": email or None, "orcid": orcid or None}
+        for name, email, orcid in zip(names, emails, orcids, strict=False)
+    ]
+
+    return data
+
+
+def _split_list_string(string: str) -> list[str]:
+    string = string.strip()
+    if not string:
+        return []  # the code below would return [''] in this case
+    # Keep empty strings to get a proper number of elements.
+    return [s.strip() for s in string.split(";")]
 
 
 def _download_scicat_data(
