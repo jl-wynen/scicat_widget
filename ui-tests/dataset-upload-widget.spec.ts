@@ -28,20 +28,28 @@ test.describe("Dataset upload", () => {
         await locator.getByLabel("Dataset name").fill("Test dataset name");
 
         await locator.getByLabel("Creation Location").fill("TEST:widget");
+        await locator.getByLabel("Owner group").fill("135246");
         await locator.getByLabel("PI").fill("Principal Skinner");
         await locator.getByLabel("Contact email").fill("skinner@princi.pal");
-        // Need exact: true to avoid conflict with 'Dataset name'
+        // Need `exact: true` to avoid conflict with 'Dataset name'
         await locator.getByLabel("Name", { exact: true }).fill("Billy Ownerson");
 
-        // TODO this fails (probably because of combobox)
-        await locator.getByLabel("Owner group").fill("135246");
-
-        await locator.getByRole("button", { name: /Files/ }).click();
+        await locator.getByRole("tab", { name: /Files/ }).click();
         await locator.getByLabel("Source folder").fill("/source/folder");
 
+        // TODO might need to wait here
+        await locator.getByLabel("Input new file").fill("README.md");
+        await locator.getByLabel("Input new file").blur();
+
+        expect((await locator.getByLabel("Remote path").count()) == 1);
+
         await locator.getByRole("button", { name: "Upload dataset" }).click();
+        // TODO need to get dialog locator
         await locator.getByRole("button", { name: "Upload", exact: true }).click();
         await locator.getByRole("button", { name: "Close" }).click();
+
+        expect(await page.notebook.runCell(1));
+        expect(await page.notebook.runCell(2));
     });
 });
 
