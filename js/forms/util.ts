@@ -16,7 +16,7 @@ export function createLabelFor<T>(
     const info = fieldInfo(component.key);
 
     const el = document.createElement("label");
-    el.setAttribute("for", component.id);
+    el.htmlFor = component.id;
     el.textContent = label ?? info?.label ?? "Unknown field";
 
     const t = title ?? info?.description;

@@ -10,11 +10,7 @@ watch:
 
 # Run tests
 test *args:
-    @uv run --group=test pytest {{args}}
-
-# Run tests with dependencies at lower bound
-test-lowest *args:
-    @uv run --resolution=lowest-direct --group=test --group=sftp pytest --backend-tests --sftp-tests {{args}}
+    npx playwright test {{args}}
 
 # --- Formatting ---
 

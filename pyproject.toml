@@ -82,7 +82,7 @@ filterwarnings = [
 [tool.mypy]
 plugins = "pydantic.mypy"
 mypy_path = "src"
-exclude = ["docs/conf.py", "venv", ".venv"]
+exclude = ["docs/conf.py", "tests/e2e/jupyter_server_test_config.py", "venv", ".venv"]
 ignore_missing_imports = true
 enable_error_code = [
     "ignore-without-code",
@@ -117,6 +117,10 @@ isort.known-first-party = ["scicat_widget"]
 pydocstyle.convention = "numpy"
 
 [tool.ruff.lint.per-file-ignores]
+"ui-tests/*" = [
+    "S101", # asserts are fine in tests
+    "D10", # no docstrings required in tests
+]
 "tests/*" = [
     "S101", # asserts are fine in tests
     "D10", # no docstrings required in tests
