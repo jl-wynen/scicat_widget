@@ -2,6 +2,7 @@
     "scripts": {
         "dev": "npm run build -- --sourcemap=inline --watch",
         "build": "esbuild js/*.ts --minify --format=esm --bundle --outdir=src/scicat_widget/_static --loader:.svg=text",
+        "fixture:serve": "esbuild tests/components/fixture/mount.ts --bundle --outfile=tests/components/fixture/mount.js --format=esm --loader:.svg=text --servedir=tests/components/fixture",
         "fix:prettier": "npm run lint:prettier -- --write",
         "lint:prettier": "prettier --config package.json --check",
         "typecheck": "tsc --noEmit"

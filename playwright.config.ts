@@ -1,51 +1,87 @@
 import { defineConfig, devices } from "@playwright/test";
-import galataConfig from "@jupyterlab/galata/lib/playwright-config";
 
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// import dotenv from 'dotenv';
-// import path from 'path';
-// dotenv.config({ path: path.resolve(__dirname, '.env') });
+const FIXTURE_PORT = 8000;
+const JUPYTER_PORT = 8080;
 
 /**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
-    ...galataConfig,
+    testIgnore: "**/.ipynb_checkpoints/**",
 
-    testDir: "./ui-tests",
-    /* Run tests in files in parallel */
-    fullyParallel: false,
     /* Fail the build on CI if you accidentally left test.only in the source code. */
     forbidOnly: !!process.env.CI,
-    /* Retry on CI only */
-    retries: process.env.CI ? 2 : 0,
+
+    retries: process.env.CI ? 1 : 0,
+    timeout: 10_000,
+
+    fullyParallel: false,
     /* Opt out of parallel tests on CI. */
     workers: process.env.CI ? 1 : undefined,
-    /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-    reporter: "html",
+
+    reporter: [["list"], ["html"]],
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
-        /* Base URL to use in actions like `await page.goto('')`. */
-        // baseURL: 'http://localhost:3000',
-
-        /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
         trace: "on-first-retry",
-
         video: "retain-on-failure",
     },
 
-    timeout: 10_000,
-
     /* Configure projects for major browsers */
     projects: [
-        // The tests only seem to run on Chromium
         {
-            name: "chromium",
-            use: { ...devices["Desktop Chrome"] },
+            name: "components chromium",
+            testDir: "./tests/components",
+            testMatch: /.*\.spec\.ts$/,
+            use: {
+                ...devices["Desktop Chrome"],
+                baseURL: `http://localhost:${FIXTURE_PORT}`,
+            },
         },
+        {
+            name: "components firefox",
+            testDir: "./tests/components",
+            testMatch: /.*\.spec\.ts$/,
+            use: {
+                ...devices["Desktop Firefox"],
+                baseURL: `http://localhost:${FIXTURE_PORT}`,
+            },
+        },
+        // TODO missing dependencies
+        // {
+        //     name: "components webkit",
+        //     testDir: "./tests/components",
+        //     testMatch: /.*\.spec\.ts$/,
+        //     use: {
+        //         ...devices["Desktop Safari"],
+        //         baseURL: `http://localhost:${FIXTURE_PORT}`,
+        //     },
+        // },
+
+        // TODO other browsers?
+        {
+            name: "e2e chromium",
+            testDir: "./tests/e2e",
+            testMatch: /.*\.spec\.ts$/,
+            use: {
+                ...devices["Desktop Chrome"],
+                baseURL: `http://localhost:${JUPYTER_PORT}`,
+            },
+        },
+
+        // {
+        //     name: "jupyterlab-firefox",
+        //     testMatch: "test/jupyterlab/**/*.test.ts",
+        //     testIgnore: "**/.ipynb_checkpoints/**",
+        //     use: {
+        //         contextOptions: {
+        //             // https://github.com/microsoft/playwright/issues/13037
+        //             permissions: [],
+        //         },
+        //         browserName: "firefox",
+        //     },
+        //     // We do not want to match exactly on Firefox
+        //     ignoreSnapshots: true,
+        // },
 
         // {
         //     name: "firefox",
@@ -79,11 +115,23 @@ export default defineConfig({
     ],
 
     /* Run your local dev server before starting the tests */
-    // webServer: {
-    //   command: 'npm run start',
-    //   url: 'http://localhost:3000',
-    //   reuseExistingServer: !process.env.CI,
-    // },
+    webServer: [
+        {
+            command: `npm run fixture:serve -- --serve=${FIXTURE_PORT}`,
+            url: `http://localhost:${FIXTURE_PORT}`,
+            reuseExistingServer: !process.env.CI,
+        },
+        {
+            // JupyterLab for Galata
+            command:
+                "npm run build && " +
+                "uv run jupyter lab --config ./tests/e2e/jupyter_server_test_config.py " +
+                `--port=${JUPYTER_PORT}`,
+            url: `http://localhost:${JUPYTER_PORT}/lab`,
+            timeout: 120_000,
+            reuseExistingServer: !process.env.CI,
+        },
+    ],
 });
 
 // module.exports = require("@jupyterlab/galata/lib/playwright-config");

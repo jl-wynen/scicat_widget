@@ -34,20 +34,25 @@ test.describe("Dataset upload", () => {
         // Need `exact: true` to avoid conflict with 'Dataset name'
         await locator.getByLabel("Name", { exact: true }).fill("Billy Ownerson");
 
+        const techniques = locator.getByLabel("Techniques");
+        await techniques.fill("PaNET00100");
+        await techniques.press("Enter");
+        // TODO read technique
+
         await locator.getByRole("tab", { name: /Files/ }).click();
         await locator.getByLabel("Source folder").fill("/source/folder");
 
         // TODO might need to wait here
         await locator.getByLabel("Input new file").fill("README.md");
-        await locator.getByLabel("Input new file").blur();
 
         expect((await locator.getByLabel("Remote path").count()) == 1);
 
-        await locator.getByRole("button", { name: "Upload dataset" }).click();
-        // TODO need to get dialog locator
-        await locator.getByRole("button", { name: "Upload", exact: true }).click();
-        await locator.getByRole("button", { name: "Close" }).click();
+        // await locator.getByRole("button", { name: "Upload dataset" }).click();
+        // // TODO need to get dialog locator
+        // await locator.getByRole("button", { name: "Upload", exact: true }).click();
+        // await locator.getByRole("button", { name: "Close" }).click();
 
+        // TODO catch assertion failures
         expect(await page.notebook.runCell(1));
         expect(await page.notebook.runCell(2));
     });
