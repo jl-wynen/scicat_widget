@@ -100,7 +100,7 @@ export class CountSpanElement {
     }
 
     set(value: number) {
-        this.element.textContent = `(${value})`;
+        this.element.textContent = value.toString();
     }
 }
 

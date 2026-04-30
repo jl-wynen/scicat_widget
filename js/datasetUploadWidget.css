@@ -73,6 +73,17 @@ button[role="tab"] {
 
 .cean-tab-count {
     margin-left: 0.5em;
+    background: var(--jp-layout-color3);
+    color: var(--jp-ui-font-color1);
+    border-radius: 10rem;
+
+    text-align: center;
+    white-space: nowrap;
+    line-height: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: .125rem .375rem;
 }
 
 fieldset.cean-fields {
