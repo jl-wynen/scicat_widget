@@ -1,23 +1,18 @@
 import { test, expect } from "@playwright/test";
+import { expectEvent, expectNoEvent, mount } from "./util";
 
 test.beforeEach(async ({ page }) => {
     await page.goto("/");
 });
 
 test("emits event on blur", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("text", {
-            key: "My text",
-            args: [{}],
-        });
-    });
+    await mount(page, "text", "My text", {});
 
     const input = page.getByLabel("My text");
     await input.fill("Lorem ipsum");
     await input.blur();
 
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "My text",
         value: "Lorem ipsum",
         userTriggered: true,
@@ -25,19 +20,13 @@ test("emits event on blur", async ({ page }) => {
 });
 
 test("emits event on enter", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("text", {
-            key: "My text",
-            args: [{}],
-        });
-    });
+    await mount(page, "text", "My text", {});
 
     const input = page.getByLabel("My text");
     await input.fill("Lorem ipsum");
     await input.press("Enter");
 
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "My text",
         value: "Lorem ipsum",
         userTriggered: true,
@@ -45,19 +34,13 @@ test("emits event on enter", async ({ page }) => {
 });
 
 test("trims input", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("text", {
-            key: "My text",
-            args: [{}],
-        });
-    });
+    await mount(page, "text", "My text", {});
 
     const input = page.getByLabel("My text");
     await input.fill(" Lorem ipsum  ");
     await input.press("Enter");
 
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "My text",
         value: "Lorem ipsum",
         userTriggered: true,
@@ -65,12 +48,7 @@ test("trims input", async ({ page }) => {
 });
 
 test("can be multiline", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("text", {
-            key: "My text",
-            args: [{ multiline: true }],
-        });
-    });
+    await mount(page, "text", "My text", { multiline: true });
 
     const input = page.getByLabel("My text");
     await input.fill("Lorem ipsum");
@@ -78,13 +56,11 @@ test("can be multiline", async ({ page }) => {
     await input.press("N");
 
     // Enter does not emit an event
-    const noEvent = await page.evaluate(() => window.lastEvent);
-    expect(noEvent).toEqual(null);
+    await expectNoEvent(page);
 
     // Now we get an event
     await input.blur();
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "My text",
         value: "Lorem ipsum\nN",
         userTriggered: true,
@@ -92,12 +68,7 @@ test("can be multiline", async ({ page }) => {
 });
 
 test("allows good email", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("text", {
-            key: "Your email:",
-            args: [{ type: "email" }],
-        });
-    });
+    await mount(page, "text", "Your email:", { type: "email" });
 
     const input = page.getByLabel("Your email:");
     await input.fill("testo@check.mail");
@@ -106,8 +77,7 @@ test("allows good email", async ({ page }) => {
     expect(error).toBeFalsy();
 
     await input.press("Enter");
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "Your email:",
         value: "testo@check.mail",
         userTriggered: true,
@@ -115,12 +85,7 @@ test("allows good email", async ({ page }) => {
 });
 
 test("flags bad email", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("text", {
-            key: "Your email:",
-            args: [{ type: "email" }],
-        });
-    });
+    await mount(page, "text", "Your email:", { type: "email" });
 
     const input = page.getByLabel("Your email:");
     await input.fill("not.a.mail");
@@ -129,16 +94,14 @@ test("flags bad email", async ({ page }) => {
     expect(await status.textContent()).toBeTruthy();
 
     await input.press("Enter");
-    const badEvent = await page.evaluate(() => window.lastEvent);
-    expect(badEvent).toEqual(null);
+    await expectNoEvent(page);
 
     // Inserting a good email removes error message
     await input.fill("good@mail.test");
     expect(await status.textContent()).toBeFalsy();
 
     await input.press("Enter");
-    const goodEvent = await page.evaluate(() => window.lastEvent);
-    expect(goodEvent).toEqual({
+    await expectEvent(page, {
         key: "Your email:",
         value: "good@mail.test",
         userTriggered: true,

@@ -1,22 +1,21 @@
 import { test, expect } from "@playwright/test";
+import { expectEvent, mount } from "./util";
 
 test.beforeEach(async ({ page }) => {
     await page.goto("/");
 });
 
 test("sets option from full key", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("combobox", {
-            key: "Combo",
-            args: [
-                [
-                    { key: "XX", text: "The X" },
-                    { key: "Y", text: "y tho?" },
-                ],
-                {},
-            ],
-        });
-    });
+    await mount(
+        page,
+        "combobox",
+        "Combo",
+        [
+            { key: "XX", text: "The X" },
+            { key: "Y", text: "y tho?" },
+        ],
+        {},
+    );
 
     const input = page.getByLabel("Combo");
     await input.fill("XX");
@@ -24,8 +23,7 @@ test("sets option from full key", async ({ page }) => {
 
     expect(await input.inputValue()).toEqual("XXThe X");
 
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "Combo",
         value: "XX",
         userTriggered: true,
@@ -33,18 +31,16 @@ test("sets option from full key", async ({ page }) => {
 });
 
 test("sets option from partial key", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("combobox", {
-            key: "Combo",
-            args: [
-                [
-                    { key: "XX", text: "The X" },
-                    { key: "Y", text: "y tho?" },
-                ],
-                {},
-            ],
-        });
-    });
+    await mount(
+        page,
+        "combobox",
+        "Combo",
+        [
+            { key: "XX", text: "The X" },
+            { key: "Y", text: "y tho?" },
+        ],
+        {},
+    );
 
     const input = page.getByLabel("Combo");
     await input.fill("X");
@@ -52,8 +48,7 @@ test("sets option from partial key", async ({ page }) => {
 
     expect(await input.inputValue()).toEqual("XXThe X");
 
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "Combo",
         value: "XX",
         userTriggered: true,
@@ -61,19 +56,17 @@ test("sets option from partial key", async ({ page }) => {
 });
 
 test("selects options with arrow keys", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("combobox", {
-            key: "Combo",
-            args: [
-                [
-                    { key: "XX", text: "The X" },
-                    { key: "Y", text: "y tho?" },
-                    { key: "XY", text: "Both" },
-                ],
-                {},
-            ],
-        });
-    });
+    await mount(
+        page,
+        "combobox",
+        "Combo",
+        [
+            { key: "XX", text: "The X" },
+            { key: "Y", text: "y tho?" },
+            { key: "XY", text: "Both" },
+        ],
+        {},
+    );
 
     const input = page.getByLabel("Combo");
     await input.fill("X");
@@ -84,8 +77,7 @@ test("selects options with arrow keys", async ({ page }) => {
 
     expect(await input.inputValue()).toEqual("XYBoth");
 
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "Combo",
         value: "XY",
         userTriggered: true,
@@ -93,19 +85,17 @@ test("selects options with arrow keys", async ({ page }) => {
 });
 
 test("selects options with click", async ({ page }) => {
-    await page.evaluate(() => {
-        window.mount("combobox", {
-            key: "Combo",
-            args: [
-                [
-                    { key: "XX", text: "The X" },
-                    { key: "Y", text: "y tho?" },
-                    { key: "XY", text: "Both" },
-                ],
-                {},
-            ],
-        });
-    });
+    await mount(
+        page,
+        "combobox",
+        "Combo",
+        [
+            { key: "XX", text: "The X" },
+            { key: "Y", text: "y tho?" },
+            { key: "XY", text: "Both" },
+        ],
+        {},
+    );
 
     const input = page.getByLabel("Combo");
     await input.focus();
@@ -113,8 +103,7 @@ test("selects options with click", async ({ page }) => {
 
     expect(await input.inputValue()).toEqual("Yy tho?");
 
-    const event = await page.evaluate(() => window.lastEvent);
-    expect(event).toEqual({
+    await expectEvent(page, {
         key: "Combo",
         value: "Y",
         userTriggered: true,

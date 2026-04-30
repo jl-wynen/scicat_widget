@@ -1,4 +1,4 @@
-import { InputComponent } from "./inputComponent.ts";
+import { InputComponent, UpdateEvent } from "./inputComponent.ts";
 import { TextInput } from "./textInput.ts";
 import { toggleButton } from "../button.ts";
 import { Choice, ComboboxInput, Options as ComboboxOptions } from "./comboboxInput.ts";
@@ -45,6 +45,16 @@ export class ComboboxManualInput extends InputComponent<string> {
             manualButton.querySelector("input")!.disabled = true;
             manualButton.title = "Selection not available";
         }
+
+        this.relayEventsFrom(this.comboboxInput);
+        this.relayEventsFrom(this.textInput);
+    }
+
+    relayEventsFrom(input: InputComponent<string>) {
+        input.container.addEventListener("input-updated", ((e: UpdateEvent) => {
+            e.stopPropagation();
+            this.updated(e.userTriggered);
+        }) as EventListener);
     }
 
     destroy() {

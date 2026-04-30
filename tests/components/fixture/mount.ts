@@ -1,10 +1,16 @@
-import { InputComponent, TextInput, ComboboxInput } from "../../../js/components/input";
+import {
+    ComboboxInput,
+    ComboboxManualInput,
+    InputComponent,
+    TextInput,
+} from "../../../js/components/input";
 
 const INPUT_COMPONENT_TYPES: Record<
     string,
     new (...args: any[]) => InputComponent<any>
 > = {
     combobox: ComboboxInput,
+    comboboxManual: ComboboxManualInput,
     text: TextInput,
 };
 
