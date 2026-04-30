@@ -74,6 +74,11 @@ export class ComboboxManualInput extends InputComponent<string> {
         this.getActive().setSilent(value);
     }
 
+    setSignaling(value: string | null, userTriggered: boolean = true) {
+        this.getActive().setSignaling(value, userTriggered);
+        this.updated(userTriggered);
+    }
+
     private setManual() {
         this.deactivate(this.comboboxInput);
         this.activate(this.textInput, this.comboboxInput.value);

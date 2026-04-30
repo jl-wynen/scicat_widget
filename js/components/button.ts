@@ -1,4 +1,11 @@
-const FA_ICONS = ["chevron-down", "folder-open", "pen", "plus", "trash"];
+const FA_ICONS = [
+    "chevron-down",
+    "folder-open",
+    "pen",
+    "plus",
+    "times-circle",
+    "trash",
+];
 
 const CUSTOM_ICONS: Record<string, string> = {};
 
