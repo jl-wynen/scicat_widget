@@ -1,9 +1,10 @@
-import { InputComponent, TextInput } from "../../../js/components/input";
+import { InputComponent, TextInput, ComboboxInput } from "../../../js/components/input";
 
 const INPUT_COMPONENT_TYPES: Record<
     string,
     new (...args: any[]) => InputComponent<any>
 > = {
+    combobox: ComboboxInput,
     text: TextInput,
 };
 

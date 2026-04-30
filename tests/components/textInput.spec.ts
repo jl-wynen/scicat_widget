@@ -15,7 +15,6 @@ test("emits event on blur", async ({ page }) => {
     const input = page.getByLabel("My text");
     await input.fill("Lorem ipsum");
     await input.blur();
-    // await input.press("Enter");
 
     const event = await page.evaluate(() => window.lastEvent);
     expect(event).toEqual({
@@ -61,6 +60,33 @@ test("trims input", async ({ page }) => {
     expect(event).toEqual({
         key: "My text",
         value: "Lorem ipsum",
+        userTriggered: true,
+    });
+});
+
+test("can be multiline", async ({ page }) => {
+    await page.evaluate(() => {
+        window.mount("text", {
+            key: "My text",
+            args: [{ multiline: true }],
+        });
+    });
+
+    const input = page.getByLabel("My text");
+    await input.fill("Lorem ipsum");
+    await input.press("Enter"); // inserts a new line
+    await input.press("N");
+
+    // Enter does not emit an event
+    const noEvent = await page.evaluate(() => window.lastEvent);
+    expect(noEvent).toEqual(null);
+
+    // Now we get an event
+    await input.blur();
+    const event = await page.evaluate(() => window.lastEvent);
+    expect(event).toEqual({
+        key: "My text",
+        value: "Lorem ipsum\nN",
         userTriggered: true,
     });
 });
