@@ -12,10 +12,6 @@ watch:
 test *args:
     npx playwright test {{args}}
 
-# Start JupyterLab for UI tests
-start-test-lab:
-    uv run jupyter lab --config ui-tests/jupyter_server_test_config.py
-
 # --- Formatting ---
 
 alias f := format
