@@ -37,7 +37,6 @@ test.describe("Dataset upload", () => {
         const techniques = locator.getByLabel("Techniques");
         await techniques.fill("PaNET00100");
         await techniques.press("Enter");
-        // TODO read technique
 
         await locator.getByRole("tab", { name: /Files/ }).click();
         await locator.getByLabel("Source folder").fill("/source/folder");
