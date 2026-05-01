@@ -425,14 +425,14 @@ ul.cean-input-items {
         1fr max-content;
 }
 
-.status {
+.cean-status {
     display: none;
-    color: var(--jp-error-color2);
 }
 
 /* The second pattern matches datetime inputs */
-:invalid + .status, div:has(> :invalid) + .status {
+:invalid + .cean-status, div:has(> :invalid) + .cean-status {
     display: block;
+    color: var(--jp-error-color2);
 }
 
 .cean-left-overflow {
