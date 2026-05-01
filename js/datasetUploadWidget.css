@@ -5,7 +5,7 @@
     border-bottom: 1px solid var(--jp-border-color1);
 
     .cean-tabs-branding {
-        padding: 0 1em 0 1em;
+        padding: 0 1em;
 
         svg {
             height: 1.8rem;
@@ -92,9 +92,9 @@ fieldset.cean-fields {
 
 .cean-input-grid {
     display: grid;
-    column-gap: 12px;
-    row-gap: 10px;
+    gap: 10px 12px;
     align-items: start;
+
     /* This can be overridden in specialised grids */
     grid-template-columns: max-content 1fr;
 }
@@ -168,36 +168,10 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
 }
 
-ul.cean-input-items {
-    list-style: none;
-    padding: 0;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-
-    li {
-        display: flex;
-        align-items: center;
-        background: var(--jp-layout-color2);
-        padding: 2px 8px;
-        gap: 4px;
-        border: var(--jp-border-width) solid var(--jp-layout-color3);
-        border-radius: var(--jp-border-radius);
-
-        span {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
-}
-
 .cean-datetime-input {
     display: grid;
     grid-template-columns: max-content max-content;
-    column-gap: 0;
-    row-gap: 10px;
+    gap: 10px 0;
     align-items: start;
 }
 
@@ -215,8 +189,7 @@ ul.cean-input-items {
         background-color: var(--jp-notebook-select-background);
 
         max-height: 16rem;
-        overflow-y: scroll;
-        overflow-x: hidden;
+        overflow: hidden scroll;
     }
 
     option {
@@ -228,7 +201,7 @@ ul.cean-input-items {
             background-color: var(--jp-editor-selected-background);
         }
 
-        & span {
+        span {
             padding-right: 0.5em;
         }
 
@@ -258,7 +231,8 @@ ul.cean-input-items {
 
         > :nth-child(1) {
             /* clear button */
-            /*color: red;*/
+
+            /* color: red; */
             cursor: pointer;
 
             &:hover {
@@ -285,44 +259,37 @@ ul.cean-input-items {
     font-family: monospace;
 }
 
+ul.cean-input-items {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+
+    li {
+        display: flex;
+        align-items: center;
+        background: var(--jp-layout-color2);
+        padding: 2px 8px;
+        gap: 4px;
+        border: var(--jp-border-width) solid var(--jp-layout-color3);
+        border-radius: var(--jp-border-radius);
+
+        span {
+            max-width: 200px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+    }
+}
+
 .cean-combobox-manual {
     display: grid;
     grid-template-columns: 1fr max-content;
 
     label {
         margin-left: 1ex;
-    }
-}
-
-.cean-techniques-item {
-    display: flex;
-    background: var(--jp-layout-color2);
-    padding: 2px 8px;
-    border: var(--jp-border-width) solid var(--jp-layout-color3);
-    border-radius: var(--jp-border-radius);
-
-    > div {
-        display: flex;
-        flex-direction: column;
-        flex-grow: 1;
-
-        .cean-item-key {
-            color: var(--jp-content-link-color);
-            font-family: unset;
-            cursor: pointer;
-
-            &:hover {
-                color: var(--jp-content-link-color);
-                text-decoration: underline;
-            }
-        }
-    }
-
-    .cean-button {
-        padding: 0;
-        background: none;
-        min-height: unset;
-        font-size: 0.8em;
     }
 }
 
@@ -347,6 +314,7 @@ ul.cean-input-items {
 
         &:focus-within {
             background: var(--jp-input-active-background);
+
             /* use box-shadow instead of border to apply to all 4 edges (because of border-collapse) */
             box-shadow: inset 0 0 0 var(--jp-border-width) var(--jp-input-active-border-color);
         }
@@ -457,14 +425,14 @@ ul.cean-input-items {
         1fr max-content;
 }
 
-/* The second pattern matches datetime inputs */
-:invalid + .status, div:has(> :invalid) + .status {
-    display: block;
-}
-
 .status {
     display: none;
     color: var(--jp-error-color2);
+}
+
+/* The second pattern matches datetime inputs */
+:invalid + .status, div:has(> :invalid) + .status {
+    display: block;
 }
 
 .cean-left-overflow {
@@ -557,6 +525,38 @@ ul.cean-input-items {
     &:hover {
         background: #3ec2fa;
         box-shadow: none !important;
+    }
+}
+
+.cean-techniques-item {
+    display: flex;
+    background: var(--jp-layout-color2);
+    padding: 2px 8px;
+    border: var(--jp-border-width) solid var(--jp-layout-color3);
+    border-radius: var(--jp-border-radius);
+
+    > div {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+
+        .cean-item-key {
+            color: var(--jp-content-link-color);
+            font-family: unset;
+            cursor: pointer;
+
+            &:hover {
+                color: var(--jp-content-link-color);
+                text-decoration: underline;
+            }
+        }
+    }
+
+    .cean-button {
+        padding: 0;
+        background: none;
+        min-height: unset;
+        font-size: 0.8em;
     }
 }
 
