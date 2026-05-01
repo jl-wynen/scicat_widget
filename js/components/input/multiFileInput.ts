@@ -4,6 +4,7 @@ import { removeButton } from "../index.ts";
 import { FileInput, InputComponent, TextInput } from "./index.ts";
 import { InputOptions } from "./inputComponent.ts";
 import { createLabelFor } from "../../forms";
+import { iconForFileType } from "../labIcon.ts";
 
 export class MultiFileInput extends InputComponent<File[]> {
     private readonly newFileInput: FileInput;
@@ -29,7 +30,11 @@ export class MultiFileInput extends InputComponent<File[]> {
             const localPath = this.newFileInput.value;
             const data = this.newFileInput.inspectionResult;
             if (localPath === null || data === null) return;
-            this.addFileInput({ localPath, remotePath: data.remotePath });
+            this.addFileInput({
+                localPath,
+                remotePath: data.remotePath,
+                type: data.type,
+            });
             this.newFileInput.setSilent(null);
         }) as EventListener);
     }
@@ -86,8 +91,8 @@ export class MultiFileInput extends InputComponent<File[]> {
             (fi) => {
                 this.onInputRemoved(fi);
             },
+            initialValue,
         );
-        fileInput.setSilent(initialValue.localPath);
 
         container.addEventListener("input-updated", () => {
             this.updated();
@@ -139,14 +144,17 @@ function createBaseStructure(
 function createFileInput(
     comm: BackendComm,
     onInputRemoved: (x: FileInput) => void,
+    file: File,
 ): [HTMLFieldSetElement, FileInput, TextInput] {
     const fieldset = document.createElement("fieldset");
     fieldset.className = "cean-single-file-input";
 
     const fileInput = new FileInput("localPath", comm, {});
+    fileInput.setSilent(file.localPath);
     const localPathLabel = createLabelFor(fileInput);
 
     const remotePathInput = new TextInput("remotePath", {});
+    remotePathInput.placeholder = file.remotePath ?? "";
     const remotePathLabel = createLabelFor(remotePathInput);
 
     const inputContainer = document.createElement("div");
@@ -163,6 +171,14 @@ function createFileInput(
         onInputRemoved(fileInput);
     });
 
-    fieldset.append(inputContainer, button);
+    const el = document.createElement("i");
+    el.classList.add("cean-file-icon");
+    iconForFileType(file.type).element({
+        container: el,
+        width: "2em",
+        height: "2em",
+    });
+
+    fieldset.append(el, inputContainer, button);
     return [fieldset, fileInput, remotePathInput];
 }

@@ -1,4 +1,5 @@
 import { AnyModel } from "@anywidget/types";
+import { FileType } from "./components/labIcon.ts";
 
 export type ReqInspectFile = {
     filename: string;
@@ -7,6 +8,7 @@ export type ReqInspectFile = {
 export type ResInspectFile = {
     success: boolean;
     filename: string;
+    type: FileType;
     size?: number;
     creationTime?: string;
     remotePath?: string;

@@ -1,3 +1,5 @@
+import { FileType } from "./components/labIcon.ts";
+
 export type Attachment = {
     localPath: string;
     caption: string;
@@ -6,6 +8,7 @@ export type Attachment = {
 export type File = {
     localPath: string;
     remotePath?: string;
+    type: FileType;
 };
 
 export type Instrument = {
