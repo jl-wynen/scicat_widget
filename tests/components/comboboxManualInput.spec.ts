@@ -1,5 +1,6 @@
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import { expectEvent, mount, removeEvent } from "./util";
+import { ComboboxManualInput } from "../../js/components/input";
 
 test.beforeEach(async ({ page }) => {
     await page.goto("/");
@@ -102,4 +103,46 @@ test("toggle to combobox removes content and signals", async ({
         value: null,
         userTriggered: true,
     });
+});
+
+test("can connect update listener", async ({ page }) => {
+    const [combobox, text] = await page.evaluate(() => {
+        const choices = [
+            { key: "XX", text: "The X" },
+            { key: "Y", text: "y tho?" },
+        ];
+        const [combobox, comboboxContainer] = window.createInputComponent(
+            "comboboxManual",
+            "receiver",
+            choices,
+            { fieldName: "Letters" },
+        );
+        const [text, textContainer] = window.createInputComponent(
+            "text",
+            "emitter",
+            {},
+        );
+
+        combobox.listenToInput(
+            text,
+            (cb: ComboboxManualInput, value: string | null) => {
+                cb.setSignaling(value, false);
+            },
+        );
+
+        window.setRootChildren(comboboxContainer, textContainer);
+        return [combobox, text];
+    });
+
+    const textInput = page.getByLabel("emitter");
+    const comboInput = page.getByLabel("receiver");
+
+    await textInput.fill("XX");
+    await textInput.blur();
+    expect(await comboInput.inputValue()).toEqual("XXThe X");
+
+    // The listener has not been disconnected:
+    await textInput.fill("Y");
+    await textInput.blur();
+    expect(await comboInput.inputValue()).toEqual("Yy tho?");
 });
