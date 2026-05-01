@@ -357,7 +357,7 @@ ul.cean-input-items {
     }
 }
 
-.cean-single-file-input {
+.cean-selected-file-item {
     display: flex;
     background: var(--jp-layout-color2);
     padding: 2px 8px;
@@ -378,11 +378,16 @@ ul.cean-input-items {
     > div {
         width: 100%;
         padding: 0 1em;
+        min-width: 0; /* Limit the size to trigger overflow in the path output. */
     }
 
     .cean-button {
         align-self: flex-start;
     }
+}
+
+.cean-path {
+    font-weight: bold;
 }
 
 .cean-attachment-grid {

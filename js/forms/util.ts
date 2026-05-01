@@ -13,19 +13,51 @@ export function createLabelFor<T>(
     label?: string,
     title?: string,
 ): HTMLLabelElement {
-    const info = fieldInfo(component.key);
-
-    const el = document.createElement("label");
-    el.htmlFor = component.id;
-    el.textContent = label ?? info?.label ?? "Unknown field";
-
-    const t = title ?? info?.description;
-    if (t) el.title = t;
+    const el = createLabel(component, component.key, label, title);
 
     if (component.required) {
         el.classList.add("cean-required");
     }
 
+    return el;
+}
+
+/**
+ * Create a label for an element..
+ *
+ * @param target Element with an id to apply the label to.
+ * @param key Key of the field.
+ * @param label Optional label text.
+ * @param title Optional title text.
+ */
+export function createLabel(
+    target: { id: string },
+    key: string,
+    label?: string,
+    title?: string,
+): HTMLLabelElement {
+    const info = fieldInfo(key);
+
+    const el = document.createElement("label");
+    el.htmlFor = target.id;
+    el.textContent = label ?? info?.label ?? "Unknown field";
+
+    const t = title ?? info?.description;
+    if (t) el.title = t;
+
+    return el;
+}
+
+/**
+ * Create an output element for a path.
+ *
+ * This uses `outputLeftOverflow`; see its documentation for requirements.
+ *
+ * @param path Path to display.
+ */
+export function pathOutput(path: string): HTMLOutputElement {
+    const el = outputLeftOverflow(path);
+    el.classList.add("cean-path");
     return el;
 }
 

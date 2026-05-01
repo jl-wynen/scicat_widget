@@ -7,8 +7,9 @@ export type Attachment = {
 
 export type File = {
     localPath: string;
-    remotePath?: string;
     type: FileType;
+    size?: number;
+    remotePath?: string;
 };
 
 export type Instrument = {
