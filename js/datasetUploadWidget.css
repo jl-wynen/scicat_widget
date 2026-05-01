@@ -242,23 +242,41 @@ ul.cean-input-items {
         }
     }
 
-    .cean-icon-button {
+    .cean-input-insert {
         position: absolute;
         right: 0;
-        /*top: 50%;*/
-        /*transform: translateY(-50%);*/
         top: 0;
         bottom: 0;
         margin: auto;
         height: fit-content;
-        color: var(--jp-ui-font-color2);
-        cursor: default;
-        background: unset;
 
-        &:hover {
-            background: unset;
+        button {
             color: var(--jp-ui-font-color2);
+            background: unset;
+
         }
+
+        > :nth-child(1) {
+            /* clear button */
+            /*color: red;*/
+            cursor: pointer;
+
+            &:hover {
+                color: var(--jp-error-color1) !important;
+                background: unset;
+            }
+        }
+
+        > :nth-child(2) {
+            /* chevron button */
+            cursor: default;
+
+            &:hover {
+                background: unset;
+                color: var(--jp-ui-font-color2);
+            }
+        }
+
     }
 }
 
@@ -521,8 +539,9 @@ ul.cean-input-items {
     background: none;
 
     &:hover {
-        color: var(--jp-error-color1);
-        background: none;
+        /* Override default cean-button styles */
+        color: var(--jp-error-color1) !important;
+        background: none !important;
     }
 
     &:active {

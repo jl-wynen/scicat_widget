@@ -25,6 +25,7 @@ export interface Options extends InputOptions<string> {
 export class ComboboxInput extends InputComponent<string> {
     private readonly datalist: HTMLDataListElement;
     private readonly searchBar: HTMLInputElement;
+    private readonly clearButton: HTMLButtonElement;
 
     private error: string = "";
     private readonly closeListener: (e: PointerEvent) => void;
@@ -41,16 +42,21 @@ export class ComboboxInput extends InputComponent<string> {
                 this.close();
             },
         );
+        const [insert, clearButton] = createSearchInsert(searchBar, () => {
+            this.setSignaling("");
+            this.searchBar.focus();
+        });
 
         const container = document.createElement("div");
         container.id = crypto.randomUUID();
         container.className = "cean-combobox";
-        container.append(searchBar, datalist, createChevron(searchBar));
+        container.append(searchBar, datalist, insert);
 
         super(key, container, options);
 
         this.datalist = datalist;
         this.searchBar = searchBar;
+        this.clearButton = clearButton;
 
         this.searchBar.addEventListener("focus", this.open.bind(this));
         this.searchBar.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -119,8 +125,23 @@ export class ComboboxInput extends InputComponent<string> {
         for (const option of this.datalist.options) {
             option.style.display = "block";
         }
+        if (this.searchBar.value.length > 0) {
+            this.clearButton.style.display = "inline-block";
+        } else {
+            this.clearButton.style.display = "none";
+        }
         this.error = value === null || value === "" ? "" : "Value not recognized";
         this.validate();
+    }
+
+    updated(userTriggered: boolean = true) {
+        if (this.searchBar.value.length > 0) {
+            this.clearButton.style.display = "inline-block";
+        } else {
+            this.clearButton.style.display = "none";
+        }
+
+        super.updated(userTriggered);
     }
 
     get options(): HTMLCollectionOf<HTMLOptionElement> {
@@ -401,6 +422,38 @@ export class SelectedEvent extends Event {
         this.key = key;
         this.text = text;
     }
+}
+
+function createSearchInsert(
+    searchBar: HTMLInputElement,
+    clearCallback: () => void,
+): [HTMLElement, HTMLButtonElement] {
+    const clearButton = createClearButton(searchBar, clearCallback);
+
+    const wrap = document.createElement("div");
+    wrap.classList = "cean-input-insert";
+    wrap.append(clearButton, createChevron(searchBar));
+    return [wrap, clearButton];
+}
+
+function createClearButton(
+    searchBar: HTMLInputElement,
+    callback: () => void,
+): HTMLButtonElement {
+    const button = iconButton("times-circle", callback);
+    button.tabIndex = -1;
+    button.title = "Clear input";
+    button.style.display = "none";
+
+    searchBar.addEventListener("input", () => {
+        if (searchBar.value.length > 0) {
+            button.style.display = "inline-block";
+        } else {
+            button.style.display = "none";
+        }
+    });
+
+    return button;
 }
 
 function createChevron(searchBar: HTMLInputElement): HTMLElement {

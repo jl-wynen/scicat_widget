@@ -14,7 +14,39 @@ const INPUT_COMPONENT_TYPES: Record<
     text: TextInput,
 };
 
-function createInputComponent(ty: string, key: string, ...args: any[]): HTMLDivElement {
+declare global {
+    interface Window {
+        lastEvent: { key: string; value: unknown; userTriggered: boolean } | null;
+        mount: (name: string, props: unknown) => void;
+        createInputComponent: (
+            ty: string,
+            key: string,
+            ...args: any[]
+        ) => [InputComponent<any>, HTMLDivElement];
+        setRootChildren: (...nodes: Node[]) => void;
+    }
+}
+
+window.lastEvent = null;
+
+window.mount = (ty: string, props: any) => {
+    const container = window.createInputComponent(ty, props.key, ...props.args)[1];
+    window.setRootChildren(container);
+
+    container.addEventListener("input-updated", (e: any) => {
+        window.lastEvent = {
+            key: e.key,
+            value: e.value,
+            userTriggered: e.userTriggered,
+        };
+    });
+};
+
+window.createInputComponent = (
+    ty: string,
+    key: string,
+    ...args: any[]
+): [InputComponent<any>, HTMLDivElement] => {
     const input = new INPUT_COMPONENT_TYPES[ty](key, ...args);
 
     const label = document.createElement("label");
@@ -24,29 +56,11 @@ function createInputComponent(ty: string, key: string, ...args: any[]): HTMLDivE
     const wrap = document.createElement("div");
     wrap.append(label, input.container);
 
-    return wrap;
-}
+    return [input, wrap];
+};
 
-declare global {
-    interface Window {
-        mount: (name: string, props: unknown) => void;
-        lastEvent: { key: string; value: unknown; userTriggered: boolean } | null;
-    }
-}
-
-window.lastEvent = null;
-
-window.mount = (ty: string, props: any) => {
+window.setRootChildren = (...nodes: Node[]) => {
     const root = document.getElementById("root")!;
     root.innerHTML = "";
-    const container = createInputComponent(ty, props.key, ...props.args);
-    root.appendChild(container);
-
-    container.addEventListener("input-updated", (e: any) => {
-        window.lastEvent = {
-            key: e.key,
-            value: e.value,
-            userTriggered: e.userTriggered,
-        };
-    });
+    root.replaceChildren(...nodes);
 };

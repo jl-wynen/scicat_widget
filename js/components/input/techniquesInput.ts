@@ -1,5 +1,5 @@
 import { InputComponent } from "./inputComponent.ts";
-import { Choice, ComboboxInput, SelectedEvent } from "./comboboxInput.ts";
+import { ComboboxInput, Choice, SelectedEvent } from "./comboboxInput.ts";
 import { Techniques } from "../../models.ts";
 import { removeButton } from "../button.ts";
 

@@ -29,7 +29,7 @@ export default defineConfig({
     /* Configure projects for major browsers */
     projects: [
         {
-            name: "components chromium",
+            name: "components-chromium",
             testDir: "./tests/components",
             testMatch: /.*\.spec\.ts$/,
             use: {
@@ -38,7 +38,7 @@ export default defineConfig({
             },
         },
         {
-            name: "components firefox",
+            name: "components-firefox",
             testDir: "./tests/components",
             testMatch: /.*\.spec\.ts$/,
             use: {
@@ -48,7 +48,7 @@ export default defineConfig({
         },
         // TODO missing dependencies
         // {
-        //     name: "components webkit",
+        //     name: "components-webkit",
         //     testDir: "./tests/components",
         //     testMatch: /.*\.spec\.ts$/,
         //     use: {
@@ -59,7 +59,7 @@ export default defineConfig({
 
         // TODO other browsers?
         {
-            name: "e2e chromium",
+            name: "e2e-chromium",
             testDir: "./tests/e2e",
             testMatch: /.*\.spec\.ts$/,
             use: {
