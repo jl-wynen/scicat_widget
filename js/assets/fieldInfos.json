@@ -44,7 +44,7 @@
         "description": "Name of the license under which the data can be used."
     },
     "localPath": {
-        "label": "Path",
+        "label": "Local path",
         "description": "File path on the file system that Python is running on ('local')."
     },
     "owners": {

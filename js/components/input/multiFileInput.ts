@@ -3,16 +3,17 @@ import { BackendComm } from "../../comm.ts";
 import { removeButton } from "../index.ts";
 import { FileInput, InputComponent, TextInput } from "./index.ts";
 import { InputOptions } from "./inputComponent.ts";
-import { createLabelFor } from "../../forms";
+import { createLabel, createLabelFor, pathOutput } from "../../forms";
+import { iconForFileType } from "../labIcon.ts";
 
 export class MultiFileInput extends InputComponent<File[]> {
     private readonly newFileInput: FileInput;
     private readonly selectedContainer: HTMLDivElement;
-    private readonly fileInputs: {
-        fileInput: FileInput;
+    private readonly selectedFiles: {
+        localPath: HTMLOutputElement;
         remotePathInput: TextInput;
+        size: number;
     }[] = [];
-    private readonly comm: BackendComm;
 
     constructor(key: string, comm: BackendComm, options: InputOptions<File[]>) {
         const [container, newFileInput, selectedContainer] = createBaseStructure(
@@ -23,91 +24,72 @@ export class MultiFileInput extends InputComponent<File[]> {
         super(key, container, options);
         this.newFileInput = newFileInput;
         this.selectedContainer = selectedContainer;
-        this.comm = comm;
 
         this.newFileInput.container.addEventListener("input-updated", (() => {
             const localPath = this.newFileInput.value;
             const data = this.newFileInput.inspectionResult;
             if (localPath === null || data === null) return;
-            this.addFileInput({ localPath, remotePath: data.remotePath });
+            this.addFileItem({
+                localPath,
+                remotePath: data.remotePath,
+                type: data.type,
+                size: data.size,
+            });
             this.newFileInput.setSilent(null);
         }) as EventListener);
     }
 
     destroy() {
-        // TODO call from parent
         this.newFileInput.destroy();
-        for (const fi of this.fileInputs) {
-            fi.fileInput.destroy();
-        }
     }
 
     get value(): File[] {
-        return this.fileInputs
-            .map((fi) => {
-                const localPath = fi.fileInput.value;
-                if (!localPath) return null;
+        return this.selectedFiles
+            .map((item) => {
+                const localPath = item.localPath.value;
                 return {
                     localPath: localPath,
-                    remotePath: fi.remotePathInput.value ?? undefined,
+                    remotePath: item.remotePathInput.value ?? undefined,
                 };
             })
             .filter((v) => v) as File[];
     }
 
     get nFiles(): number {
-        return this.fileInputs.filter((fi) => fi.fileInput.value).length;
+        return this.selectedFiles.length;
     }
 
     get totalSize(): number {
-        return this.fileInputs
-            .filter((fi) => fi.fileInput.value)
-            .reduce((sum, fi) => sum + (fi.fileInput.size ?? 0), 0);
+        return this.selectedFiles.reduce((sum, item) => sum + (item.size ?? 0), 0);
     }
 
     setSilent(value: File[] | null) {
         // Clear current inputs
-        while (this.fileInputs.length > 0) {
-            const fi = this.fileInputs.pop()!;
-            fi.fileInput.destroy();
-        }
+        this.selectedFiles.splice(0, this.selectedFiles.length);
         this.selectedContainer.replaceChildren();
 
         if (value && value.length > 0) {
             for (const file of value) {
-                this.addFileInput(file);
+                this.addFileItem(file);
             }
         }
     }
 
-    private addFileInput(initialValue: File) {
-        const [container, fileInput, remotePathInput] = createFileInput(
-            this.comm,
-            (fi) => {
-                this.onInputRemoved(fi);
-            },
-        );
-        fileInput.setSilent(initialValue.localPath);
+    private addFileItem(file: File) {
+        const [container, localPath, remotePathInput] = createFileItem((p) => {
+            this.onInputRemoved(p);
+        }, file);
 
-        container.addEventListener("input-updated", () => {
-            this.updated();
-        });
-
-        fileInput.container.addEventListener("file-inspected", (e: Event) => {
-            const event = e as CustomEvent;
-            const payload = event.detail.payload;
-            remotePathInput.placeholder = payload.remotePath ?? null;
-        });
-
-        this.fileInputs.push({ fileInput, remotePathInput });
+        this.selectedFiles.push({ localPath, remotePathInput, size: file.size ?? 0 });
         this.selectedContainer.append(container);
     }
 
-    private onInputRemoved(fileInput: FileInput) {
-        const index = this.fileInputs.findIndex((fi) => fi.fileInput === fileInput);
+    private onInputRemoved(localPath: HTMLOutputElement) {
+        const index = this.selectedFiles.findIndex(
+            (item) => item.localPath === localPath,
+        );
         if (index !== -1) {
-            this.fileInputs[index].fileInput.destroy();
-            this.fileInputs.splice(index, 1);
+            this.selectedFiles.splice(index, 1);
         }
         this.updated();
     }
@@ -121,12 +103,12 @@ function createBaseStructure(
     const newFileLabel = createLabelFor(newFileInput, "Input new file");
 
     const selectedLabel = document.createElement("div");
-    selectedLabel.textContent = "Selected files";
+    selectedLabel.textContent = "Selected files:";
 
     const selectedContainer = document.createElement("div");
 
     const fieldset = document.createElement("fieldset");
-    fieldset.classList.add("cean-muli-file-input");
+    fieldset.classList.add("cean-multi-file-input");
     fieldset.append(
         newFileLabel,
         newFileInput.container,
@@ -136,33 +118,42 @@ function createBaseStructure(
     return [fieldset, newFileInput, selectedContainer];
 }
 
-function createFileInput(
-    comm: BackendComm,
-    onInputRemoved: (x: FileInput) => void,
-): [HTMLFieldSetElement, FileInput, TextInput] {
+function createFileItem(
+    onInputRemoved: (x: HTMLOutputElement) => void,
+    file: File,
+): [HTMLFieldSetElement, HTMLOutputElement, TextInput] {
     const fieldset = document.createElement("fieldset");
-    fieldset.className = "cean-single-file-input";
+    fieldset.className = "cean-selected-file-item";
 
-    const fileInput = new FileInput("localPath", comm, {});
-    const localPathLabel = createLabelFor(fileInput);
+    const localPath = pathOutput(file.localPath);
+    const localPathLabel = createLabel(localPath, "localPath");
 
     const remotePathInput = new TextInput("remotePath", {});
+    remotePathInput.placeholder = file.remotePath ?? "";
     const remotePathLabel = createLabelFor(remotePathInput);
 
     const inputContainer = document.createElement("div");
     inputContainer.classList.add("cean-input-grid");
     inputContainer.append(
         localPathLabel,
-        fileInput.container,
+        localPath,
         remotePathLabel,
         remotePathInput.container,
     );
 
     const button = removeButton(() => {
         fieldset.remove();
-        onInputRemoved(fileInput);
+        onInputRemoved(localPath);
     });
 
-    fieldset.append(inputContainer, button);
-    return [fieldset, fileInput, remotePathInput];
+    const el = document.createElement("i");
+    el.classList.add("cean-file-icon");
+    iconForFileType(file.type).element({
+        container: el,
+        width: "2em",
+        height: "2em",
+    });
+
+    fieldset.append(el, inputContainer, button);
+    return [fieldset, localPath, remotePathInput];
 }

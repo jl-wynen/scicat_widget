@@ -12,9 +12,10 @@ import IPython.display
 import ipywidgets
 import traitlets
 from jupyter_host_file_picker import HostFilePicker
-from scitacean import Client, Dataset, File, ScicatCommError, Thumbnail
+from scitacean import Client, Dataset, ScicatCommError, Thumbnail
 from scitacean.ontology import expands_techniques
 
+from ._filesystem import inspect_file
 from ._logging import get_logger
 from ._model import Instrument, ProposalOverview
 from ._scicat_api import get_user_and_scicat_info
@@ -144,17 +145,11 @@ def _load_techniques() -> dict[str, Any]:
 def _inspect_file(
     widget: DatasetUploadWidget, key: str, input_payload: dict[str, str]
 ) -> None:
-    try:
-        # TODO do not allow folders (probably in scitacean)
-        file = File.from_local(input_payload["filename"])
-        payload = {
-            "success": True,
-            "size": file.size,
-            "creationTime": file.creation_time,
-            "remotePath": file.remote_path.posix,
-        }
-    except FileNotFoundError:
-        payload = {"success": False, "error": "File not found", **input_payload}
+    payload = inspect_file(Path(input_payload["filename"])) or {
+        "success": False,
+        "error": "File not found",
+        **input_payload,
+    }
     widget.send(
         {
             "type": "res:inspect-file",

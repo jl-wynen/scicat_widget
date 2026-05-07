@@ -1,3 +1,5 @@
+import { FileType } from "./components/labIcon.ts";
+
 export type Attachment = {
     localPath: string;
     caption: string;
@@ -5,6 +7,8 @@ export type Attachment = {
 
 export type File = {
     localPath: string;
+    type: FileType;
+    size?: number;
     remotePath?: string;
 };
 
