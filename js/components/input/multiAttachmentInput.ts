@@ -2,7 +2,7 @@ import { InputComponent, InputOptions, UpdateEvent } from "./inputComponent.ts";
 import { Attachment, File } from "../../models.ts";
 import { BackendComm, ResLoadImage } from "../../comm.ts";
 import { FileInput } from "./fileInput.ts";
-import { createLabelFor, outputLeftOverflow } from "../../forms";
+import { createLabelFor, pathOutput } from "../../forms";
 import { TextInput } from "./textInput.ts";
 import { removeButton } from "../button.ts";
 
@@ -119,10 +119,10 @@ class AttachmentView {
     ) {
         this.image = image;
 
-        const pathOutput = outputLeftOverflow(path);
+        const pathField = pathOutput(path);
 
         const pathLabel = document.createElement("label");
-        pathLabel.setAttribute("for", pathOutput.id);
+        pathLabel.setAttribute("for", pathField.id);
         pathLabel.textContent = "Path";
 
         this.captionInput = new TextInput(crypto.randomUUID(), {
@@ -147,7 +147,7 @@ class AttachmentView {
         this.container.classList.add("cean-attachment-view");
         this.container.append(
             pathLabel,
-            pathOutput,
+            pathField,
             captionLabel,
             this.captionInput.container,
             imageContainer,
@@ -188,13 +188,13 @@ function createBaseStructure(
     errorOutput.classList.add("cean-error");
 
     const selectedLabel = document.createElement("div");
-    selectedLabel.textContent = "Selected attachments";
+    selectedLabel.textContent = "Selected attachments:";
 
     const selectedContainer = document.createElement("div");
     selectedContainer.classList = "cean-attachment-grid";
 
     const fieldset = document.createElement("fieldset");
-    fieldset.classList.add("cean-muli-attachment-input");
+    fieldset.classList.add("cean-multi-attachment-input");
     fieldset.append(
         newAttachmentLabel,
         newAttachmentInput.container,

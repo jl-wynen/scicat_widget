@@ -106,7 +106,7 @@ function createSourceFolderElement(
     const label = createLabelFor(sourceFolder);
 
     const fieldset = document.createElement("fieldset");
-    fieldset.classList.add("cean-input-grid");
+    fieldset.classList.add("cean-input-grid", "cean-fields", "cean-source-folder");
     fieldset.append(label, sourceFolder.container);
     return fieldset;
 }

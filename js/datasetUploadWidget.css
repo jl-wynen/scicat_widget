@@ -94,13 +94,14 @@ button[role="tab"] {
     padding: .125rem .375rem;
 }
 
-fieldset.cean-fields {
-    margin: 0.4em 0;
+fieldset.cean-fields, fieldset.cean-multi-file-input {
+    margin: 0.5em;
+    border: 1px solid var(--jp-border-color3);
 }
 
 .cean-input-grid {
     display: grid;
-    gap: 10px 12px;
+    gap: 0.8em 1em;
     align-items: start;
 
     /* This can be overridden in specialised grids */
@@ -134,7 +135,6 @@ fieldset.cean-fields {
 .cean-form-columns {
     display: grid;
     grid-template-columns: 3fr 2fr;
-    column-gap: 1em;
     align-items: start;
 }
 
@@ -267,12 +267,17 @@ input.cean-input, select.cean-input, textarea.cean-input {
     font-family: monospace;
 }
 
-ul.cean-input-items {
+.cean-input-items {
     list-style: none;
     padding: 0;
+    margin: 0.5em 0 1em;
     display: flex;
     flex-wrap: wrap;
     gap: 0.5em;
+
+    &:empty {
+        display: none;
+    }
 
     li {
         display: flex;
@@ -298,6 +303,26 @@ ul.cean-input-items {
 
     label {
         margin-left: 1ex;
+    }
+}
+
+.cean-people {
+    fieldset {
+        margin: 0.5em 0;
+
+        &:first-child {
+            margin-top: 0;
+        }
+    }
+}
+
+.cean-person {
+    padding: 0.3em;
+    gap: 0.7em 0;
+    grid-template-columns: max-content 1fr max-content;
+
+    .cean-input-wrap {
+        margin: 0 0.4em 0 1em;
     }
 }
 
@@ -343,6 +368,21 @@ ul.cean-input-items {
     }
 }
 
+.cean-source-folder {
+    display: block;
+    margin-bottom: 2em !important;
+
+    .cean-input-wrap {
+        margin-top: 0.7em;
+    }
+}
+
+.cean-multi-file-input {
+    > .cean-input-wrap {
+        margin: 0.7em 0 2em;
+    }
+}
+
 .cean-file-input {
     display: grid;
     grid-template-columns: 1fr max-content;
@@ -363,6 +403,7 @@ ul.cean-input-items {
     padding: 2px 8px;
     border: var(--jp-border-width) solid var(--jp-layout-color3);
     border-radius: var(--jp-border-radius);
+    margin: 0.5em 0;
 
     > i {
         align-self: flex-start;
@@ -390,11 +431,17 @@ ul.cean-input-items {
     font-weight: bold;
 }
 
+.cean-multi-attachment-input {
+    > .cean-input-wrap {
+        margin: 0.7em 0 2em;
+    }
+}
+
 .cean-attachment-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(20em, 1fr));
     gap: 16px;
-    padding: 16px;
+    padding-top: 0.5em;
 }
 
 .cean-attachment-view {
@@ -402,6 +449,7 @@ ul.cean-input-items {
     background-color: var(--jp-layout-color2);
     border-radius: 4px;
     padding: 0.4em;
+    margin: 0;
     display: flex;
     flex-direction: column;
     gap: 4px;
@@ -558,6 +606,7 @@ ul.cean-input-items {
     padding: 2px 8px;
     border: var(--jp-border-width) solid var(--jp-layout-color3);
     border-radius: var(--jp-border-radius);
+    margin: 0.4em 0;
 
     > div {
         display: flex;

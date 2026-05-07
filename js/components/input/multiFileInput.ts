@@ -103,12 +103,12 @@ function createBaseStructure(
     const newFileLabel = createLabelFor(newFileInput, "Input new file");
 
     const selectedLabel = document.createElement("div");
-    selectedLabel.textContent = "Selected files";
+    selectedLabel.textContent = "Selected files:";
 
     const selectedContainer = document.createElement("div");
 
     const fieldset = document.createElement("fieldset");
-    fieldset.classList.add("cean-muli-file-input");
+    fieldset.classList.add("cean-multi-file-input");
     fieldset.append(
         newFileLabel,
         newFileInput.container,

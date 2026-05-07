@@ -33,7 +33,7 @@ export class Tabs {
         this.element.classList.add("cean-tabs");
         this.element.append(header, contentContainer);
 
-        this.selectTab(1); // TODO
+        this.selectTab(0);
     }
 
     countElement(index: number): CountSpanElement | null {
