@@ -5,6 +5,11 @@ from pydantic import BaseModel, EmailStr
 from scitacean.model import Instrument
 
 
+class Config(BaseModel):
+    frontendUrl: str | None
+    skipConfirmation: bool
+
+
 class ProposalOverview(BaseModel):
     id_: str
     title: str
@@ -23,4 +28,4 @@ class UserInfo(BaseModel):
     proposals: list[ProposalOverview]
 
 
-__all__ = ["Instrument", "ProposalOverview", "UserInfo"]
+__all__ = ["Config", "Instrument", "ProposalOverview", "UserInfo"]

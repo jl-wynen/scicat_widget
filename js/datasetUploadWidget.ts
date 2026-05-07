@@ -1,6 +1,6 @@
 import type { RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
-import { Instrument, Proposal, StaticData } from "./models.ts";
+import { Config, Instrument, Proposal, StaticData } from "./models.ts";
 import { BackendComm } from "./comm.ts";
 import {
     ComboboxInput,
@@ -20,17 +20,14 @@ import { DatasetOverview } from "./forms";
 import { GatherResult, UploadComponent } from "./components";
 
 interface WidgetModel {
+    config: Config;
     initial: object;
     staticData: StaticData;
-    scicatUrl: string;
-    skipConfirmation: boolean;
 }
 
 async function render({ model, el }: RenderProps<WidgetModel>) {
-    const config = {
-        scicatUrl: model.get("scicatUrl"),
-        skipConfirmation: model.get("skipConfirmation"),
-    };
+    const config = model.get("config");
+    console.log("CONFIG", config);
     const staticData = model.get("staticData");
 
     const comm = new BackendComm(model);

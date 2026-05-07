@@ -1,4 +1,4 @@
-import { Config } from "../config.ts";
+import { Config } from "../models.ts";
 import { imageLink } from "./output.ts";
 import scicatLogo from "../assets/img/SciCat_logo_icon.svg";
 
@@ -161,7 +161,9 @@ function createHeader(
 ): HTMLElement {
     const left = document.createElement("div");
     left.classList.add("cean-tabs-branding");
-    left.appendChild(imageLink(config.scicatUrl, scicatLogo));
+    left.appendChild(
+        imageLink(config.frontendUrl ?? "https://www.scicatproject.org/", scicatLogo),
+    );
 
     const middle = document.createElement("div");
     middle.classList.add("cean-tabs-buttons");

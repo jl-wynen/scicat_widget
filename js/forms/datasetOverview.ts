@@ -3,7 +3,7 @@ import { Tabs, UploadComponent } from "../components";
 import { Attachments } from "./attachments.ts";
 import { Files } from "./files.ts";
 import { MetadataOverview } from "./metadataOverview.ts";
-import { Config } from "../config.ts";
+import { Config } from "../models.ts";
 
 export class DatasetOverview {
     private readonly container: HTMLElement;

@@ -17,7 +17,7 @@ from scitacean.ontology import expands_techniques
 
 from ._filesystem import inspect_file
 from ._logging import get_logger
-from ._model import Instrument, ProposalOverview
+from ._model import Config, Instrument, ProposalOverview
 from ._scicat_api import get_user_and_scicat_info
 from ._upload import UploadError, upload_dataset
 
@@ -28,18 +28,17 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     _esm = _STATIC_PATH / "datasetUploadWidget.js"
     _css = _STATIC_PATH / "datasetUploadWidget.css"
 
+    config = traitlets.Dict().tag(sync=True)
     initial = traitlets.Dict().tag(sync=True)
     staticData = traitlets.Dict().tag(sync=True)
-    scicatUrl = traitlets.Unicode().tag(sync=True)
-    skipConfirmation = traitlets.Bool().tag(sync=True)
 
     def __init__(self, client: Client, /, *, skip_confirm: bool = False) -> None:
+        config = _build_config(client, skip_confirm=skip_confirm)
         initial, static = _collect_initial_data(client)
         super().__init__(
+            config=config.model_dump(),
             initial=initial,
             staticData=static,
-            scicatUrl="https://staging.scicat.ess.eu/",  # TODO detect from client
-            skipConfirmation=skip_confirm,
             client=client,  # TODO create client here if not given
         )
         self.client = client
@@ -68,6 +67,13 @@ class DatasetUploadWidget(anywidget.AnyWidget):
             )
         finally:
             self._is_displaying = False
+
+
+def _build_config(client: Client, *, skip_confirm: bool) -> Config:
+    return Config(
+        frontendUrl=client.profile.frontend_url,
+        skipConfirmation=skip_confirm,
+    )
 
 
 def _collect_initial_data(
