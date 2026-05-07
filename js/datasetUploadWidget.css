@@ -24,13 +24,23 @@
         align-items: center;
         padding-right: 16px;
         margin-left: auto;
+        min-width: 0;
 
-        a {
-            margin-right: 1em;
+        .cean-scicat-link {
+            min-width: 0;
+            overflow: hidden;
         }
 
-        a:hover {
-            text-decoration: underline;
+        .cean-scicat-link a {
+            display: block;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            margin-right: 1em;
+
+            &:hover {
+                text-decoration: underline;
+            }
         }
     }
 }
