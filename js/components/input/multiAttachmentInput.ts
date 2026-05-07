@@ -1,5 +1,5 @@
 import { InputComponent, InputOptions, UpdateEvent } from "./inputComponent.ts";
-import { Attachment, File } from "../../models.ts";
+import { Attachment } from "../../models.ts";
 import { BackendComm, ResLoadImage } from "../../comm.ts";
 import { FileInput } from "./fileInput.ts";
 import { createLabelFor, pathOutput } from "../../forms";
@@ -13,7 +13,7 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
     private readonly attachments: AttachmentView[];
     private readonly comm: BackendComm;
 
-    constructor(key: string, comm: BackendComm, options: InputOptions<File[]>) {
+    constructor(key: string, comm: BackendComm, options: InputOptions<Attachment[]>) {
         const [container, newAttachmentInput, errorOutput, attachmentsContainer] =
             createBaseStructure(key, comm);
 
