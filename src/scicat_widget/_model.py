@@ -6,6 +6,7 @@ from scitacean.model import Instrument
 
 
 class Config(BaseModel):
+    fieldDependencies: dict[str, list[str]]
     frontendUrl: str | None
     skipConfirmation: bool
 

@@ -1,7 +1,7 @@
 import type { RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
 import { Config, Instrument, Proposal, StaticData } from "./models.ts";
-import { BackendComm } from "./comm.ts";
+import { BackendComm, ResFormatField } from "./comm.ts";
 import {
     ComboboxInput,
     ComboboxManualInput,
@@ -27,13 +27,17 @@ interface WidgetModel {
 
 async function render({ model, el }: RenderProps<WidgetModel>) {
     const config = model.get("config");
-    console.log("CONFIG", config);
     const staticData = model.get("staticData");
 
     const comm = new BackendComm(model);
 
     const inputs = createInputs(staticData, comm);
-    connectInputs(inputs, staticData);
+    const inputConnectionCleanup = connectInputs(
+        inputs,
+        staticData,
+        config.fieldDependencies,
+        comm,
+    );
 
     const uploader = new UploadComponent(comm, config, () => {
         return gatherData(inputs);
@@ -61,6 +65,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         for (const input of inputs.values()) {
             input.destroy();
         }
+        inputConnectionCleanup();
     };
 }
 
@@ -102,22 +107,84 @@ function createInputs(
     return inputs;
 }
 
+// TODO support special keys like instrumentName
+function connectInputTarget(
+    inputs: Map<string, InputComponent<any>>,
+    targetName: string,
+    dependencies: string[],
+    comm: BackendComm,
+): string | null {
+    const target = inputs.get(targetName);
+    if (target === undefined) {
+        console.warn(`Cannot connect inputs, target not found: '${targetName}'`);
+        return null;
+    }
+    const sources: [string, InputComponent<any>][] = [];
+    for (const sourceName of dependencies) {
+        const source = inputs.get(sourceName);
+        if (source === undefined) {
+            console.warn(
+                `Cannot connect inputs, dependency not found: '${sourceName}'`,
+            );
+            return null;
+        }
+        sources.push([sourceName, source]);
+    }
+
+    const key = crypto.randomUUID();
+    const responder = (payload: ResFormatField) => {
+        if (payload.error !== undefined) {
+            console.error(`Failed to format ${targetName}: ${payload.error}`);
+        } else {
+            target.setSignaling(payload.value, false);
+        }
+    };
+    comm.onResFormatField(key, responder);
+    for (const [_, source] of sources) {
+        target.listenToInput(source, () => {
+            const values: Record<string, any> = {};
+            for (const [sourceName, source] of sources) {
+                values[sourceName] = source.value;
+            }
+            comm.sendReqFormatField(key, { name: targetName, values });
+        });
+    }
+
+    return key;
+}
+
 function connectInputs(
     inputs: Map<string, InputComponent<any>>,
     staticData: StaticData,
-) {
-    connectInputPair(
-        inputs,
-        "ownerGroup",
-        "proposalId",
-        (ownerGroup: InputComponent<string>, proposalId: string | null) => {
-            const group =
-                staticData.accessGroups.find((group) => {
-                    return group === proposalId;
-                }) ?? null;
-            ownerGroup.setSignaling(group, false);
-        },
-    );
+    fieldConnections: Record<string, string[]>,
+    comm: BackendComm,
+): () => void {
+    const responderKeys: string[] = [];
+    for (const [targetName, dependencies] of Object.entries(fieldConnections)) {
+        const key = connectInputTarget(inputs, targetName, dependencies, comm);
+        if (key !== null) {
+            responderKeys.push(key);
+        }
+    }
+    return () => {
+        responderKeys.forEach((key) => {
+            comm.offResFormatField(key);
+        });
+    };
+
+    // TODO check owner group in list unless user passes override
+    // connectInputPair(
+    //     inputs,
+    //     "ownerGroup",
+    //     "proposalId",
+    //     (ownerGroup: InputComponent<string>, proposalId: string | null) => {
+    //         const group =
+    //             staticData.accessGroups.find((group) => {
+    //                 return group === proposalId;
+    //             }) ?? null;
+    //         ownerGroup.setSignaling(group, false);
+    //     },
+    // );
 
     connectInputPair(
         inputs,

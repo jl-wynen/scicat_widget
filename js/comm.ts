@@ -21,6 +21,16 @@ export type ResBrowseFiles = {
     selected: string;
 };
 
+export type ReqFormatField = {
+    name: string;
+    values: Record<string, any>;
+};
+
+export type ResFormatField = {
+    value?: unknown;
+    error?: string;
+};
+
 export type ReqUploadDataset = Record<string, any>;
 
 export type FieldError = {
@@ -89,6 +99,18 @@ export class BackendComm {
 
     offResBrowseFiles(key: string) {
         this.getForMethod("res:browse-files").delete(key);
+    }
+
+    sendReqFormatField(key: string, payload: ReqFormatField) {
+        this.model.send({ type: "req:format-field", key, payload });
+    }
+
+    onResFormatField(key: string, callback: (payload: ResFormatField) => void) {
+        this.getForMethod("res:format-field").set(key, callback);
+    }
+
+    offResFormatField(key: string) {
+        this.getForMethod("res:format-field").delete(key);
     }
 
     sendReqUploadDataset(key: string, payload: ReqUploadDataset) {

@@ -6,6 +6,7 @@ export type Attachment = {
 };
 
 export type Config = {
+    fieldDependencies: Record<string, string[]>;
     frontendUrl: string | null;
     skipConfirmation: boolean;
 };
