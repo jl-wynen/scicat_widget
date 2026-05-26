@@ -1,7 +1,7 @@
 import type { RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
 import { Config, Instrument, Proposal, StaticData } from "./models.ts";
-import { BackendComm, ResFormatField } from "./comm.ts";
+import { BackendComm } from "./comm.ts";
 import {
     ComboboxInput,
     ComboboxManualInput,
@@ -18,6 +18,7 @@ import {
 import { Choice } from "./components/input/comboboxInput.ts";
 import { DatasetOverview } from "./forms";
 import { GatherResult, UploadComponent } from "./components";
+import { connectInputs } from "./fieldAutomation.ts";
 
 interface WidgetModel {
     config: Config;
@@ -105,187 +106,6 @@ function createInputs(
         inputs.set(input.key, input);
     }
     return inputs;
-}
-
-// TODO support special keys like instrumentName
-function connectInputTarget(
-    inputs: Map<string, InputComponent<any>>,
-    targetName: string,
-    dependencies: string[],
-    comm: BackendComm,
-): string | null {
-    const target = inputs.get(targetName);
-    if (target === undefined) {
-        console.warn(`Cannot connect inputs, target not found: '${targetName}'`);
-        return null;
-    }
-    const sources: [string, InputComponent<any>][] = [];
-    for (const sourceName of dependencies) {
-        const source = inputs.get(sourceName);
-        if (source === undefined) {
-            console.warn(
-                `Cannot connect inputs, dependency not found: '${sourceName}'`,
-            );
-            return null;
-        }
-        sources.push([sourceName, source]);
-    }
-
-    const key = crypto.randomUUID();
-    const responder = (payload: ResFormatField) => {
-        if (payload.error !== undefined) {
-            console.error(`Failed to format ${targetName}: ${payload.error}`);
-        } else {
-            target.setSignaling(payload.value, false);
-        }
-    };
-    comm.onResFormatField(key, responder);
-    for (const [_, source] of sources) {
-        target.listenToInput(source, () => {
-            const values: Record<string, any> = {};
-            for (const [sourceName, source] of sources) {
-                values[sourceName] = source.value;
-            }
-            comm.sendReqFormatField(key, { name: targetName, values });
-        });
-    }
-
-    return key;
-}
-
-function connectInputs(
-    inputs: Map<string, InputComponent<any>>,
-    staticData: StaticData,
-    fieldConnections: Record<string, string[]>,
-    comm: BackendComm,
-): () => void {
-    const responderKeys: string[] = [];
-    for (const [targetName, dependencies] of Object.entries(fieldConnections)) {
-        const key = connectInputTarget(inputs, targetName, dependencies, comm);
-        if (key !== null) {
-            responderKeys.push(key);
-        }
-    }
-    return () => {
-        responderKeys.forEach((key) => {
-            comm.offResFormatField(key);
-        });
-    };
-
-    // TODO check owner group in list unless user passes override
-    // connectInputPair(
-    //     inputs,
-    //     "ownerGroup",
-    //     "proposalId",
-    //     (ownerGroup: InputComponent<string>, proposalId: string | null) => {
-    //         const group =
-    //             staticData.accessGroups.find((group) => {
-    //                 return group === proposalId;
-    //             }) ?? null;
-    //         ownerGroup.setSignaling(group, false);
-    //     },
-    // );
-
-    connectInputPair(
-        inputs,
-        "instrumentId",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            if (proposal.instrumentIds.length == 1) {
-                return proposal.instrumentIds[0];
-            } else {
-                return null;
-            }
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "creationLocation",
-        "instrumentId",
-        setterFromItemId(staticData.instruments, (instrument: Instrument) => {
-            // TODO generalize
-            return `ESS:${instrument.name.toUpperCase()}`;
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "principalInvestigator",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piName;
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "contactEmail",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piEmail;
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "sourceFolder",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            const instrumentId = inputs.get("instrumentId")?.value ?? "";
-            const instrument = staticData.instruments.find((instr) => {
-                return instr.id == instrumentId;
-            });
-            if (instrument === undefined) {
-                return null;
-            }
-            // TODO generalize
-            return `/ess/data/${instrument.name.toLowerCase()}/${proposal.id}/upload`;
-        }),
-    );
-    connectInputPair(
-        inputs,
-        "sourceFolder",
-        "instrumentId",
-        setterFromItemId(staticData.instruments, (instrument: Instrument) => {
-            const proposalId = inputs.get("proposalId")?.value ?? "";
-            const proposal = staticData.proposals.find((instr) => {
-                return instr.id == proposalId;
-            });
-            if (proposal === undefined) {
-                return null;
-            }
-            // TODO generalize
-            return `/ess/data/${instrument.name.toLowerCase()}/${proposal.id}/upload`;
-        }),
-    );
-}
-
-function setterFromItemId<T, Item extends { id: string }>(
-    collection: Item[],
-    makeValue: (item: Item) => T | null,
-) {
-    return (destination: InputComponent<T>, id: string | null) => {
-        const item = collection.find((item) => {
-            return item.id == id;
-        });
-        if (item) {
-            destination.setSignaling(makeValue(item), false);
-        } else {
-            destination.setSignaling(null, false);
-        }
-    };
-}
-
-function connectInputPair<Dst, Src>(
-    inputs: Map<string, InputComponent<any>>,
-    destination: string,
-    source: string,
-    listener: (dst: InputComponent<Dst>, value: Src | null) => void,
-) {
-    const src = inputs.get(source);
-    if (src === undefined) return;
-    inputs.get(destination)?.listenToInput(src, listener);
 }
 
 function makeProposalInput(proposals: Proposal[]): ComboboxManualInput {
