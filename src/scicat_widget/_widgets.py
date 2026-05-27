@@ -40,12 +40,8 @@ class DatasetUploadWidget(anywidget.AnyWidget):
         /,
         *,
         skip_confirm: bool = False,
-        field_formatters: dict[str, Callable[..., Any]]
-        | None = None,  # TODO get from profile
     ) -> None:
-        config = _build_config(
-            client, skip_confirm=skip_confirm, field_formatters=field_formatters
-        )
+        config = _build_config(client, skip_confirm=skip_confirm)
         initial, static = _collect_initial_data(client)
         super().__init__(
             config=config.model_dump(),
@@ -54,7 +50,6 @@ class DatasetUploadWidget(anywidget.AnyWidget):
             client=client,  # TODO create client here if not given
         )
         self.client = client
-        self.field_formatters = field_formatters or {}
 
         # This `Output` is displayed alongside `self` so that sub widgets,
         # e.g., a file picker can be attached to it and displayed.
@@ -86,30 +81,30 @@ def _build_config(
     client: Client,
     *,
     skip_confirm: bool,
-    field_formatters: dict[str, Callable[..., Any]] | None,
 ) -> Config:
+    profile = client.profile
     return Config(
         fieldDependencies={
-            name: _extract_formatter_dependencies(fn)
-            for name, fn in (field_formatters or {}).items()
+            name: _extract_factory_dependencies(fn)
+            for name, fn in profile.field_factories.items()
         },
-        frontendUrl=client.profile.frontend_url,
+        frontendUrl=profile.frontend_url,
         skipConfirmation=skip_confirm,
     )
 
 
-def _extract_formatter_dependencies(formatter: Callable[..., object]) -> list[str]:
-    spec = inspect.getfullargspec(formatter)
+def _extract_factory_dependencies(factory: Callable[..., object]) -> list[str]:
+    spec = inspect.getfullargspec(factory)
     if spec.varargs is not None or spec.varkw is not None:
         raise TypeError("Variable arguments are not supported")
     return [*spec.args, *spec.kwonlyargs]
 
 
-def _call_formatter(formatter: Callable[..., Any], args: dict[str, Any]) -> Any:
-    spec = inspect.getfullargspec(formatter)
+def _call_field_factory(factory: Callable[..., Any], args: dict[str, Any]) -> Any:
+    spec = inspect.getfullargspec(factory)
     pos_args = [args[name] for name in spec.args]
     kw_args = {name: args[name] for name in spec.kwonlyargs}
-    return formatter(*pos_args, **kw_args)
+    return factory(*pos_args, **kw_args)
 
 
 def _collect_initial_data(
@@ -230,19 +225,19 @@ def _browse_files(
         IPython.display.display(picker)  # type: ignore[no-untyped-call]
 
 
-def _format_field(
+def _build_field(
     widget: DatasetUploadWidget, key: str, input_payload: dict[str, Any]
 ) -> None:
     try:
-        formatter = widget.field_formatters[input_payload["name"]]
+        factory = widget.client.profile.field_factories[input_payload["name"]]
     except KeyError:
-        payload = {"error": f"No formatter for field {input_payload['name']}"}
+        payload = {"error": f"No factory for field {input_payload['name']}"}
     else:
-        payload = {"value": _call_formatter(formatter, input_payload["values"])}
+        payload = {"value": _call_field_factory(factory, input_payload["values"])}
 
     widget.send(
         {
-            "type": "res:format-field",
+            "type": "res:build-field",
             "key": key,
             "payload": payload,
         }
@@ -303,7 +298,7 @@ def _upload_dataset(
 
 _EVENT_HANDLERS = {
     "req:browse-files": _browse_files,
-    "req:format-field": _format_field,
+    "req:build-field": _build_field,
     "req:inspect-file": _inspect_file,
     "req:load-image": _load_image,
     "req:upload-dataset": _upload_dataset,

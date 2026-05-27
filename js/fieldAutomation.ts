@@ -1,11 +1,11 @@
 import { InputComponent } from "./components/input";
 import { Proposal, StaticData } from "./models.ts";
-import { BackendComm, ResFormatField } from "./comm.ts";
+import { BackendComm, ResBuildField } from "./comm.ts";
 
 /**
  * Connect input fields to automatically set values based on changes.
  * @param inputs Inputs keyed by SciCat key.
- * @param staticData Unchanging data to extra information from.
+ * @param staticData Unchanging data to extract information from.
  * @param fieldConnections User-declared relationships between fields.
  * @param comm Communication interface for backend interactions.
  * @returns Function to clean up the comm interface.
@@ -77,7 +77,7 @@ function connectUserDefined(
     }
     return () => {
         responderKeys.forEach((key) => {
-            comm.offResFormatField(key);
+            comm.offResBuildField(key);
         });
     };
 }
@@ -162,14 +162,14 @@ function connectInputsForTarget(
     }
 
     const key = crypto.randomUUID();
-    const responder = (payload: ResFormatField) => {
+    const responder = (payload: ResBuildField) => {
         if (payload.error !== undefined) {
-            console.error(`Failed to format ${targetName}: ${payload.error}`);
+            console.error(`Failed to build field ${targetName}: ${payload.error}`);
         } else {
             target.setSignaling(payload.value, false);
         }
     };
-    comm.onResFormatField(key, responder);
+    comm.onResBuildField(key, responder);
 
     for (const [_, emitter] of sources) {
         target.listenToInput(emitter, () => {
@@ -177,13 +177,13 @@ function connectInputsForTarget(
             for (const [source, valueInput] of sources) {
                 const value = source.getter(valueInput);
                 if (value === null) {
-                    // not enough values to format output
+                    // not enough values to build
                     target.setSignaling(null, false);
                     return;
                 }
                 values[source.requestedName] = value;
             }
-            comm.sendReqFormatField(key, { name: targetName, values });
+            comm.sendReqBuildField(key, { name: targetName, values });
         });
     }
 
