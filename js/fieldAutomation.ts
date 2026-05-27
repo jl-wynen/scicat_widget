@@ -116,8 +116,8 @@ function makeInstrumentNameSource(staticData: StaticData): Source {
             if (item) {
                 return item.name;
             } else {
-                // Manual input or null
-                return id;
+                // Manual input or null (manual input is instrument id, not name)
+                return null;
             }
         },
     };
