@@ -6,8 +6,9 @@ export type Attachment = {
 };
 
 export type Config = {
-    fieldDependencies: Record<string, string[]>;
     frontendUrl: string | null;
+    scientificMetadataSchema: "plain" | "value-unit";
+    fieldDependencies: Record<string, string[]>;
     skipConfirmation: boolean;
 };
 

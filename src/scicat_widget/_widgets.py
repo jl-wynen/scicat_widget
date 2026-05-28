@@ -84,11 +84,12 @@ def _build_config(
 ) -> Config:
     profile = client.profile
     return Config(
+        frontendUrl=profile.frontend_url,
+        scientificMetadataSchema=profile.scientific_metadata_schema,
         fieldDependencies={
             name: _extract_factory_dependencies(fn)
             for name, fn in profile.field_factories.items()
         },
-        frontendUrl=profile.frontend_url,
         skipConfirmation=skip_confirm,
     )
 

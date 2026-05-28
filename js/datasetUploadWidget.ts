@@ -32,7 +32,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 
     const comm = new BackendComm(model);
 
-    const inputs = createInputs(staticData, comm);
+    const inputs = createInputs(config, staticData, comm);
     const inputConnectionCleanup = connectInputs(
         inputs,
         staticData,
@@ -71,6 +71,7 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
 }
 
 function createInputs(
+    config: Config,
     staticData: StaticData,
     comm: BackendComm,
 ): Map<string, InputComponent<unknown>> {
@@ -95,7 +96,9 @@ function createInputs(
         new TextInput("type", { required: true }),
         new MultiTextInput("keywords", {}),
         new MultiTextInput("relationships", {}),
-        new ScientificMetadataInput("scientificMetadata", {}),
+        new ScientificMetadataInput("scientificMetadata", {
+            schema: config.scientificMetadataSchema,
+        }),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
         new MultiAttachmentInput("attachments", comm, {}),

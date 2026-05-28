@@ -2,12 +2,14 @@
 # Copyright (c) 2026 SciCat Project (https://github.com/SciCatProject/scitacean)
 
 from pydantic import BaseModel, EmailStr
+from scitacean import ScientificMetadataSchema
 from scitacean.model import Instrument
 
 
 class Config(BaseModel):
-    fieldDependencies: dict[str, list[str]]
     frontendUrl: str | None
+    scientificMetadataSchema: ScientificMetadataSchema
+    fieldDependencies: dict[str, list[str]]
     skipConfirmation: bool
 
 
