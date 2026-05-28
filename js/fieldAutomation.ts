@@ -92,8 +92,10 @@ type Source = {
 
 function makeSource(requestedName: string, staticData: StaticData): Source {
     switch (requestedName) {
-        case "instrumentName":
-            return makeInstrumentNameSource(staticData);
+        case "instrumentNames":
+            return makeInstrumentNamesSource(staticData);
+        case "proposalIds":
+            return makeProposalIdsSource();
         default:
             return {
                 requestedName,
@@ -104,21 +106,38 @@ function makeSource(requestedName: string, staticData: StaticData): Source {
             };
     }
 }
-function makeInstrumentNameSource(staticData: StaticData): Source {
+
+function makeInstrumentNamesSource(staticData: StaticData): Source {
     return {
-        requestedName: "instrumentName",
+        requestedName: "instrumentNames",
         underlyingName: "instrumentId",
-        getter: (input): string | null => {
+        getter: (input): string[] | null => {
             const id = input.value;
             const item = staticData.instruments.find((item) => {
                 return item.id == id;
             });
             if (item) {
-                return item.name;
+                return [item.name];
             } else {
                 // Manual input or null (manual input is instrument id, not name)
                 return null;
             }
+        },
+    };
+}
+
+// TODO remove when we properly use api v4
+//   this is just a compatibility helper to produce plural `proposalIds`
+function makeProposalIdsSource(): Source {
+    return {
+        requestedName: "proposalIds",
+        underlyingName: "proposalId",
+        getter: (input): string[] | null => {
+            const id = input.value;
+            if (id === null) {
+                return null;
+            }
+            return [id];
         },
     };
 }
