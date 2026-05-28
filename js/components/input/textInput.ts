@@ -13,6 +13,7 @@ export interface Options extends InputOptions<string> {
  */
 export class TextInput extends InputComponent<string> {
     protected readonly inputElement: HTMLInputElement | HTMLTextAreaElement;
+    private readonly clearButton: HTMLButtonElement;
 
     constructor(key: string, options: Options) {
         const inputElement = makeInputElement(options);
@@ -21,9 +22,20 @@ export class TextInput extends InputComponent<string> {
         inputElement.required = options.required ?? false;
         inputElement.classList.add("cean-input");
 
-        super(key, inputElement, options);
+        const [insert, clearButton] = InputComponent.createInsert(inputElement, () => {
+            this.setSignaling("");
+            inputElement.focus();
+        });
+
+        const container = document.createElement("div");
+        container.id = crypto.randomUUID();
+        container.classList.add("cean-input-container");
+        container.append(inputElement, insert);
+
+        super(key, container, options);
         this.inputElement = inputElement;
         this.inputElement.placeholder = options.placeholder ?? "";
+        this.clearButton = clearButton;
 
         // The trim listener must come before the validation listener,
         // so the validation can detect empty strings after trimming.
@@ -42,6 +54,12 @@ export class TextInput extends InputComponent<string> {
 
     setSilent(value: string | null) {
         this.inputElement.value = value ?? "";
+        this.clearButton.disabled = this.inputElement.value.length === 0;
+    }
+
+    updated(userTriggered: boolean = true) {
+        this.clearButton.disabled = this.inputElement.value.length === 0;
+        super.updated(userTriggered);
     }
 
     get placeholder(): string {

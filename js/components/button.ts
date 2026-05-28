@@ -99,6 +99,23 @@ export function toggleButton(
     return label;
 }
 
+export function clearButton(
+    input: HTMLInputElement | HTMLTextAreaElement,
+    onClear: () => void,
+): HTMLButtonElement {
+    const button = iconButton("times-circle", onClear);
+    button.classList.add("cean-clear-button");
+    button.tabIndex = -1;
+    button.title = "Clear input";
+    button.disabled = true;
+
+    input.addEventListener("input", () => {
+        button.disabled = input.value.length <= 0;
+    });
+
+    return button;
+}
+
 function createEmptyButton(callback: () => void, title?: string): HTMLButtonElement {
     const button = document.createElement("button");
     button.type = "button";

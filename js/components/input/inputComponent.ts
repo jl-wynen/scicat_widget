@@ -1,4 +1,5 @@
 import { Validator } from "../../validation.ts";
+import { clearButton } from "../button.ts";
 
 export interface InputOptions<T> {
     required?: boolean;
@@ -172,6 +173,18 @@ export abstract class InputComponent<T> {
                 event.stopPropagation();
             }
         });
+    }
+
+    protected static createInsert(
+        input: HTMLInputElement | HTMLTextAreaElement,
+        onClear: () => void,
+    ): [HTMLElement, HTMLButtonElement] {
+        const button = clearButton(input, onClear);
+
+        const wrap = document.createElement("div");
+        wrap.classList = "cean-input-insert";
+        wrap.append(button);
+        return [wrap, button];
     }
 }
 

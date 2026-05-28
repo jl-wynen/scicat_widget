@@ -149,6 +149,24 @@ label.cean-required::after {
     color: var(--jp-error-color2);
 }
 
+.cean-input-container {
+    position: relative;
+
+    .cean-input-insert {
+        position: absolute;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        margin: auto;
+        height: fit-content;
+    }
+}
+
+textarea.cean-input + .cean-input-insert {
+    top: 1pt;
+    bottom: unset;
+}
+
 input.cean-input, select.cean-input, textarea.cean-input {
     /* Make all input elements use all available space */
     width: 100%;
@@ -221,44 +239,6 @@ input.cean-input, select.cean-input, textarea.cean-input {
             background-color: var(--jp-editor-selected-focused-background);
             font-weight: bold;
         }
-    }
-
-    .cean-input-insert {
-        position: absolute;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        margin: auto;
-        height: fit-content;
-
-        button {
-            color: var(--jp-ui-font-color2);
-            background: unset;
-
-        }
-
-        > :nth-child(1) {
-            /* clear button */
-
-            /* color: red; */
-            cursor: pointer;
-
-            &:hover {
-                color: var(--jp-error-color1) !important;
-                background: unset;
-            }
-        }
-
-        > :nth-child(2) {
-            /* chevron button */
-            cursor: default;
-
-            &:hover {
-                background: unset;
-                color: var(--jp-ui-font-color2);
-            }
-        }
-
     }
 }
 
@@ -586,6 +566,38 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
     &:active {
         color: var(--jp-error-color2);
+    }
+}
+
+.cean-clear-button, .cean-chevron {
+    cursor: unset;
+    color: var(--jp-ui-font-color2);
+    background: unset !important;
+
+    &:hover {
+        color: var(--jp-ui-font-color2) !important;
+        background: unset !important;
+    }
+
+    &:active {
+        color: var(--jp-ui-font-color2) !important;
+        box-shadow: none !important;
+    }
+}
+
+.cean-clear-button {
+    cursor: pointer;
+
+    &:disabled {
+        display: none
+    }
+
+    &:hover {
+        color: var(--jp-error-color1) !important;
+    }
+
+    &:active {
+        color: var(--jp-error-color2) !important;
     }
 }
 

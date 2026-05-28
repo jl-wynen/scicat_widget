@@ -4,14 +4,27 @@ import { iconButton, removeButton } from "../button.ts";
 export class MultiTextInput extends InputComponent<string[]> {
     inputElement: HTMLInputElement;
     itemsList: HTMLUListElement;
+    clearButton: HTMLButtonElement;
 
     constructor(key: string, options: InputOptions<string[]>) {
         const [inputElement, itemsList, addButton] = createElements(key, () => {
             this.updated();
         });
+
+        const [insert, clearButton] = InputComponent.createInsert(inputElement, () => {
+            inputElement.value = "";
+            inputElement.focus();
+            clearButton.disabled = true;
+        });
+
+        const inputContainer = document.createElement("div");
+        inputContainer.id = crypto.randomUUID();
+        inputContainer.classList.add("cean-input-container");
+        inputContainer.append(inputElement, insert);
+
         const inputRow = document.createElement("div");
         inputRow.className = "cean-input-grid cean-input-and-button";
-        inputRow.append(inputElement, addButton);
+        inputRow.append(inputContainer, addButton);
 
         const wrap = document.createElement("div");
         wrap.append(inputRow, itemsList);
@@ -19,6 +32,7 @@ export class MultiTextInput extends InputComponent<string[]> {
         super(key, wrap, options);
         this.inputElement = inputElement;
         this.itemsList = itemsList;
+        this.clearButton = clearButton;
     }
 
     // Custom override so this returns the input element's id, not the wrap element's.

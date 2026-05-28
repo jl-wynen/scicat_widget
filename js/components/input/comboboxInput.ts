@@ -42,14 +42,15 @@ export class ComboboxInput extends InputComponent<string> {
                 this.close();
             },
         );
-        const [insert, clearButton] = createSearchInsert(searchBar, () => {
+        const [insert, clearButton] = InputComponent.createInsert(searchBar, () => {
             this.setSignaling("");
             this.searchBar.focus();
         });
+        insert.appendChild(createChevron(searchBar));
 
         const container = document.createElement("div");
         container.id = crypto.randomUUID();
-        container.className = "cean-combobox";
+        container.className = "cean-combobox cean-input-container";
         container.append(searchBar, datalist, insert);
 
         super(key, container, options);
@@ -125,11 +126,7 @@ export class ComboboxInput extends InputComponent<string> {
         for (const option of this.datalist.options) {
             option.style.display = "block";
         }
-        if (this.searchBar.value.length > 0) {
-            this.clearButton.style.display = "inline-block";
-        } else {
-            this.clearButton.style.display = "none";
-        }
+        this.clearButton.disabled = this.searchBar.value.length === 0;
         this.error = value === null || value === "" ? "" : "Value not recognized";
         this.validate();
     }
@@ -424,42 +421,11 @@ export class SelectedEvent extends Event {
     }
 }
 
-function createSearchInsert(
-    searchBar: HTMLInputElement,
-    clearCallback: () => void,
-): [HTMLElement, HTMLButtonElement] {
-    const clearButton = createClearButton(searchBar, clearCallback);
-
-    const wrap = document.createElement("div");
-    wrap.classList = "cean-input-insert";
-    wrap.append(clearButton, createChevron(searchBar));
-    return [wrap, clearButton];
-}
-
-function createClearButton(
-    searchBar: HTMLInputElement,
-    callback: () => void,
-): HTMLButtonElement {
-    const button = iconButton("times-circle", callback);
-    button.tabIndex = -1;
-    button.title = "Clear input";
-    button.style.display = "none";
-
-    searchBar.addEventListener("input", () => {
-        if (searchBar.value.length > 0) {
-            button.style.display = "inline-block";
-        } else {
-            button.style.display = "none";
-        }
-    });
-
-    return button;
-}
-
 function createChevron(searchBar: HTMLInputElement): HTMLElement {
     const button = iconButton("chevron-down", () => {
         searchBar.focus();
     });
+    button.classList.add("cean-chevron");
     button.tabIndex = -1;
     return button;
 }
