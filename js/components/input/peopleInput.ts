@@ -56,6 +56,11 @@ export class PeopleInput extends InputComponent<Person[]> {
         }
     }
 
+    get id(): string {
+        // There is no default input element a label could point to.
+        return this.peopleContainer.id;
+    }
+
     private addPerson() {
         const personInput = new PersonInput(this.removePerson.bind(this));
         personInput.element.addEventListener("input-updated", () => {

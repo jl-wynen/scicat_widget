@@ -66,6 +66,10 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
         return this.attachments.length;
     }
 
+    get id(): string {
+        return this.newAttachmentInput.id;
+    }
+
     private clear() {
         this.attachmentsContainer.replaceChildren();
         this.attachments.splice(0, this.attachments.length);
