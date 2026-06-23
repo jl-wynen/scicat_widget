@@ -37,6 +37,8 @@ jobs:
           python-version: "${{ inputs.python-version }}"
       - name: Pin Python version
         run: uv python pin ${{ inputs.python-version }}
+      - name: Install Python packages
+        run: uv sync
 
       - name: Run Playwright tests
         run: npx playwright test
