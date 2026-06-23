@@ -73,6 +73,10 @@ export class TextInput extends InputComponent<string> {
     get id(): string {
         return this.inputElement.id;
     }
+
+    protected get validationElement(): HTMLElement {
+        return this.inputElement;
+    }
 }
 
 function makeInputElement(options: Options): HTMLInputElement | HTMLTextAreaElement {

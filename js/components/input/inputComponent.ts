@@ -37,11 +37,9 @@ export abstract class InputComponent<T> {
         this.wrapElement = wrapElementsWith(inputContainer, this.statusElement);
 
         this.isValid = () => {
-            if (
-                inputContainer instanceof HTMLInputElement ||
-                inputContainer instanceof HTMLTextAreaElement
-            ) {
-                return inputContainer.validity.valid;
+            let el = this.validationElement;
+            if (el instanceof HTMLInputElement || el instanceof HTMLTextAreaElement) {
+                return el.validity.valid;
             }
             return true;
         };
@@ -123,8 +121,13 @@ export abstract class InputComponent<T> {
         }) as EventListener);
     }
 
+    // Override in child classes to return an input element that can be validated.
+    protected get validationElement(): HTMLElement {
+        return this.inputContainer;
+    }
+
     validate() {
-        const element = this.inputContainer;
+        const element = this.validationElement;
         if (
             !(
                 element instanceof HTMLInputElement ||
