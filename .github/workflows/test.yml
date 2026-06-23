@@ -20,6 +20,7 @@ jobs:
     container:
       # Keep the tag in sync with the playwright version resolved in package-lock.json.
       image: mcr.microsoft.com/playwright:v1.59.1-noble
+      options: --user 1001
     steps:
       - uses: actions/checkout@v4
       - name: Install Node
