@@ -3,24 +3,17 @@ name: Test
 on:
   workflow_dispatch:
     inputs:
-      os-variant:
-        default: 'ubuntu-24.04'
-        type: string
-        description: 'Operating system'
       python-version:
         type: string
         description: 'Python interpreter version'
   workflow_call:
     inputs:
-      os-variant:
-        default: 'ubuntu-24.04'
-        type: string
       python-version:
         type: string
 
 jobs:
   tests:
-    name: Tests ${{ inputs.os-variant }} py${{ inputs.python-version }}
+    name: Tests py${{ inputs.python-version }}
     runs-on: ubuntu-24.04
     # Use the official Playwright image to avoid the dependency installation stalling
     # on Ubuntu, see https://github.com/microsoft/playwright/issues/34297

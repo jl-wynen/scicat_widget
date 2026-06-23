@@ -44,7 +44,6 @@ jobs:
     needs: formatting
     uses: ./.github/workflows/test.yml
     with:
-      os-variant: ubuntu-24.04
       python-version: '3.11'
 
   build:
