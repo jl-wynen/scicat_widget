@@ -58,6 +58,10 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
         }
     }
 
+    get id(): string {
+        return this.tableBody.id;
+    }
+
     private addNewRow(item?: ScientificMetadataItem) {
         const newItem = item ?? { name: "", value: "", unit: "" };
 

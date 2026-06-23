@@ -75,6 +75,10 @@ export class MultiFileInput extends InputComponent<File[]> {
         }
     }
 
+    get id(): string {
+        return this.newFileInput.id;
+    }
+
     private addFileItem(file: File) {
         const [container, localPath, remotePathInput] = createFileItem((p) => {
             this.onInputRemoved(p);

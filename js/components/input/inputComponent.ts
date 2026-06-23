@@ -12,9 +12,7 @@ export interface InputOptions<T> {
 export abstract class InputComponent<T> {
     /// A predicatable key for the input, e.g., 'dattasetName'.
     private readonly _key: string;
-    /// A unique ID for the input, used as `element.id`.
-    private readonly inputId: string;
-    private readonly baseInputElement: HTMLElement;
+    private readonly inputContainer: HTMLElement;
     protected readonly statusElement: HTMLOutputElement;
     protected readonly wrapElement: HTMLDivElement;
 
@@ -24,27 +22,26 @@ export abstract class InputComponent<T> {
 
     protected constructor(
         key: string,
-        inputElement: HTMLElement,
+        inputContainer: HTMLElement,
         options: InputOptions<T>,
     ) {
         this._key = key;
-        this.inputId = inputElement.id;
         this.required = options.required ?? false;
         this.customValidator = options.validator ?? null;
 
-        this.baseInputElement = inputElement;
+        this.inputContainer = inputContainer;
         this.statusElement = document.createElement("output");
-        this.statusElement.id = `${inputElement.id}-status`;
+        this.statusElement.id = `${inputContainer.id}-status`;
         this.statusElement.className = "cean-status";
 
-        this.wrapElement = wrapElementsWith(inputElement, this.statusElement);
+        this.wrapElement = wrapElementsWith(inputContainer, this.statusElement);
 
         this.isValid = () => {
             if (
-                inputElement instanceof HTMLInputElement ||
-                inputElement instanceof HTMLTextAreaElement
+                inputContainer instanceof HTMLInputElement ||
+                inputContainer instanceof HTMLTextAreaElement
             ) {
-                return inputElement.validity.valid;
+                return inputContainer.validity.valid;
             }
             return true;
         };
@@ -56,9 +53,14 @@ export abstract class InputComponent<T> {
         return this._key;
     }
 
-    get id(): string {
-        return this.inputId;
-    }
+    /**
+     * Return the ID of the (main) input element that should be
+     * targeted by a label.
+     *
+     * This needs to be provided by subclasses because the `inputContainer`
+     * passed to the base class is usually a container, not an actual input.
+     */
+    abstract get id(): string;
 
     get container(): HTMLDivElement {
         return this.wrapElement;
@@ -122,7 +124,7 @@ export abstract class InputComponent<T> {
     }
 
     validate() {
-        const element = this.baseInputElement;
+        const element = this.inputContainer;
         if (
             !(
                 element instanceof HTMLInputElement ||

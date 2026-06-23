@@ -69,6 +69,10 @@ export class TextInput extends InputComponent<string> {
     set placeholder(v: string | null) {
         this.inputElement.placeholder = v ?? "";
     }
+
+    get id(): string {
+        return this.inputElement.id;
+    }
 }
 
 function makeInputElement(options: Options): HTMLInputElement | HTMLTextAreaElement {
