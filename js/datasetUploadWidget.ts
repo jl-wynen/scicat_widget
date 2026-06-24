@@ -91,7 +91,7 @@ function createInputs(
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
         new MultiTextInput("keywords", {}),
-        new MultiTextInput("relationships", {}),
+        new MultiTextInput("inputDatasets", {}),
         new ScientificMetadataInput("scientificMetadata", {}),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
@@ -288,7 +288,8 @@ function setInitialData(
     initialData: Record<string, any>,
 ) {
     for (const [key, value] of Object.entries(initialData)) {
-        inputs.get(key)?.setSignaling(value, false);
+        // userTriggered=true so that the fields written here are not overridden by update-handlers
+        inputs.get(key)?.setSignaling(value, true);
     }
 }
 
