@@ -39,7 +39,9 @@ export function createLabel(
     const info = fieldInfo(key);
 
     const el = document.createElement("label");
-    el.htmlFor = target.id;
+    if (target.id) {
+        el.htmlFor = target.id;
+    }
     el.textContent = label ?? info?.label ?? "Unknown field";
 
     const t = title ?? info?.description;
