@@ -16,7 +16,6 @@ import {
     InputComponent,
     MultiAttachmentInput,
     MultiFileInput,
-    MultiTextInput,
     PeopleInput,
     ScientificMetadataInput,
     MultiInput,
@@ -95,14 +94,14 @@ function createInputs(
         new TextInput("contactEmail", { required: true, type: "email" }),
         new PeopleInput("owners", {}),
         makeOwnerGroupInput(staticData.accessGroups),
-        new MultiTextInput("accessGroups", {}),
+        makeMultiTextInput("accessGroups"),
         new TextInput("license", {}),
         makeTechniquesInput(staticData.techniques),
-        new MultiTextInput("usedSoftware", {}),
+        makeMultiTextInput("usedSoftware"),
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
-        new MultiTextInput("keywords", {}),
-        new MultiTextInput("relationships", {}),
+        makeMultiTextInput("keywords"),
+        makeMultiTextInput("relationships"),
         new ScientificMetadataInput("scientificMetadata", {
             schema: config.scientificMetadataSchema,
         }),
@@ -116,6 +115,22 @@ function createInputs(
         inputs.set(input.key, input);
     }
     return inputs;
+}
+
+function makeMultiTextInput(key: string): MultiInput {
+    const renderItem = (value: string) => {
+        const textSpan = document.createElement("span");
+        textSpan.className = "cean-item-text";
+        textSpan.textContent = value;
+
+        const wrap = document.createElement("div");
+        wrap.append(textSpan);
+        return wrap;
+    };
+    return new MultiInput(key, new TextInput(`${key}-input`, {}), renderItem, {
+        compressedItems: true,
+        addButton: true,
+    });
 }
 
 function makeProposalInput(proposals: Proposal[]): ComboboxManualInput {
@@ -196,7 +211,7 @@ function makeTechniquesInput(techniques: Techniques): MultiInput {
         return renderUnknownTechniqueItem(value);
     };
 
-    return new MultiInput("techniques", combobox, renderItem);
+    return new MultiInput("techniques", combobox, renderItem, {});
 }
 
 function renderKnownTechniqueItem(

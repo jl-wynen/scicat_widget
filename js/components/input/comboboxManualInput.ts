@@ -31,7 +31,7 @@ export class ComboboxManualInput extends InputComponent<string> {
             `Input a ${options.fieldName} manually`,
         );
         const container = document.createElement("div");
-        container.classList.add("cean-combobox-manual");
+        container.classList.add("cean-input-grid", "cean-input-and-button");
         container.append(comboboxInput.container, textInput.container, manualButton);
 
         super(key, container, options);

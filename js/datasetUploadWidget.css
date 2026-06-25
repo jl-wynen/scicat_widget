@@ -257,45 +257,6 @@ input.cean-input, select.cean-input, textarea.cean-input {
     font-family: monospace;
 }
 
-.cean-input-items {
-    list-style: none;
-    padding: 0;
-    margin: 0.5em 0 1em;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-
-    &:empty {
-        display: none;
-    }
-
-    li {
-        display: flex;
-        align-items: center;
-        background: var(--jp-layout-color2);
-        padding: 2px 8px;
-        gap: 4px;
-        border: var(--jp-border-width) solid var(--jp-layout-color3);
-        border-radius: var(--jp-border-radius);
-
-        span {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
-}
-
-.cean-combobox-manual {
-    display: grid;
-    grid-template-columns: 1fr max-content;
-
-    label {
-        margin-left: 1ex;
-    }
-}
-
 .cean-people {
     fieldset {
         margin: 0.5em 0;
@@ -622,6 +583,12 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-compressed-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
 .cean-selected-item {
     display: flex;
     background: var(--jp-layout-color2);
@@ -655,6 +622,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
     .cean-button {
         padding: 0;
+        margin-left: 0.5em;
         background: none;
         min-height: unset;
         font-size: 0.8em;

@@ -3,7 +3,6 @@ export { ComboboxManualInput } from "./comboboxManualInput.ts";
 export { DatetimeInput } from "./datetimeInput.ts";
 export { FileInput } from "./fileInput.ts";
 export { InputComponent, UpdateEvent } from "./inputComponent.ts";
-export { MultiTextInput } from "./multiTextInput.ts";
 export { MultiAttachmentInput } from "./multiAttachmentInput.ts";
 export { MultiFileInput } from "./multiFileInput.ts";
 export { MultiInput } from "./multiInput.ts";

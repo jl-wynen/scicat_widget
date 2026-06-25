@@ -1,5 +1,10 @@
-import { InputComponent, UpdateEvent } from "./inputComponent.ts";
-import { removeButton } from "../button.ts";
+import { InputComponent, UpdateEvent, InputOptions } from "./inputComponent.ts";
+import { iconButton, removeButton } from "../button.ts";
+
+export interface Options extends InputOptions<string[]> {
+    compressedItems?: boolean;
+    addButton?: boolean;
+}
 
 export class MultiInput extends InputComponent<string[]> {
     private readonly underlying: InputComponent<string>;
@@ -10,12 +15,17 @@ export class MultiInput extends InputComponent<string[]> {
         key: string,
         underlying: InputComponent<string>,
         renderItem: (value: string) => HTMLElement,
+        options: Options,
     ) {
-        const selectionContainer = document.createElement("div");
-        const container = document.createElement("div");
-        container.append(underlying.container, selectionContainer);
+        const [container, selectionContainer] = createElements(
+            underlying,
+            options,
+            (value: string) => {
+                this.addItem(value);
+            },
+        );
 
-        super(key, container, {});
+        super(key, container, options);
         this.underlying = underlying;
         this.selectionContainer = selectionContainer;
         this.renderItem = renderItem;
@@ -75,4 +85,37 @@ export class MultiInput extends InputComponent<string[]> {
         );
         return item;
     }
+}
+
+function createElements(
+    underlying: InputComponent<string>,
+    options: Options,
+    addItem: (value: string) => void,
+): [HTMLDivElement, HTMLDivElement] {
+    const selectionContainer = document.createElement("div");
+    selectionContainer.className = "cean-selected-items";
+    if (options.compressedItems) {
+        selectionContainer.classList.add("cean-compressed-items");
+    }
+
+    const container = document.createElement("div");
+
+    if (options.addButton) {
+        function onClick() {
+            const value = underlying.value;
+            if (value) addItem(value);
+        }
+        const addButton = iconButton("plus", onClick, "Add item");
+        addButton.tabIndex = -1;
+
+        const lineWrap = document.createElement("div");
+        lineWrap.className = "cean-input-grid cean-input-and-button";
+        lineWrap.append(underlying.container, addButton);
+        container.append(lineWrap);
+    } else {
+        container.append(underlying.container);
+    }
+
+    container.append(selectionContainer);
+    return [container, selectionContainer];
 }
