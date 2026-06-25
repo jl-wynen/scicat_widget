@@ -27,7 +27,7 @@ dependencies = [
     "ipykernel>=6.30.1",
     "jupyter-host-file-picker>=26.2.1",
     "pydantic>=2.12",
-    "scitacean>=26.2.0",
+    "scitacean>=26.6.0",
 ]
 
 [dependency-groups]
