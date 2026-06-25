@@ -16,7 +16,6 @@ export type Choice = {
 
 export interface Options extends InputOptions<string> {
     renderChoice?: (choice: Choice) => HTMLElement;
-    filter?: boolean;
 }
 
 /**
@@ -25,7 +24,6 @@ export interface Options extends InputOptions<string> {
 export class ComboboxInput extends InputComponent<string> {
     private readonly datalist: HTMLDataListElement;
     private readonly searchBar: HTMLInputElement;
-    private readonly clearButton: HTMLButtonElement;
 
     private error: string = "";
     private readonly closeListener: (e: PointerEvent) => void;
@@ -42,10 +40,7 @@ export class ComboboxInput extends InputComponent<string> {
                 this.close();
             },
         );
-        const [insert, clearButton] = InputComponent.createInsert(searchBar, () => {
-            this.setSignaling("");
-            this.searchBar.focus();
-        });
+        const [insert, _] = InputComponent.createInsert(searchBar, null);
         insert.appendChild(createChevron(searchBar));
 
         const container = document.createElement("div");
@@ -57,7 +52,6 @@ export class ComboboxInput extends InputComponent<string> {
 
         this.datalist = datalist;
         this.searchBar = searchBar;
-        this.clearButton = clearButton;
 
         this.searchBar.addEventListener("focus", this.open.bind(this));
         this.searchBar.addEventListener("keydown", (e: KeyboardEvent) => {
@@ -126,19 +120,8 @@ export class ComboboxInput extends InputComponent<string> {
         for (const option of this.datalist.options) {
             option.style.display = "block";
         }
-        this.clearButton.disabled = this.searchBar.value.length === 0;
         this.error = value === null || value === "" ? "" : "Value not recognized";
         this.validate();
-    }
-
-    updated(userTriggered: boolean = true) {
-        if (this.searchBar.value.length > 0) {
-            this.clearButton.style.display = "inline-block";
-        } else {
-            this.clearButton.style.display = "none";
-        }
-
-        super.updated(userTriggered);
     }
 
     get options(): HTMLCollectionOf<HTMLOptionElement> {
@@ -228,8 +211,6 @@ export class ComboboxInput extends InputComponent<string> {
 
     private open() {
         this.datalist.style.display = "block";
-        // TODO disable filter based on options
-        filterOptions(this.searchBar.value, this.datalist);
     }
 
     private close() {
@@ -282,7 +263,8 @@ function createSearchBar(
 
     let currentFocus: number | null = null;
     searchBar.addEventListener("input", () => {
-        openCombobox(); // This filters and ensures that the list is visible
+        openCombobox();
+        filterOptions(searchBar.value, datalist);
         currentFocus = firstVisibleOption(datalist);
         selectActive(datalist, currentFocus);
     });

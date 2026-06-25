@@ -182,16 +182,24 @@ export abstract class InputComponent<T> {
         });
     }
 
+    /** Create a div to show on the right of an input.
+     *
+     * Contains a clear button if `onClear` is not null.
+     */
     protected static createInsert(
         input: HTMLInputElement | HTMLTextAreaElement,
-        onClear: () => void,
-    ): [HTMLElement, HTMLButtonElement] {
-        const button = clearButton(input, onClear);
-
+        onClear: (() => void) | null,
+    ): [HTMLElement, HTMLButtonElement | null] {
         const wrap = document.createElement("div");
         wrap.classList = "cean-input-insert";
-        wrap.append(button);
-        return [wrap, button];
+
+        if (onClear !== null) {
+            const button = clearButton(input, onClear);
+            wrap.append(button);
+            return [wrap, button];
+        } else {
+            return [wrap, null];
+        }
     }
 }
 

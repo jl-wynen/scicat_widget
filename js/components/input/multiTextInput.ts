@@ -14,7 +14,7 @@ export class MultiTextInput extends InputComponent<string[]> {
         const [insert, clearButton] = InputComponent.createInsert(inputElement, () => {
             inputElement.value = "";
             inputElement.focus();
-            clearButton.disabled = true;
+            (clearButton as HTMLButtonElement).disabled = true;
         });
 
         const inputContainer = document.createElement("div");
@@ -32,7 +32,7 @@ export class MultiTextInput extends InputComponent<string[]> {
         super(key, wrap, options);
         this.inputElement = inputElement;
         this.itemsList = itemsList;
-        this.clearButton = clearButton;
+        this.clearButton = clearButton as HTMLButtonElement;
     }
 
     // Custom override so this returns the input element's id, not the wrap element's.
