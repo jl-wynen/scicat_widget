@@ -16,7 +16,6 @@ export type Choice = {
 
 export interface Options extends InputOptions<string> {
     renderChoice?: (choice: Choice) => HTMLElement;
-    filter?: boolean;
 }
 
 /**
@@ -212,8 +211,6 @@ export class ComboboxInput extends InputComponent<string> {
 
     private open() {
         this.datalist.style.display = "block";
-        // TODO disable filter based on options
-        filterOptions(this.searchBar.value, this.datalist);
     }
 
     private close() {
@@ -266,7 +263,8 @@ function createSearchBar(
 
     let currentFocus: number | null = null;
     searchBar.addEventListener("input", () => {
-        openCombobox(); // This filters and ensures that the list is visible
+        openCombobox();
+        filterOptions(searchBar.value, datalist);
         currentFocus = firstVisibleOption(datalist);
         selectActive(datalist, currentFocus);
     });
