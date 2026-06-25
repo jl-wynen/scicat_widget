@@ -35,7 +35,7 @@ export class TextInput extends InputComponent<string> {
         super(key, container, options);
         this.inputElement = inputElement;
         this.inputElement.placeholder = options.placeholder ?? "";
-        this.clearButton = clearButton;
+        this.clearButton = clearButton as HTMLButtonElement;
 
         // The trim listener must come before the validation listener,
         // so the validation can detect empty strings after trimming.
