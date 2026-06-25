@@ -1,4 +1,4 @@
-import { FileType } from "./components/labIcon.ts";
+import { FileType } from "./components/icon.ts";
 
 export type Attachment = {
     localPath: string;
@@ -34,9 +34,11 @@ export type Person = {
 export type Proposal = {
     id: string;
     title: string;
+    startTime: Date;
     instrumentIds: string[];
     piName: string | null;
     piEmail: string | null;
+    type: string | null;
 };
 
 export type StaticData = {

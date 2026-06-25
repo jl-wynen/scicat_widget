@@ -1,30 +1,12 @@
-import type { RenderProps } from "@anywidget/types";
+import type { AnyModel, RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
-import {
-    Config,
-    Instrument,
-    Proposal,
-    StaticData,
-    Technique,
-    Techniques,
-} from "./models.ts";
+import { Config, StaticData } from "./models.ts";
 import { BackendComm } from "./comm.ts";
-import {
-    ComboboxInput,
-    ComboboxManualInput,
-    DatetimeInput,
-    InputComponent,
-    MultiAttachmentInput,
-    MultiFileInput,
-    PeopleInput,
-    ScientificMetadataInput,
-    MultiInput,
-    TextInput,
-} from "./components/input";
-import { Choice } from "./components/input/comboboxInput.ts";
+import { InputComponent } from "./components/input";
 import { DatasetOverview } from "./forms";
-import { createIcon, GatherResult, UploadComponent } from "./components";
+import { GatherResult, UploadComponent } from "./components";
 import { connectInputs } from "./fieldAutomation.ts";
+import { createInputs } from "./inputConstruction.ts";
 
 interface WidgetModel {
     config: Config;
@@ -34,7 +16,7 @@ interface WidgetModel {
 
 async function render({ model, el }: RenderProps<WidgetModel>) {
     const config = model.get("config");
-    const staticData = model.get("staticData");
+    const staticData = parseStaticData(model);
 
     const comm = new BackendComm(model);
 
@@ -76,176 +58,12 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
     };
 }
 
-function createInputs(
-    config: Config,
-    staticData: StaticData,
-    comm: BackendComm,
-): Map<string, InputComponent<unknown>> {
-    const inputList = [
-        new TextInput("datasetName", { required: true }),
-        new TextInput("description", { multiline: true }),
-        makeProposalInput(staticData.proposals),
-        makeInstrumentInput(staticData.instruments),
-        new TextInput("creationLocation", {}),
-        new TextInput("runNumber", {}),
-        new DatetimeInput("startTime", {}),
-        new DatetimeInput("endTime", {}),
-        new TextInput("principalInvestigator", { required: true }),
-        new TextInput("contactEmail", { required: true, type: "email" }),
-        new PeopleInput("owners", {}),
-        makeOwnerGroupInput(staticData.accessGroups),
-        makeMultiTextInput("accessGroups"),
-        new TextInput("license", {}),
-        makeTechniquesInput(staticData.techniques),
-        makeMultiTextInput("usedSoftware"),
-        new TextInput("sampleId", {}),
-        new TextInput("type", { required: true }),
-        makeMultiTextInput("keywords"),
-        makeMultiTextInput("relationships"),
-        new ScientificMetadataInput("scientificMetadata", {
-            schema: config.scientificMetadataSchema,
-        }),
-        new TextInput("sourceFolder", { required: true }),
-        new MultiFileInput("files", comm, {}),
-        new MultiAttachmentInput("attachments", comm, {}),
-    ];
-
-    const inputs = new Map();
-    for (const input of inputList) {
-        inputs.set(input.key, input);
+function parseStaticData(model: AnyModel<any>): StaticData {
+    const staticData = model.get("staticData");
+    for (const proposal of staticData.proposals) {
+        proposal.startTime = new Date(proposal.startTime);
     }
-    return inputs;
-}
-
-function makeMultiTextInput(key: string): MultiInput {
-    const renderItem = (value: string) => {
-        const textSpan = document.createElement("span");
-        textSpan.className = "cean-item-text";
-        textSpan.textContent = value;
-
-        const wrap = document.createElement("div");
-        wrap.append(textSpan);
-        return wrap;
-    };
-    return new MultiInput(key, new TextInput(`${key}-input`, {}), renderItem, {
-        compressedItems: true,
-        addButton: true,
-    });
-}
-
-function makeProposalInput(proposals: Proposal[]): ComboboxManualInput {
-    const choices =
-        proposals
-            .map((proposal) => {
-                return { key: proposal.id, text: proposal.title };
-            })
-            .sort((a, b) => a.key.localeCompare(b.key)) ?? [];
-
-    return new ComboboxManualInput("proposalId", choices, { fieldName: "proposal ID" });
-}
-
-function makeInstrumentInput(instruments: Instrument[]): ComboboxManualInput {
-    const choices = instruments
-        .map((instrument) => {
-            return {
-                key: instrument.id,
-                text: instrument.uniqueName,
-            };
-        })
-        .sort((a, b) => a.text.localeCompare(b.text));
-
-    const renderChoice = (choice: Choice) => {
-        const el = document.createElement("span");
-        el.className = "cean-item-text";
-        el.textContent = choice.text;
-        return el;
-    };
-
-    return new ComboboxManualInput("instrumentId", choices, {
-        fieldName: "instrument ID",
-        renderChoice,
-    });
-}
-
-function makeOwnerGroupInput(accessGroups: string[]): ComboboxInput | TextInput {
-    if (accessGroups.length == 0) {
-        return new TextInput("ownerGroup", { required: true });
-    } else {
-        const choices =
-            accessGroups
-                .map((group) => {
-                    return { key: group, text: group };
-                })
-                .sort((a, b) => a.key.localeCompare(b.key)) ?? [];
-
-        const renderChoice = (choice: Choice) => {
-            const el = document.createElement("span");
-            el.className = "cean-item-text";
-            el.textContent = choice.text;
-            return el;
-        };
-
-        return new ComboboxInput("ownerGroup", choices, {
-            required: true,
-            renderChoice,
-        });
-    }
-}
-
-function makeTechniquesInput(techniques: Techniques): MultiInput {
-    const choices = techniques.techniques
-        .map((technique) => {
-            return { key: technique.id, text: technique.name };
-        })
-        .sort((a, b) => a.key.localeCompare(b.key));
-    const combobox = new ComboboxManualInput("techniques-choices", choices, {
-        fieldName: "technique",
-    });
-
-    const renderItem = (value: string): HTMLElement => {
-        for (const technique of techniques.techniques) {
-            if (technique.id == value) {
-                return renderKnownTechniqueItem(technique, techniques.prefix);
-            }
-        }
-        return renderUnknownTechniqueItem(value);
-    };
-
-    return new MultiInput("techniques", combobox, renderItem, {});
-}
-
-function renderKnownTechniqueItem(
-    technique: Technique,
-    urlPrefix: string,
-): HTMLElement {
-    const keySpan = document.createElement("span");
-    keySpan.className = "cean-item-key";
-    keySpan.textContent = technique.id;
-
-    const textSpan = document.createElement("span");
-    textSpan.className = "cean-item-text";
-    textSpan.textContent = technique.name;
-
-    const anchor = document.createElement("a");
-    anchor.className = "cean-external-link";
-    anchor.href = `${urlPrefix}/${technique.id}`;
-    anchor.target = "_blank";
-    anchor.tabIndex = -1;
-    anchor.append(createIcon("external-link-alt"));
-
-    const wrap = document.createElement("div");
-    wrap.append(keySpan, textSpan, anchor);
-    return wrap;
-}
-
-function renderUnknownTechniqueItem(value: string): HTMLElement {
-    const textSpan = document.createElement("span");
-    textSpan.className = "cean-item-text        ";
-    textSpan.textContent = value;
-
-    const wrap = document.createElement("div");
-    wrap.append(textSpan);
-    return wrap;
+    return staticData;
 }
 
 function setInitialData(

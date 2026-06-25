@@ -1,4 +1,4 @@
-import { InputComponent, UpdateEvent, InputOptions } from "./inputComponent.ts";
+import { InputComponent, InputOptions, UpdateEvent } from "./inputComponent.ts";
 import { iconButton, removeButton } from "../button.ts";
 
 export interface Options extends InputOptions<string[]> {
@@ -6,15 +6,17 @@ export interface Options extends InputOptions<string[]> {
     addButton?: boolean;
 }
 
+// TODO validation (required field)
+
 export class MultiInput extends InputComponent<string[]> {
     private readonly underlying: InputComponent<string>;
     private readonly selectionContainer: HTMLDivElement;
-    private readonly renderItem: (value: string) => HTMLElement;
+    private readonly renderItem: (value: string) => HTMLElement | HTMLElement[];
 
     constructor(
         key: string,
         underlying: InputComponent<string>,
-        renderItem: (value: string) => HTMLElement,
+        renderItem: (value: string) => HTMLElement | HTMLElement[],
         options: Options,
     ) {
         const [container, selectionContainer] = createElements(
@@ -32,6 +34,7 @@ export class MultiInput extends InputComponent<string[]> {
 
         underlying.container.addEventListener("input-updated", ((e: UpdateEvent) => {
             this.addItem(e.value_as<string>());
+            e.stopPropagation();
         }) as EventListener);
     }
 
@@ -50,15 +53,16 @@ export class MultiInput extends InputComponent<string[]> {
     }
 
     setSilent(value: string[] | null) {
-        this.selectionContainer.replaceChildren(...(value ?? []).map(this.createItem));
+        this.selectionContainer.replaceChildren();
+        (value ?? []).forEach((val) => this.addItem(val, false));
     }
 
-    private addItem(value: string | null) {
+    private addItem(value: string | null, update: boolean = true) {
         this.underlying.setSilent(null);
         if (value === null) return;
         if (!this.isSelected(value)) {
             this.selectionContainer.append(this.createItem(value));
-            this.updated();
+            if (update) this.updated();
         }
     }
 
@@ -77,8 +81,14 @@ export class MultiInput extends InputComponent<string[]> {
         const item = document.createElement("div");
         item.className = "cean-selected-item";
         item.dataset.value = value;
-        item.append(
-            this.renderItem(value),
+
+        const rendered = this.renderItem(value);
+        if (rendered instanceof Array) {
+            item.append(...rendered);
+        } else {
+            item.appendChild(rendered);
+        }
+        item.appendChild(
             removeButton(() => {
                 this.removeItem(value);
             }),

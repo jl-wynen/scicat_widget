@@ -1,6 +1,8 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # Copyright (c) 2026 SciCat Project (https://github.com/SciCatProject/scitacean)
 
+from datetime import datetime
+
 from pydantic import BaseModel, EmailStr
 from scitacean import ScientificMetadataSchema
 from scitacean.model import Instrument
@@ -16,9 +18,11 @@ class Config(BaseModel):
 class ProposalOverview(BaseModel):
     id_: str
     title: str
+    start_time: datetime
     instrument_ids: list[str]
     pi_name: str | None
     pi_email: EmailStr | None
+    type: str | None
 
 
 class UserInfo(BaseModel):

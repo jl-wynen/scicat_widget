@@ -27,7 +27,7 @@ function connectHardCoded(
     connectInputPair(
         inputs,
         "instrumentId",
-        "proposalId",
+        "proposalIds",
         setterFromItemId(staticData.proposals, (proposal: Proposal) => {
             if (proposal.instrumentIds.length == 1) {
                 return proposal.instrumentIds[0];
@@ -39,11 +39,22 @@ function connectHardCoded(
 
     connectInputPair(
         inputs,
-        "principalInvestigator",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piName;
-        }),
+        "principalInvestigators",
+        "proposalIds",
+        (destination: InputComponent<string[]>, ids: string[] | null) => {
+            const names = ids
+                ?.map((id) => {
+                    return staticData.proposals.find((item) => {
+                        return item.id == id;
+                    })?.piName;
+                })
+                .filter((name) => !!name) as string[] | undefined;
+            if (names) {
+                destination.setSignaling(names, false);
+            } else {
+                destination.setSignaling(null, false);
+            }
+        },
     );
 
     connectInputPair(
@@ -94,8 +105,6 @@ function makeSource(requestedName: string, staticData: StaticData): Source {
     switch (requestedName) {
         case "instrumentNames":
             return makeInstrumentNamesSource(staticData);
-        case "proposalIds":
-            return makeProposalIdsSource();
         default:
             return {
                 requestedName,
@@ -122,22 +131,6 @@ function makeInstrumentNamesSource(staticData: StaticData): Source {
                 // Manual input or null (manual input is instrument id, not name)
                 return null;
             }
-        },
-    };
-}
-
-// TODO remove when we properly use api v4
-//   this is just a compatibility helper to produce plural `proposalIds`
-function makeProposalIdsSource(): Source {
-    return {
-        requestedName: "proposalIds",
-        underlyingName: "proposalId",
-        getter: (input): string[] | null => {
-            const id = input.value;
-            if (id === null) {
-                return null;
-            }
-            return [id];
         },
     };
 }

@@ -21,7 +21,7 @@ function createGeneralInfo(
     generalInfo.className = "cean-input-grid cean-general-info cean-fields";
     appendInput(generalInfo, inputs, "datasetName");
     appendInput(generalInfo, inputs, "description");
-    appendInput(generalInfo, inputs, "proposalId");
+    appendInput(generalInfo, inputs, "proposalIds");
 
     const instrumentId = inputs.get("instrumentId");
     if (instrumentId) {
@@ -63,7 +63,7 @@ function createGeneralInfo(
 function createColumns(inputs: Map<string, InputComponent<unknown>>): HTMLDivElement {
     const humans = document.createElement("fieldset");
     humans.className = "cean-input-grid cean-fields";
-    appendInput(humans, inputs, "principalInvestigator");
+    appendInput(humans, inputs, "principalInvestigators");
     appendInput(humans, inputs, "contactEmail");
     appendInput(humans, inputs, "owners");
 
