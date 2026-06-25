@@ -5,6 +5,13 @@ export type Attachment = {
     caption: string;
 };
 
+export type Config = {
+    frontendUrl: string | null;
+    scientificMetadataSchema: "plain" | "value-unit";
+    fieldDependencies: Record<string, string[]>;
+    skipConfirmation: boolean;
+};
+
 export type File = {
     localPath: string;
     type: FileType;
@@ -32,6 +39,13 @@ export type Proposal = {
     piEmail: string | null;
 };
 
+export type StaticData = {
+    instruments: Instrument[];
+    proposals: Proposal[];
+    accessGroups: string[];
+    techniques: Techniques;
+};
+
 export type Technique = {
     id: string;
     name: string;
@@ -40,11 +54,4 @@ export type Technique = {
 export type Techniques = {
     prefix: string;
     techniques: Technique[];
-};
-
-export type StaticData = {
-    instruments: Instrument[];
-    proposals: Proposal[];
-    accessGroups: string[];
-    techniques: Techniques;
 };

@@ -2,7 +2,15 @@
 # Copyright (c) 2026 SciCat Project (https://github.com/SciCatProject/scitacean)
 
 from pydantic import BaseModel, EmailStr
+from scitacean import ScientificMetadataSchema
 from scitacean.model import Instrument
+
+
+class Config(BaseModel):
+    frontendUrl: str | None
+    scientificMetadataSchema: ScientificMetadataSchema
+    fieldDependencies: dict[str, list[str]]
+    skipConfirmation: bool
 
 
 class ProposalOverview(BaseModel):
@@ -23,4 +31,4 @@ class UserInfo(BaseModel):
     proposals: list[ProposalOverview]
 
 
-__all__ = ["Instrument", "ProposalOverview", "UserInfo"]
+__all__ = ["Config", "Instrument", "ProposalOverview", "UserInfo"]

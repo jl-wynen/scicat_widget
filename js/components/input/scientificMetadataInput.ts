@@ -1,20 +1,23 @@
 import { InputComponent, InputOptions } from "./inputComponent.ts";
 import { removeButton, textButton } from "../button.ts";
 
-export type ScientificMetadataItem = {
-    name: string;
-    value: string;
-    unit?: string;
-};
+export type ScientificMetadataItem = Map<string, string>;
+
+type Schema = "plain" | "value-unit";
+
+export interface Options extends InputOptions<ScientificMetadataItem[]> {
+    schema: Schema;
+}
 
 /**
  * Input component for the scientific metadata field.
  */
 export class ScientificMetadataInput extends InputComponent<ScientificMetadataItem[]> {
     private readonly tableBody: HTMLTableSectionElement;
+    private readonly schema: Schema;
 
-    constructor(key: string, options: InputOptions<ScientificMetadataItem[]>) {
-        const table = createTable();
+    constructor(key: string, options: Options) {
+        const table = createTable(options.schema);
         const container = document.createElement("div");
         container.id = crypto.randomUUID();
         container.classList.add("cean-scientific-metadata");
@@ -23,6 +26,7 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
         super(key, container, options);
 
         this.tableBody = table.createTBody();
+        this.schema = options.schema;
 
         container.appendChild(
             textButton("Add item", () => {
@@ -39,7 +43,7 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
     get value(): ScientificMetadataItem[] | null {
         const items = [];
         for (const tr of this.tableBody.rows) {
-            const item = readRow(tr);
+            const item = readRow(tr, this.schema);
             if (!itemIsEmpty(item)) {
                 items.push(item);
             }
@@ -63,18 +67,18 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
     }
 
     private addNewRow(item?: ScientificMetadataItem) {
-        const newItem = item ?? { name: "", value: "", unit: "" };
+        const newItem = item ?? new Map();
 
         const tr = document.createElement("tr");
 
-        const columns: (keyof ScientificMetadataItem)[] = ["name", "value", "unit"];
+        const columns: string[] = columnNames(this.schema);
         columns.forEach((key) => {
             const input = document.createElement("input");
             input.classList.add("cean-input");
             input.type = "text";
-            input.value = newItem[key] ?? "";
+            input.value = newItem.get(key) ?? "";
             input.addEventListener("input", () => {
-                newItem[key] = input.value;
+                newItem.set(key, input.value);
                 this.autoAddRow(tr);
             });
             const td = document.createElement("td");
@@ -91,7 +95,7 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
 
     private autoAddRow(modified_tr: HTMLTableRowElement) {
         if (modified_tr === this.tableBody.lastElementChild) {
-            const lastItem = readRow(modified_tr);
+            const lastItem = readRow(modified_tr, this.schema);
             if (!itemIsEmpty(lastItem)) {
                 this.addNewRow();
             }
@@ -106,12 +110,16 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
     }
 }
 
-function readRow(tr: HTMLTableRowElement): ScientificMetadataItem {
-    return {
-        name: readCellInput(tr.cells[0]),
-        value: readCellInput(tr.cells[1]),
-        unit: readCellInput(tr.cells[2]) || undefined,
-    };
+function readRow(tr: HTMLTableRowElement, schema: Schema): ScientificMetadataItem {
+    const item = new Map();
+    item.set("name", readCellInput(tr.cells[0]));
+    if (schema == "plain") {
+        item.set("value", readCellInput(tr.cells[1]));
+    } else {
+        item.set("value", readCellInput(tr.cells[1]));
+        item.set("unit", readCellInput(tr.cells[2]) || undefined);
+    }
+    return item;
 }
 
 function readCellInput(cell: HTMLTableCellElement): string {
@@ -119,14 +127,21 @@ function readCellInput(cell: HTMLTableCellElement): string {
 }
 
 function itemIsEmpty(item: ScientificMetadataItem): boolean {
-    return !(item.name || item.value || item.unit);
+    for (const value of item.values()) {
+        if (value) {
+            return false;
+        }
+    }
+    return true;
 }
 
-function createTable(): HTMLTableElement {
+function createTable(schema: Schema): HTMLTableElement {
     const table = document.createElement("table");
 
     const headerRow = document.createElement("tr");
-    ["Name", "Value", "Unit", ""].forEach((text) => {
+    const columns = columnNames(schema);
+    columns.push(""); // button column at the end
+    columns.forEach((text) => {
         const th = document.createElement("th");
         th.textContent = text;
         headerRow.appendChild(th);
@@ -135,6 +150,14 @@ function createTable(): HTMLTableElement {
     head.appendChild(headerRow);
 
     return table;
+}
+
+function columnNames(schema: Schema): string[] {
+    if (schema == "plain") {
+        return ["name", "value"];
+    } else {
+        return ["name", "value", "unit"];
+    }
 }
 
 function addEventListeners(tableBody: HTMLTableSectionElement, onUpdate: () => void) {

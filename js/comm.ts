@@ -21,6 +21,16 @@ export type ResBrowseFiles = {
     selected: string;
 };
 
+export type ReqBuildField = {
+    name: string;
+    values: Record<string, any>;
+};
+
+export type ResBuildField = {
+    value?: unknown;
+    error?: string;
+};
+
 export type ReqUploadDataset = Record<string, any>;
 
 export type FieldError = {
@@ -89,6 +99,18 @@ export class BackendComm {
 
     offResBrowseFiles(key: string) {
         this.getForMethod("res:browse-files").delete(key);
+    }
+
+    sendReqBuildField(key: string, payload: ReqBuildField) {
+        this.model.send({ type: "req:build-field", key, payload });
+    }
+
+    onResBuildField(key: string, callback: (payload: ResBuildField) => void) {
+        this.getForMethod("res:build-field").set(key, callback);
+    }
+
+    offResBuildField(key: string) {
+        this.getForMethod("res:build-field").delete(key);
     }
 
     sendReqUploadDataset(key: string, payload: ReqUploadDataset) {

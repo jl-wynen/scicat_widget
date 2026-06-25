@@ -1,5 +1,5 @@
-import { Config } from "../config.ts";
-import { imageLink } from "./output.ts";
+import { Config } from "../models.ts";
+import { imageLink, simpleLink } from "./output.ts";
 import scicatLogo from "../assets/img/SciCat_logo_icon.svg";
 
 export type TabSpec = {
@@ -161,7 +161,9 @@ function createHeader(
 ): HTMLElement {
     const left = document.createElement("div");
     left.classList.add("cean-tabs-branding");
-    left.appendChild(imageLink(config.scicatUrl, scicatLogo));
+    left.appendChild(
+        imageLink(config.frontendUrl ?? "https://www.scicatproject.org/", scicatLogo),
+    );
 
     const middle = document.createElement("div");
     middle.classList.add("cean-tabs-buttons");
@@ -172,6 +174,7 @@ function createHeader(
 
     const right = document.createElement("div");
     right.classList.add("cean-tabs-controls");
+    addSciCatLink(right, config);
     right.append(...controls);
 
     const header = document.createElement("nav");
@@ -185,4 +188,13 @@ function createContentContainer(panels: HTMLDivElement[]): HTMLDivElement {
     container.classList.add("cean-tabs-content");
     container.append(...panels);
     return container;
+}
+
+function addSciCatLink(container: HTMLElement, config: Config) {
+    if (config.frontendUrl) {
+        const div = document.createElement("div");
+        div.classList.add("cean-scicat-link");
+        div.innerHTML = simpleLink(config.frontendUrl);
+        container.appendChild(div);
+    }
 }

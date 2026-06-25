@@ -1,6 +1,6 @@
 import type { RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
-import { Instrument, Proposal, StaticData } from "./models.ts";
+import { Config, Instrument, Proposal, StaticData } from "./models.ts";
 import { BackendComm } from "./comm.ts";
 import {
     ComboboxInput,
@@ -18,25 +18,27 @@ import {
 import { Choice } from "./components/input/comboboxInput.ts";
 import { DatasetOverview } from "./forms";
 import { GatherResult, UploadComponent } from "./components";
+import { connectInputs } from "./fieldAutomation.ts";
 
 interface WidgetModel {
+    config: Config;
     initial: object;
     staticData: StaticData;
-    scicatUrl: string;
-    skipConfirmation: boolean;
 }
 
 async function render({ model, el }: RenderProps<WidgetModel>) {
-    const config = {
-        scicatUrl: model.get("scicatUrl"),
-        skipConfirmation: model.get("skipConfirmation"),
-    };
+    const config = model.get("config");
     const staticData = model.get("staticData");
 
     const comm = new BackendComm(model);
 
-    const inputs = createInputs(staticData, comm);
-    connectInputs(inputs, staticData);
+    const inputs = createInputs(config, staticData, comm);
+    const inputConnectionCleanup = connectInputs(
+        inputs,
+        staticData,
+        config.fieldDependencies,
+        comm,
+    );
 
     const uploader = new UploadComponent(comm, config, () => {
         return gatherData(inputs);
@@ -64,10 +66,12 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         for (const input of inputs.values()) {
             input.destroy();
         }
+        inputConnectionCleanup();
     };
 }
 
 function createInputs(
+    config: Config,
     staticData: StaticData,
     comm: BackendComm,
 ): Map<string, InputComponent<unknown>> {
@@ -92,7 +96,9 @@ function createInputs(
         new TextInput("type", { required: true }),
         new MultiTextInput("keywords", {}),
         new MultiTextInput("relationships", {}),
-        new ScientificMetadataInput("scientificMetadata", {}),
+        new ScientificMetadataInput("scientificMetadata", {
+            schema: config.scientificMetadataSchema,
+        }),
         new TextInput("sourceFolder", { required: true }),
         new MultiFileInput("files", comm, {}),
         new MultiAttachmentInput("attachments", comm, {}),
@@ -103,125 +109,6 @@ function createInputs(
         inputs.set(input.key, input);
     }
     return inputs;
-}
-
-function connectInputs(
-    inputs: Map<string, InputComponent<any>>,
-    staticData: StaticData,
-) {
-    connectInputPair(
-        inputs,
-        "ownerGroup",
-        "proposalId",
-        (ownerGroup: InputComponent<string>, proposalId: string | null) => {
-            const group =
-                staticData.accessGroups.find((group) => {
-                    return group === proposalId;
-                }) ?? null;
-            ownerGroup.setSignaling(group, false);
-        },
-    );
-
-    connectInputPair(
-        inputs,
-        "instrumentId",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            if (proposal.instrumentIds.length == 1) {
-                return proposal.instrumentIds[0];
-            } else {
-                return null;
-            }
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "creationLocation",
-        "instrumentId",
-        setterFromItemId(staticData.instruments, (instrument: Instrument) => {
-            // TODO generalize
-            return `ESS:${instrument.name.toUpperCase()}`;
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "principalInvestigator",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piName;
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "contactEmail",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piEmail;
-        }),
-    );
-
-    connectInputPair(
-        inputs,
-        "sourceFolder",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            const instrumentId = inputs.get("instrumentId")?.value ?? "";
-            const instrument = staticData.instruments.find((instr) => {
-                return instr.id == instrumentId;
-            });
-            if (instrument === undefined) {
-                return null;
-            }
-            // TODO generalize
-            return `/ess/data/${instrument.name.toLowerCase()}/${proposal.id}/upload`;
-        }),
-    );
-    connectInputPair(
-        inputs,
-        "sourceFolder",
-        "instrumentId",
-        setterFromItemId(staticData.instruments, (instrument: Instrument) => {
-            const proposalId = inputs.get("proposalId")?.value ?? "";
-            const proposal = staticData.proposals.find((instr) => {
-                return instr.id == proposalId;
-            });
-            if (proposal === undefined) {
-                return null;
-            }
-            // TODO generalize
-            return `/ess/data/${instrument.name.toLowerCase()}/${proposal.id}/upload`;
-        }),
-    );
-}
-
-function setterFromItemId<T, Item extends { id: string }>(
-    collection: Item[],
-    makeValue: (item: Item) => T | null,
-) {
-    return (destination: InputComponent<T>, id: string | null) => {
-        const item = collection.find((item) => {
-            return item.id == id;
-        });
-        if (item) {
-            destination.setSignaling(makeValue(item), false);
-        } else {
-            destination.setSignaling(null, false);
-        }
-    };
-}
-
-function connectInputPair<Dst, Src>(
-    inputs: Map<string, InputComponent<any>>,
-    destination: string,
-    source: string,
-    listener: (dst: InputComponent<Dst>, value: Src | null) => void,
-) {
-    const src = inputs.get(source);
-    if (src === undefined) return;
-    inputs.get(destination)?.listenToInput(src, listener);
 }
 
 function makeProposalInput(proposals: Proposal[]): ComboboxManualInput {

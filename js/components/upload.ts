@@ -2,11 +2,11 @@ import { BackendComm, FieldError, ResUploadDataset } from "../comm";
 import { simpleLink, textElement } from "./output.ts";
 import { textButton } from "./button.ts";
 import { Dialog } from "./dialog.ts";
-import { Config } from "../config.ts";
+import { Config } from "../models.ts";
 
 export class UploadComponent {
     private readonly comm: BackendComm;
-    private readonly scicatUrl: string;
+    private readonly frontendUrl: string | null;
     private readonly skipConfirmation: boolean;
     private readonly gatherData: () => GatherResult;
 
@@ -15,7 +15,7 @@ export class UploadComponent {
 
     constructor(comm: BackendComm, config: Config, gatherData: () => GatherResult) {
         this.comm = comm;
-        this.scicatUrl = config.scicatUrl;
+        this.frontendUrl = config.frontendUrl;
         this.skipConfirmation = config.skipConfirmation;
         this.gatherData = gatherData;
 
@@ -68,8 +68,9 @@ export class UploadComponent {
         this.dialog.closeOnClickOutside = true;
         this.dialog.header.textContent = "Confirm Upload";
 
+        let link = this.frontendUrl ? simpleLink(this.frontendUrl) : "SciCat";
         let content = `<p>Are you sure you want to upload this dataset to
-${simpleLink(this.scicatUrl)}?</p>
+${link}?</p>
 <p class="cean-warning" style="text-align: center;">This cannot be undone!</p>
     `;
         if (validationErrors) {

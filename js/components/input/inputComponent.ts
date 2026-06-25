@@ -99,6 +99,8 @@ export abstract class InputComponent<T> {
         }) as EventListener;
         target.container.addEventListener("input-updated", listener);
 
+        // TODO only disable when the user actually changed the element,
+        //   not just when it loses focus
         // Remove the handler when `this` is updated manually:
         const removeListener = (e: Event) => {
             const event = e as UpdateEvent;
