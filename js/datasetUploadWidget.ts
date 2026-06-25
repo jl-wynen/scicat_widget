@@ -1,6 +1,13 @@
 import type { RenderProps } from "@anywidget/types";
 import "./datasetUploadWidget.css";
-import { Config, Instrument, Proposal, StaticData } from "./models.ts";
+import {
+    Config,
+    Instrument,
+    Proposal,
+    StaticData,
+    Technique,
+    Techniques,
+} from "./models.ts";
 import { BackendComm } from "./comm.ts";
 import {
     ComboboxInput,
@@ -12,12 +19,12 @@ import {
     MultiTextInput,
     PeopleInput,
     ScientificMetadataInput,
-    TechniquesInput,
+    MultiInput,
     TextInput,
 } from "./components/input";
 import { Choice } from "./components/input/comboboxInput.ts";
 import { DatasetOverview } from "./forms";
-import { GatherResult, UploadComponent } from "./components";
+import { createIcon, GatherResult, UploadComponent } from "./components";
 import { connectInputs } from "./fieldAutomation.ts";
 
 interface WidgetModel {
@@ -90,7 +97,7 @@ function createInputs(
         makeOwnerGroupInput(staticData.accessGroups),
         new MultiTextInput("accessGroups", {}),
         new TextInput("license", {}),
-        new TechniquesInput("techniques", staticData.techniques),
+        makeTechniquesInput(staticData.techniques),
         new MultiTextInput("usedSoftware", {}),
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
@@ -168,6 +175,62 @@ function makeOwnerGroupInput(accessGroups: string[]): ComboboxInput | TextInput 
             renderChoice,
         });
     }
+}
+
+function makeTechniquesInput(techniques: Techniques): MultiInput {
+    const choices = techniques.techniques
+        .map((technique) => {
+            return { key: technique.id, text: technique.name };
+        })
+        .sort((a, b) => a.key.localeCompare(b.key));
+    const combobox = new ComboboxManualInput("techniques-choices", choices, {
+        fieldName: "technique",
+    });
+
+    const renderItem = (value: string): HTMLElement => {
+        for (const technique of techniques.techniques) {
+            if (technique.id == value) {
+                return renderKnownTechniqueItem(technique, techniques.prefix);
+            }
+        }
+        return renderUnknownTechniqueItem(value);
+    };
+
+    return new MultiInput("techniques", combobox, renderItem);
+}
+
+function renderKnownTechniqueItem(
+    technique: Technique,
+    urlPrefix: string,
+): HTMLElement {
+    const keySpan = document.createElement("span");
+    keySpan.className = "cean-item-key";
+    keySpan.textContent = technique.id;
+
+    const textSpan = document.createElement("span");
+    textSpan.className = "cean-item-text";
+    textSpan.textContent = technique.name;
+
+    const anchor = document.createElement("a");
+    anchor.className = "cean-external-link";
+    anchor.href = `${urlPrefix}/${technique.id}`;
+    anchor.target = "_blank";
+    anchor.tabIndex = -1;
+    anchor.append(createIcon("external-link-alt"));
+
+    const wrap = document.createElement("div");
+    wrap.append(keySpan, textSpan, anchor);
+    return wrap;
+}
+
+function renderUnknownTechniqueItem(value: string): HTMLElement {
+    const textSpan = document.createElement("span");
+    textSpan.className = "cean-item-text        ";
+    textSpan.textContent = value;
+
+    const wrap = document.createElement("div");
+    wrap.append(textSpan);
+    return wrap;
 }
 
 function setInitialData(

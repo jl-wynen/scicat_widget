@@ -4,7 +4,7 @@ import { removeButton } from "../index.ts";
 import { FileInput, InputComponent, TextInput } from "./index.ts";
 import { InputOptions } from "./inputComponent.ts";
 import { createLabel, createLabelFor, pathOutput } from "../../forms";
-import { iconForFileType } from "../labIcon.ts";
+import { iconForFileType } from "../icon.ts";
 
 export class MultiFileInput extends InputComponent<File[]> {
     private readonly newFileInput: FileInput;

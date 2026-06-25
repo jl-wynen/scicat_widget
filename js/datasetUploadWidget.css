@@ -622,7 +622,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
-.cean-techniques-item {
+.cean-selected-item {
     display: flex;
     background: var(--jp-layout-color2);
     padding: 2px 8px;
@@ -632,18 +632,24 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
     > div {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         flex-grow: 1;
+        column-gap: 0.5em;
 
-        .cean-item-key {
-            color: var(--jp-content-link-color);
-            font-family: unset;
-            cursor: pointer;
+        .cean-external-link {
+            visibility: hidden;
+            margin-left: auto;
+            margin-right: 0.4em;
 
             &:hover {
                 color: var(--jp-content-link-color);
-                text-decoration: underline;
             }
+        }
+    }
+
+    &:hover {
+        .cean-external-link {
+            visibility: visible;
         }
     }
 
