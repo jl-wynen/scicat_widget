@@ -586,7 +586,12 @@ input.cean-input, select.cean-input, textarea.cean-input {
 .cean-compressed-items {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.5em;
+    gap: 0.4em;
+    padding-top: 0.4em;
+
+    .cean-selected-item {
+        margin: 0;
+    }
 }
 
 .cean-selected-item {
