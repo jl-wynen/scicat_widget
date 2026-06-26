@@ -23,7 +23,7 @@ function createGeneralInfo(
     appendInput(generalInfo, inputs, "description");
     appendInput(generalInfo, inputs, "proposalIds");
 
-    const instrumentId = inputs.get("instrumentId");
+    const instrumentId = inputs.get("instrumentIds");
     if (instrumentId) {
         generalInfo.appendChild(createLabelFor(instrumentId));
 

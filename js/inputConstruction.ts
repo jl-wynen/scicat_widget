@@ -36,7 +36,7 @@ export function createInputs(
             staticData.instruments,
             config.frontendUrl,
         ),
-        makeInstrumentInput(staticData.instruments),
+        makeInstrumentInput(staticData.instruments, config.frontendUrl),
         new TextInput("creationLocation", {}),
         new TextInput("runNumber", {}),
         new DatetimeInput("startTime", {}),
@@ -116,12 +116,9 @@ function makeProposalInput(
         if (proposal !== undefined) {
             const content = renderKnownProposalItem(proposal, instruments);
             if (scicatUrl) {
-                const anchor = document.createElement("a");
-                anchor.className = "cean-external-link";
-                anchor.href = `${scicatUrl}/proposals/${proposal.id}`;
-                anchor.target = "_blank";
-                anchor.tabIndex = -1;
-                anchor.append(createIcon("external-link-alt"));
+                const anchor = makeExternalLink(
+                    `${scicatUrl}/proposals/${encodeURIComponent(proposal.id)}`,
+                );
                 return [content, anchor];
             }
             return content;
@@ -137,8 +134,8 @@ function makeProposalInput(
         return renderUnknownItem(choice.key);
     }
 
-    const combobox = new ComboboxManualInput("proposalId-input", choices, {
-        fieldName: "proposal ID",
+    const combobox = new ComboboxManualInput("proposalIds-input", choices, {
+        fieldName: "proposal IDs",
         renderChoice,
     });
     return new MultiInput("proposalIds", combobox, renderItem, {});
@@ -198,27 +195,68 @@ function makeProposalTypeSpan(proposal: Proposal): HTMLSpanElement | null {
     return span;
 }
 
-function makeInstrumentInput(instruments: Instrument[]): ComboboxManualInput {
+function makeInstrumentInput(
+    instruments: Instrument[],
+    scicatUrl: string | null,
+): MultiInput {
+    const instrumentMap = new Map(
+        instruments.map((instrument) => {
+            return [instrument.id, instrument];
+        }),
+    );
+
     const choices = instruments
         .map((instrument) => {
             return {
                 key: instrument.id,
-                text: instrument.uniqueName,
+                text: instrument.name,
             };
         })
         .sort((a, b) => a.text.localeCompare(b.text));
 
-    const renderChoice = (choice: Choice) => {
-        const el = document.createElement("span");
-        el.className = "cean-item-text";
-        el.textContent = choice.text;
-        return el;
-    };
+    function renderItem(value: string): HTMLElement | HTMLElement[] {
+        const instrument = instrumentMap.get(value);
+        if (instrument !== undefined) {
+            const content = renderKnownInstrumentItem(instrument);
+            if (scicatUrl) {
+                const anchor = makeExternalLink(
+                    `${scicatUrl}/instruments/${encodeURIComponent(instrument.id)}`,
+                );
+                return [content, anchor];
+            }
+            return content;
+        }
+        return renderUnknownItem(value);
+    }
 
-    return new ComboboxManualInput("instrumentId", choices, {
-        fieldName: "instrument ID",
+    function renderChoice(choice: Choice): HTMLElement {
+        const instrument = instrumentMap.get(choice.key);
+        if (instrument !== undefined) {
+            return renderKnownInstrumentItem(instrument);
+        }
+        return renderUnknownItem(choice.text);
+    }
+
+    const combobox = new ComboboxManualInput("instrumentIds-input", choices, {
+        fieldName: "instrument IDs",
         renderChoice,
     });
+    return new MultiInput("instrumentIds", combobox, renderItem, {});
+}
+
+function renderKnownInstrumentItem(instrument: Instrument): HTMLElement {
+    const nameSpan = document.createElement("span");
+    nameSpan.className = "cean-item-text";
+    nameSpan.textContent = instrument.name;
+
+    const uniqueNameSpan = document.createElement("span");
+    uniqueNameSpan.className = "cean-item-key";
+    uniqueNameSpan.textContent = instrument.uniqueName;
+
+    const wrap = document.createElement("div");
+    wrap.className = "cean-instrument cean-item-row";
+    wrap.append(nameSpan, uniqueNameSpan);
+    return wrap;
 }
 
 function makeOwnerGroupInput(accessGroups: string[]): ComboboxInput | TextInput {
@@ -280,12 +318,7 @@ function renderKnownTechniqueItem(
     textSpan.className = "cean-item-text";
     textSpan.textContent = technique.name;
 
-    const anchor = document.createElement("a");
-    anchor.className = "cean-external-link";
-    anchor.href = `${urlPrefix}/${technique.id}`;
-    anchor.target = "_blank";
-    anchor.tabIndex = -1;
-    anchor.append(createIcon("external-link-alt"));
+    const anchor = makeExternalLink(`${urlPrefix}/${technique.id}`);
 
     const wrap = document.createElement("div");
     wrap.className = "cean-item-row";
@@ -322,4 +355,14 @@ function findById<T extends { id: string }>(id: string, items: T[]): T | null {
         if (item.id == id) return item;
     }
     return null;
+}
+
+function makeExternalLink(url: string): HTMLAnchorElement {
+    const anchor = document.createElement("a");
+    anchor.className = "cean-external-link";
+    anchor.href = url;
+    anchor.target = "_blank";
+    anchor.tabIndex = -1;
+    anchor.append(createIcon("external-link-alt"));
+    return anchor;
 }

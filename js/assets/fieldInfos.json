@@ -27,9 +27,9 @@
         "label": "End",
         "description": "End time of data acquisition for the dataset."
     },
-    "instrumentId": {
-        "label": "Instrument",
-        "description": "The instrument where the data was taken."
+    "instrumentIds": {
+        "label": "Instruments",
+        "description": "The instruments where the data was recorded."
     },
     "isPublished": {
         "label": "Published",
