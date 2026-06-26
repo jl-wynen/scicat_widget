@@ -64,7 +64,7 @@ function createColumns(inputs: Map<string, InputComponent<unknown>>): HTMLDivEle
     const humans = document.createElement("fieldset");
     humans.className = "cean-input-grid cean-fields";
     appendInput(humans, inputs, "principalInvestigators");
-    appendInput(humans, inputs, "contactEmail");
+    appendInput(humans, inputs, "contactEmails");
     appendInput(humans, inputs, "owners");
 
     const ownership = document.createElement("fieldset");

@@ -10,6 +10,7 @@ import {
     ScientificMetadataInput,
     TextInput,
 } from "./components/input";
+import { Options as TextInputOptions } from "./components/input/textInput.ts";
 import { Choice } from "./components/input/comboboxInput.ts";
 import {
     Config,
@@ -41,7 +42,7 @@ export function createInputs(
         new DatetimeInput("startTime", {}),
         new DatetimeInput("endTime", {}),
         makeMultiTextInput("principalInvestigators", true),
-        new TextInput("contactEmail", { required: true, type: "email" }),
+        makeMultiTextInput("contactEmails", true, { type: "email" }),
         new PeopleInput("owners", {}),
         makeOwnerGroupInput(staticData.accessGroups),
         makeMultiTextInput("accessGroups"),
@@ -67,7 +68,11 @@ export function createInputs(
     return inputs;
 }
 
-function makeMultiTextInput(key: string, required: boolean = false): MultiInput {
+function makeMultiTextInput(
+    key: string,
+    required: boolean = false,
+    textOptions: TextInputOptions = {},
+): MultiInput {
     const renderItem = (value: string) => {
         const textSpan = document.createElement("span");
         textSpan.className = "cean-item-text";
@@ -77,7 +82,7 @@ function makeMultiTextInput(key: string, required: boolean = false): MultiInput 
         wrap.append(textSpan);
         return wrap;
     };
-    return new MultiInput(key, new TextInput(`${key}-input`, {}), renderItem, {
+    return new MultiInput(key, new TextInput(`${key}-input`, textOptions), renderItem, {
         compressedItems: true,
         addButton: true,
         required,

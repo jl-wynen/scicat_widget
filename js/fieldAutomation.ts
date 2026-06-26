@@ -59,11 +59,22 @@ function connectHardCoded(
 
     connectInputPair(
         inputs,
-        "contactEmail",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piEmail;
-        }),
+        "contactEmails",
+        "proposalIds",
+        (destination: InputComponent<string[]>, ids: string[] | null) => {
+            const emails = ids
+                ?.map((id) => {
+                    return staticData.proposals.find((item) => {
+                        return item.id == id;
+                    })?.piEmail;
+                })
+                .filter((name) => !!name) as string[] | undefined;
+            if (emails) {
+                destination.setSignaling(emails, false);
+            } else {
+                destination.setSignaling(null, false);
+            }
+        },
     );
 }
 

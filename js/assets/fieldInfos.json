@@ -7,9 +7,9 @@
         "label": "Checksum algorithm",
         "description": "Algorithm for computing checksums of files. The default is a good choice for most cases."
     },
-    "contactEmail": {
-        "label": "Contact email",
-        "description": "Email address of the person to contact about the dataset."
+    "contactEmails": {
+        "label": "Contact emails",
+        "description": "Email addresses of the person or people to contact about the dataset."
     },
     "creationLocation": {
         "label": "Creation location",
