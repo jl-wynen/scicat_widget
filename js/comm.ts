@@ -1,5 +1,5 @@
 import { AnyModel } from "@anywidget/types";
-import { FileType } from "./components/labIcon.ts";
+import { FileType } from "./components/icon.ts";
 
 export type ReqInspectFile = {
     filename: string;

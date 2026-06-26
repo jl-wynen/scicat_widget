@@ -124,21 +124,19 @@ fieldset.cean-fields, fieldset.cean-multi-file-input {
     }
 }
 
-.cean-instrument-row {
-    grid-template-columns:
-        2fr
-        max-content 1fr;
-}
-
 .cean-run-info-row {
     grid-template-columns:
         1fr
-        max-content max-content
-        max-content max-content;
+        max-content 1fr;
+}
 
-    & > *:nth-child(2n+1) {
-        /* Ensure input columns can shrink and inputs don't overflow */
-        min-width: 0;
+.cean-times-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    & > div:first-child {
+        margin-right: auto;
     }
 }
 
@@ -255,45 +253,6 @@ input.cean-input, select.cean-input, textarea.cean-input {
 .cean-item-key {
     color: var(--jp-content-font-color3);
     font-family: monospace;
-}
-
-.cean-input-items {
-    list-style: none;
-    padding: 0;
-    margin: 0.5em 0 1em;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5em;
-
-    &:empty {
-        display: none;
-    }
-
-    li {
-        display: flex;
-        align-items: center;
-        background: var(--jp-layout-color2);
-        padding: 2px 8px;
-        gap: 4px;
-        border: var(--jp-border-width) solid var(--jp-layout-color3);
-        border-radius: var(--jp-border-radius);
-
-        span {
-            max-width: 200px;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-    }
-}
-
-.cean-combobox-manual {
-    display: grid;
-    grid-template-columns: 1fr max-content;
-
-    label {
-        margin-left: 1ex;
-    }
 }
 
 .cean-people {
@@ -622,7 +581,18 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
-.cean-techniques-item {
+.cean-compressed-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em;
+    padding-top: 0.4em;
+
+    .cean-selected-item {
+        margin: 0;
+    }
+}
+
+.cean-selected-item {
     display: flex;
     background: var(--jp-layout-color2);
     padding: 2px 8px;
@@ -630,29 +600,56 @@ input.cean-input, select.cean-input, textarea.cean-input {
     border-radius: var(--jp-border-radius);
     margin: 0.4em 0;
 
-    > div {
+    .cean-item-row {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
         flex-grow: 1;
+        column-gap: 0.5em;
+    }
 
-        .cean-item-key {
+    .cean-external-link {
+        visibility: hidden;
+        margin-left: auto;
+        margin-right: 0.4em;
+        align-content: center;
+
+        &:hover {
             color: var(--jp-content-link-color);
-            font-family: unset;
-            cursor: pointer;
+        }
+    }
 
-            &:hover {
-                color: var(--jp-content-link-color);
-                text-decoration: underline;
-            }
+    &:hover {
+        .cean-external-link {
+            visibility: visible;
         }
     }
 
     .cean-button {
         padding: 0;
+        margin-left: 0.5em;
         background: none;
         min-height: unset;
         font-size: 0.8em;
     }
+}
+
+.cean-item-detail-row {
+    color: var(--jp-content-font-color3);
+}
+
+.cean-proposal {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+
+    .cean-item-key {
+        font-weight: bold;
+        color: var(--jp-info-color1);
+    }
+}
+
+option:not(:last-child):has(.cean-proposal) {
+    border-bottom: 1px solid var(--jp-layout-color2);
 }
 
 .cean-modal-dialog {

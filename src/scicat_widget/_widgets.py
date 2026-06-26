@@ -163,9 +163,11 @@ def _serialize_proposal(proposal: ProposalOverview) -> dict[str, Any]:
     return {
         "id": proposal.id_,
         "title": proposal.title,
+        "startTime": proposal.start_time,
         "instrumentIds": proposal.instrument_ids,
         "piName": proposal.pi_name,
         "piEmail": proposal.pi_email,
+        "type": proposal.type,
     }
 
 

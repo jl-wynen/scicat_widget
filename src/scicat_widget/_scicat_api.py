@@ -47,9 +47,11 @@ def get_proposals(client: Client, access_groups: list[str]) -> list[ProposalOver
         ProposalOverview(
             id_=p["proposalId"],
             title=p["title"],
+            start_time=p["startTime"],
             instrument_ids=p["instrumentIds"],
             pi_name=_combine_pi_name(p),
             pi_email=p.get("pi_email", None),
+            type=p.get("type", None),
         )
         for p in proposals
         if p["proposalId"] in access_groups

@@ -1,5 +1,5 @@
 import { InputComponent } from "./components/input";
-import { Proposal, StaticData } from "./models.ts";
+import { StaticData } from "./models.ts";
 import { BackendComm, ResBuildField } from "./comm.ts";
 
 /**
@@ -26,33 +26,48 @@ function connectHardCoded(
 ) {
     connectInputPair(
         inputs,
-        "instrumentId",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            if (proposal.instrumentIds.length == 1) {
-                return proposal.instrumentIds[0];
+        "instrumentIds",
+        "proposalIds",
+        (destination: InputComponent<string[]>, proposalIds: string[] | null) => {
+            const instrumentIds = extractFieldsForIds(
+                staticData.proposals,
+                proposalIds,
+                "instrumentIds",
+            );
+            if (instrumentIds) {
+                destination.setSignaling(instrumentIds.flat(), false);
             } else {
-                return null;
+                destination.setSignaling(null, false);
             }
-        }),
+        },
     );
 
     connectInputPair(
         inputs,
-        "principalInvestigator",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piName;
-        }),
+        "principalInvestigators",
+        "proposalIds",
+        (destination: InputComponent<string[]>, ids: string[] | null) => {
+            const names = extractFieldsForIds(staticData.proposals, ids, "piName");
+            if (names) {
+                destination.setSignaling(names, false);
+            } else {
+                destination.setSignaling(null, false);
+            }
+        },
     );
 
     connectInputPair(
         inputs,
-        "contactEmail",
-        "proposalId",
-        setterFromItemId(staticData.proposals, (proposal: Proposal) => {
-            return proposal.piEmail;
-        }),
+        "contactEmails",
+        "proposalIds",
+        (destination: InputComponent<string[]>, ids: string[] | null) => {
+            const emails = extractFieldsForIds(staticData.proposals, ids, "piEmail");
+            if (emails) {
+                destination.setSignaling(emails, false);
+            } else {
+                destination.setSignaling(null, false);
+            }
+        },
     );
 }
 
@@ -94,8 +109,6 @@ function makeSource(requestedName: string, staticData: StaticData): Source {
     switch (requestedName) {
         case "instrumentNames":
             return makeInstrumentNamesSource(staticData);
-        case "proposalIds":
-            return makeProposalIdsSource();
         default:
             return {
                 requestedName,
@@ -110,34 +123,11 @@ function makeSource(requestedName: string, staticData: StaticData): Source {
 function makeInstrumentNamesSource(staticData: StaticData): Source {
     return {
         requestedName: "instrumentNames",
-        underlyingName: "instrumentId",
-        getter: (input): string[] | null => {
-            const id = input.value;
-            const item = staticData.instruments.find((item) => {
-                return item.id == id;
-            });
-            if (item) {
-                return [item.name];
-            } else {
-                // Manual input or null (manual input is instrument id, not name)
-                return null;
-            }
-        },
-    };
-}
-
-// TODO remove when we properly use api v4
-//   this is just a compatibility helper to produce plural `proposalIds`
-function makeProposalIdsSource(): Source {
-    return {
-        requestedName: "proposalIds",
-        underlyingName: "proposalId",
-        getter: (input): string[] | null => {
-            const id = input.value;
-            if (id === null) {
-                return null;
-            }
-            return [id];
+        underlyingName: "instrumentIds",
+        getter: (input: InputComponent<string[]>): string[] | null => {
+            return (
+                extractFieldsForIds(staticData.instruments, input.value, "name") ?? null
+            );
         },
     };
 }
@@ -209,22 +199,6 @@ function connectInputsForTarget(
     return key;
 }
 
-function setterFromItemId<T, Item extends { id: string }>(
-    collection: Item[],
-    makeValue: (item: Item) => T | null,
-) {
-    return (destination: InputComponent<T>, id: string | null) => {
-        const item = collection.find((item) => {
-            return item.id == id;
-        });
-        if (item) {
-            destination.setSignaling(makeValue(item), false);
-        } else {
-            destination.setSignaling(null, false);
-        }
-    };
-}
-
 function connectInputPair<Dst, Src>(
     inputs: Map<string, InputComponent<any>>,
     target: string,
@@ -234,4 +208,22 @@ function connectInputPair<Dst, Src>(
     const src = inputs.get(source);
     if (src === undefined) return;
     inputs.get(target)?.listenToInput(src, listener);
+}
+
+function extractFieldsForIds<T extends { id: string }, K extends keyof T>(
+    collection: T[],
+    ids: string[] | null,
+    key: K,
+): string[] | undefined {
+    return ids
+        ?.map((id: string) => {
+            const found = collection.find((item) => {
+                return item.id == id;
+            });
+            if (found === undefined) {
+                return undefined;
+            }
+            return found[key];
+        })
+        .filter((name) => !!name) as string[] | undefined;
 }

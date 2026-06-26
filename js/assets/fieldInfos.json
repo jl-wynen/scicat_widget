@@ -7,9 +7,9 @@
         "label": "Checksum algorithm",
         "description": "Algorithm for computing checksums of files. The default is a good choice for most cases."
     },
-    "contactEmail": {
-        "label": "Contact email",
-        "description": "Email address of the person to contact about the dataset."
+    "contactEmails": {
+        "label": "Contact emails",
+        "description": "Email addresses of the person or people to contact about the dataset."
     },
     "creationLocation": {
         "label": "Creation location",
@@ -27,9 +27,9 @@
         "label": "End",
         "description": "End time of data acquisition for the dataset."
     },
-    "instrumentId": {
-        "label": "Instrument",
-        "description": "The instrument where the data was taken."
+    "instrumentIds": {
+        "label": "Instruments",
+        "description": "The instruments where the data was recorded."
     },
     "isPublished": {
         "label": "Published",
@@ -67,13 +67,13 @@
         "label": "ORCID",
         "description": "ORCID iD of the person."
     },
-    "principalInvestigator": {
+    "principalInvestigators": {
         "label": "PI",
-        "description": "Principal investigator of the proposal."
+        "description": "Principal investigators of the proposals."
     },
-    "proposalId": {
-        "label": "Proposal",
-        "description": "The proposal, if any, under which this data was recorded or computed."
+    "proposalIds": {
+        "label": "Proposals",
+        "description": "The proposals, if any, under which this data was recorded or computed."
     },
     "relationships": {
         "label": "Relationships",

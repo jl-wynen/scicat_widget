@@ -1,13 +1,4 @@
-const FA_ICONS = [
-    "chevron-down",
-    "folder-open",
-    "pen",
-    "plus",
-    "times-circle",
-    "trash",
-];
-
-const CUSTOM_ICONS: Record<string, string> = {};
+import { createIcon } from "./icon.ts";
 
 /**
  * Create a button with text.
@@ -123,14 +114,4 @@ function createEmptyButton(callback: () => void, title?: string): HTMLButtonElem
     if (title !== undefined) button.title = title;
     button.addEventListener("click", callback);
     return button;
-}
-
-function createIcon(icon: string): HTMLElement {
-    const iconElement = document.createElement("i");
-    if (FA_ICONS.includes(icon)) {
-        iconElement.className = `fa fa-${icon}`;
-    } else {
-        iconElement.innerHTML = CUSTOM_ICONS[icon];
-    }
-    return iconElement;
 }

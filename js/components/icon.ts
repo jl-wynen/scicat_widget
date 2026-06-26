@@ -62,3 +62,24 @@ export function iconForFileType(fileType: FileType): LabIcon {
             return fileIcon;
     }
 }
+const FA_ICONS = [
+    "chevron-down",
+    "external-link-alt",
+    "folder-open",
+    "pen",
+    "plus",
+    "times-circle",
+    "trash",
+];
+
+const CUSTOM_ICONS: Record<string, string> = {};
+
+export function createIcon(icon: string): HTMLElement {
+    const iconElement = document.createElement("i");
+    if (FA_ICONS.includes(icon)) {
+        iconElement.className = `fa fa-${icon}`;
+    } else {
+        iconElement.innerHTML = CUSTOM_ICONS[icon];
+    }
+    return iconElement;
+}
