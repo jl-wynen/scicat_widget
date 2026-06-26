@@ -124,21 +124,19 @@ fieldset.cean-fields, fieldset.cean-multi-file-input {
     }
 }
 
-.cean-instrument-row {
-    grid-template-columns:
-        2fr
-        max-content 1fr;
-}
-
 .cean-run-info-row {
     grid-template-columns:
         1fr
-        max-content max-content
-        max-content max-content;
+        max-content 1fr;
+}
 
-    & > *:nth-child(2n+1) {
-        /* Ensure input columns can shrink and inputs don't overflow */
-        min-width: 0;
+.cean-times-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+
+    & > div:first-child {
+        margin-right: auto;
     }
 }
 

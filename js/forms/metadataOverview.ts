@@ -22,23 +22,7 @@ function createGeneralInfo(
     appendInput(generalInfo, inputs, "datasetName");
     appendInput(generalInfo, inputs, "description");
     appendInput(generalInfo, inputs, "proposalIds");
-
-    const instrumentId = inputs.get("instrumentIds");
-    if (instrumentId) {
-        generalInfo.appendChild(createLabelFor(instrumentId));
-
-        // Don't need an extra class name here, but wrap for consistency.
-        const instrumentIdWrap = document.createElement("div");
-        instrumentIdWrap.append(instrumentId.container);
-
-        const runInfoRow = document.createElement("div");
-        runInfoRow.className = "cean-input-grid cean-instrument-row";
-        runInfoRow.append(instrumentIdWrap);
-        appendInput(runInfoRow, inputs, "creationLocation");
-        generalInfo.appendChild(runInfoRow);
-    } else {
-        console.error("Input instrumentId not found");
-    }
+    appendInput(generalInfo, inputs, "instrumentIds");
 
     const runNumber = inputs.get("runNumber");
     if (runNumber) {
@@ -51,11 +35,27 @@ function createGeneralInfo(
         const runInfoRow = document.createElement("div");
         runInfoRow.className = "cean-input-grid cean-run-info-row";
         runInfoRow.append(runNumberWrap);
-        appendInput(runInfoRow, inputs, "startTime");
-        appendInput(runInfoRow, inputs, "endTime");
+        appendInput(runInfoRow, inputs, "creationLocation");
         generalInfo.appendChild(runInfoRow);
     } else {
         console.error("Input runNumber not found");
+    }
+
+    const startTime = inputs.get("startTime");
+    if (startTime) {
+        generalInfo.appendChild(createLabelFor(startTime));
+
+        // Don't need an extra class name here, but wrap for consistency.
+        const startTimeWrap = document.createElement("div");
+        startTimeWrap.append(startTime.container);
+
+        const timesRow = document.createElement("div");
+        timesRow.className = "cean-input-grid cean-times-row";
+        timesRow.append(startTimeWrap);
+        appendInput(timesRow, inputs, "endTime");
+        generalInfo.appendChild(timesRow);
+    } else {
+        console.error("Input startTime not found");
     }
     return generalInfo;
 }
