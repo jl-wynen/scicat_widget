@@ -133,20 +133,19 @@ def _collect_initial_data(
 
 def _serialize_dataset(dataset: Dataset) -> dict[str, Any]:
     # TODO reverse in upload
-    set = dataset.make_upload_model(strict_validation=False).model_dump(
-        exclude_none=True
-    )
-    if "investigator" in set:
-        # fallback for old field name
-        set["principalInvestigator"] = set.pop("investigator")
+    set = {
+        key: val for key, val in dataset.make_upload_fields().items() if val is not None
+    }
     if "techniques" in set:
         # TODO reverse in upload
-        set["techniques"] = [t["pid"].rsplit("/", 1)[-1] for t in set["techniques"]]
+        set["techniques"] = [t.pid.rsplit("/", 1)[-1] for t in set["techniques"]]
+    if "sourceFolder" in set:
+        set["sourceFolder"] = set["sourceFolder"].posix
 
     set["files"] = [
-        {"localPath": file.path}
-        for block in dataset.make_datablock_upload_models().orig_datablocks or ()
-        for file in block.dataFileList
+        {"localPath": os.fspath(file.local_path)}
+        for file in dataset.files
+        if file.local_path is not None
     ]
     return set
 
