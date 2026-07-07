@@ -1,7 +1,7 @@
 import { InputComponent, InputOptions } from "./inputComponent.ts";
 import { removeButton, textButton } from "../button.ts";
 
-export type ScientificMetadataItem = Map<string, string>;
+export type ScientificMetadataItem = Map<string, string | undefined>;
 
 type Schema = "plain" | "value-unit";
 
@@ -69,7 +69,13 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
             // This is data from Python (scientificMetadata is a dict)
             for (const [name, entry] of Object.entries(value)) {
                 const { value, unit } = entry as { value: string; unit?: string };
-                this.addNewRow({ name, value, unit });
+                this.addNewRow(
+                    new Map([
+                        ["name", name],
+                        ["value", value],
+                        ["unit", unit],
+                    ]),
+                );
             }
         }
     }

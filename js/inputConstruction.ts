@@ -52,7 +52,7 @@ export function createInputs(
         new TextInput("sampleId", {}),
         new TextInput("type", { required: true }),
         makeMultiTextInput("keywords"),
-        makeMultiTextInput("relationships"),
+        makeMultiTextInput("inputDatasets"),
         new ScientificMetadataInput("scientificMetadata", {
             schema: config.scientificMetadataSchema,
         }),

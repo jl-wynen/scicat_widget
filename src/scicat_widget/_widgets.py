@@ -41,7 +41,8 @@ class DatasetUploadWidget(anywidget.AnyWidget):
         *,
         initial: Dataset | None = None,
         skip_confirm: bool = False,
-    ) -> None:config = _build_config(client, skip_confirm=skip_confirm)
+    ) -> None:
+        config = _build_config(client, skip_confirm=skip_confirm)
         initial_data, static = _collect_initial_data(client, initial)
         super().__init__(
             config=config.model_dump(),

@@ -43,12 +43,16 @@ export class DatetimeInput extends InputComponent<Date> {
         return new Date(`${dateVal}T${timeVal}`);
     }
 
-    setSilent(value: Date | null) {
+    setSilent(value: Date | string | null) {
         if (!value) {
             this.dateElement.value = "";
             this.timeElement.value = "";
             return;
         }
+        if (!(value instanceof Date)) {
+            value = new Date(value);
+        }
+
         const localDate = new Date(value.getTime() - value.getTimezoneOffset() * 60000);
         const dateString = localDate.toISOString();
         this.dateElement.value = dateString.slice(0, 10);
