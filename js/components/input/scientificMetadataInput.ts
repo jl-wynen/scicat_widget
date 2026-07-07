@@ -65,6 +65,7 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
             for (const item of value) {
                 this.addNewRow(item);
             }
+            this.addNewRow();
         } else {
             // This is data from Python (scientificMetadata is a dict)
             for (const [name, entry] of Object.entries(value)) {
@@ -77,6 +78,7 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
                     ]),
                 );
             }
+            this.addNewRow();
         }
     }
 
