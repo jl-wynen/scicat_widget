@@ -47,7 +47,9 @@ async function render({ model, el }: RenderProps<WidgetModel>) {
         true,
     );
 
+    // lockFields must be after setInitialData to set the data before locks take effect.
     setInitialData(inputs, model.get("initial"));
+    lockFields(inputs, config.lockedFields);
 
     return () => {
         datasetOverview.destroy();
@@ -73,6 +75,17 @@ function setInitialData(
     for (const [key, value] of Object.entries(initialData)) {
         // userTriggered=true so that the fields written here are not overridden by update-handlers
         inputs.get(key)?.setSignaling(value, true);
+    }
+}
+
+function lockFields(inputs: Map<string, InputComponent<any>>, lockedFields: string[]) {
+    for (const name of lockedFields) {
+        const input = inputs.get(name);
+        if (input === undefined) {
+            console.warn(`Cannot lock field '${name}', field does not exist`);
+        } else {
+            input.lock();
+        }
     }
 }
 

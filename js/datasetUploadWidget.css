@@ -608,6 +608,15 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-input:disabled {
+    background: var(--jp-layout-color2);
+    border-color: var(--jp-layout-color2);
+
+    & + div .cean-clear-button {
+        display: none;
+    }
+}
+
 .cean-button[type="submit"] {
     /* SciCat brand color */
     background: #27aae1;
@@ -623,10 +632,23 @@ input.cean-input, select.cean-input, textarea.cean-input {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4em;
-    padding-top: 0.4em;
 
     .cean-selected-item {
         margin: 0;
+    }
+}
+
+.cean-selected-items, .cean-compressed-items {
+    margin: 0.4em 0;
+}
+
+.cean-locked {
+    .cean-selected-items, .cean-compressed-items {
+        margin: 0;
+    }
+
+    .cean-button {
+        display: none;
     }
 }
 
@@ -637,6 +659,16 @@ input.cean-input, select.cean-input, textarea.cean-input {
     border: var(--jp-border-width) solid var(--jp-layout-color3);
     border-radius: var(--jp-border-radius);
     margin: 0.4em 0;
+
+    /* Handle margin via parent to deal with locked inputs. */
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 
     .cean-item-row {
         display: flex;

@@ -103,6 +103,8 @@ export class ComboboxInput extends InputComponent<string> {
     }
 
     setSilent(value: string | null) {
+        if (this.locked) return;
+
         deselectAll(this.datalist);
         for (const option of this.datalist.options) {
             if (option.value == value) {
@@ -122,6 +124,11 @@ export class ComboboxInput extends InputComponent<string> {
         }
         this.error = value === null || value === "" ? "" : "Value not recognized";
         this.validate();
+    }
+
+    lock() {
+        super.lock();
+        this.searchBar.disabled = true;
     }
 
     get options(): HTMLCollectionOf<HTMLOptionElement> {

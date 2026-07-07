@@ -5,7 +5,7 @@ import inspect
 import os
 import pathlib
 import warnings
-from collections.abc import Callable
+from collections.abc import Callable, Iterable
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -42,9 +42,10 @@ class DatasetUploadWidget(anywidget.AnyWidget):
         /,
         *,
         initial: Dataset | None = None,
+        locked: Iterable[str] = (),
         skip_confirm: bool = False,
     ) -> None:
-        config = _build_config(client, skip_confirm=skip_confirm)
+        config = _build_config(client, locked=locked, skip_confirm=skip_confirm)
         initial_data, static = _collect_initial_data(client, initial)
         super().__init__(
             config=config.model_dump(),
@@ -83,6 +84,7 @@ class DatasetUploadWidget(anywidget.AnyWidget):
 def _build_config(
     client: Client,
     *,
+    locked: Iterable[str],
     skip_confirm: bool,
 ) -> Config:
     profile = client.profile
@@ -93,6 +95,7 @@ def _build_config(
             name: _extract_factory_dependencies(fn)
             for name, fn in profile.field_factories.items()
         },
+        lockedFields=list(locked),
         skipConfirmation=skip_confirm,
     )
 

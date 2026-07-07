@@ -9,6 +9,7 @@ export type Config = {
     frontendUrl: string | null;
     scientificMetadataSchema: "plain" | "value-unit";
     fieldDependencies: Record<string, string[]>;
+    lockedFields: string[];
     skipConfirmation: boolean;
 };
 

@@ -12,6 +12,7 @@ class Config(BaseModel):
     frontendUrl: str | None
     scientificMetadataSchema: ScientificMetadataSchema
     fieldDependencies: dict[str, list[str]]
+    lockedFields: list[str]
     skipConfirmation: bool
 
 

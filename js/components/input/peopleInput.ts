@@ -56,6 +56,14 @@ export class PeopleInput extends InputComponent<Person[]> {
         }
     }
 
+    lock() {
+        super.lock();
+        for (const person of this.peopleComponents.values()) {
+            person.lock();
+        }
+        this.container.classList.add("cean-locked");
+    }
+
     get id(): string {
         // There is no default input element a label could point to.
         return this.peopleContainer.id;
@@ -124,6 +132,12 @@ class PersonInput {
         this.nameInput.setSilent(value?.name ?? null);
         this.emailInput.setSilent(value?.email ?? null);
         this.orcidInput.setSilent(value?.orcid ?? null);
+    }
+
+    lock() {
+        this.nameInput.lock();
+        this.emailInput.lock();
+        this.orcidInput.lock();
     }
 
     get element(): HTMLFieldSetElement {
