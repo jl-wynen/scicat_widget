@@ -163,6 +163,9 @@ def _listify_owners(data: dict[str, Any]) -> dict[str, Any]:
     emails = _split_list_string(data.pop("ownerEmail", ""))
     orcids = _split_list_string(data.pop("orcidOfOwner", ""))
 
+    if not names and not emails and not orcids:
+        return data
+
     lengths = {l for l in (len(names), len(emails), len(orcids)) if l > 0}
     if len(lengths) != 1:
         raise ValueError(
