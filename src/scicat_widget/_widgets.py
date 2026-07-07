@@ -146,6 +146,8 @@ def _serialize_dataset(dataset: Dataset) -> dict[str, Any]:
     if "inputDatasets" in set:
         set["inputDatasets"] = [str(pid) for pid in set["inputDatasets"]]
 
+    set = _listify_owners(set)
+
     set["files"] = [
         {"localPath": os.fspath(file.local_path)}
         for file in dataset.files
