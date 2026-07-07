@@ -77,7 +77,7 @@ function createColumns(inputs: Map<string, InputComponent<unknown>>): HTMLDivEle
     misc.className = "cean-input-grid cean-fields";
     appendInput(misc, inputs, "techniques");
     appendInput(misc, inputs, "usedSoftware");
-    appendInput(misc, inputs, "sampleId");
+    appendInput(misc, inputs, "sampleIds");
 
     const relations = document.createElement("fieldset");
     relations.className = "cean-input-grid cean-fields";

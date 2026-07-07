@@ -49,7 +49,7 @@ export function createInputs(
         new TextInput("license", {}),
         makeTechniquesInput(staticData.techniques),
         makeMultiTextInput("usedSoftware"),
-        new TextInput("sampleId", {}),
+        makeMultiTextInput("sampleIds"),
         new TextInput("type", { required: true }),
         makeMultiTextInput("keywords"),
         makeMultiTextInput("inputDatasets"),
