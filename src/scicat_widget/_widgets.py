@@ -141,6 +141,10 @@ def _serialize_dataset(dataset: Dataset) -> dict[str, Any]:
         set["techniques"] = [t.pid.rsplit("/", 1)[-1] for t in set["techniques"]]
     if "sourceFolder" in set:
         set["sourceFolder"] = set["sourceFolder"].posix
+    if "contactEmail" in set:
+        set["contactEmails"] = set.pop("contactEmail").split(";")
+    if "inputDatasets" in set:
+        set["inputDatasets"] = [str(pid) for pid in set["inputDatasets"]]
 
     set["files"] = [
         {"localPath": os.fspath(file.local_path)}
