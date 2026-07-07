@@ -24,11 +24,13 @@ export type ResBrowseFiles = {
 export type ReqBuildField = {
     name: string;
     values: Record<string, any>;
+    existingValue: any; // value of the field to build when the callback was called
 };
 
 export type ResBuildField = {
     value?: unknown;
     error?: string;
+    existingValue: any; // value of the field to build when the callback was called
 };
 
 export type ReqUploadDataset = Record<string, any>;

@@ -174,7 +174,9 @@ function connectInputsForTarget(
     const responder = (payload: ResBuildField) => {
         if (payload.error !== undefined) {
             console.error(`Failed to build field ${targetName}: ${payload.error}`);
-        } else {
+        } else if (payload.existingValue == target.value) {
+            // If the component's value has changed while the builder was running,
+            // that value takes precedence.
             target.setSignaling(payload.value, false);
         }
     };
@@ -192,7 +194,11 @@ function connectInputsForTarget(
                 }
                 values[source.requestedName] = value;
             }
-            comm.sendReqBuildField(key, { name: targetName, values });
+            comm.sendReqBuildField(key, {
+                name: targetName,
+                values,
+                existingValue: target.value,
+            });
         });
     }
 
