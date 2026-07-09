@@ -27,6 +27,10 @@
         "label": "End",
         "description": "End time of data acquisition for the dataset."
     },
+    "inputDatasets": {
+        "label": "Input datasets",
+        "description": "Datasets that were used to produce the dataset."
+    },
     "instrumentIds": {
         "label": "Instruments",
         "description": "The instruments where the data was recorded."
@@ -87,9 +91,9 @@
         "label": "Run number",
         "description": "Facility or instrument run number that this data belongs to."
     },
-    "sampleId": {
-        "label": "Sample ID",
-        "description": "SciCat identifier for the sample that was used to record the data."
+    "sampleIds": {
+        "label": "Sample IDs",
+        "description": "SciCat identifiers for the samples that were used to record the data."
     },
     "scientificMetadata": {
         "label": "Scientific metadata",

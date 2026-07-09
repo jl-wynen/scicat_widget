@@ -10,7 +10,7 @@ export interface InputOptions<T> {
  * Base class for input widgets.
  */
 export abstract class InputComponent<T> {
-    /// A predicatable key for the input, e.g., 'dattasetName'.
+    /// A predicatable key for the input, e.g., 'datasetName'.
     private readonly _key: string;
     private readonly inputContainer: HTMLElement;
     protected readonly statusElement: HTMLOutputElement;
@@ -130,12 +130,10 @@ export abstract class InputComponent<T> {
 
     validate() {
         const element = this.validationElement;
-        if (
-            !(
-                element instanceof HTMLInputElement ||
-                element instanceof HTMLTextAreaElement
-            )
-        ) {
+        if (!(
+            element instanceof HTMLInputElement ||
+            element instanceof HTMLTextAreaElement
+        )) {
             return; // Element does not support validation
         }
 

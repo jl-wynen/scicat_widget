@@ -71,7 +71,8 @@ function setInitialData(
     initialData: Record<string, any>,
 ) {
     for (const [key, value] of Object.entries(initialData)) {
-        inputs.get(key)?.setSignaling(value, false);
+        // userTriggered=true so that the fields written here are not overridden by update-handlers
+        inputs.get(key)?.setSignaling(value, true);
     }
 }
 

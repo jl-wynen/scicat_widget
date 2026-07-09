@@ -131,6 +131,7 @@ function createFileItem(
 
     const localPath = pathOutput(file.localPath);
     const localPathLabel = createLabel(localPath, "localPath");
+    localPathLabel.htmlFor = localPath.id;
 
     const remotePathInput = new TextInput("remotePath", {});
     remotePathInput.placeholder = file.remotePath ?? "";

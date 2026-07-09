@@ -39,13 +39,14 @@ class DatasetUploadWidget(anywidget.AnyWidget):
         client: Client,
         /,
         *,
+        initial: Dataset | None = None,
         skip_confirm: bool = False,
     ) -> None:
         config = _build_config(client, skip_confirm=skip_confirm)
-        initial, static = _collect_initial_data(client)
+        initial_data, static = _collect_initial_data(client, initial)
         super().__init__(
             config=config.model_dump(),
-            initial=initial,
+            initial=initial_data,
             staticData=static,
             client=client,  # TODO create client here if not given
         )
@@ -109,7 +110,7 @@ def _call_field_factory(factory: Callable[..., Any], args: dict[str, Any]) -> An
 
 
 def _collect_initial_data(
-    client: Client | None = None,
+    client: Client | None = None, initial: Dataset | None = None
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     if client is None:
         return {}, {}
@@ -124,7 +125,72 @@ def _collect_initial_data(
         "techniques": _load_techniques(),
     }
 
+    if initial is not None:
+        initial_data.update(_serialize_dataset(initial))
+
     return initial_data, static_data
+
+
+def _serialize_dataset(dataset: Dataset) -> dict[str, Any]:
+    # TODO reverse in upload
+    set = {
+        key: val for key, val in dataset.make_upload_fields().items() if val is not None
+    }
+    if "techniques" in set:
+        # TODO reverse in upload
+        set["techniques"] = [t.pid.rsplit("/", 1)[-1] for t in set["techniques"]]
+    if "sourceFolder" in set:
+        set["sourceFolder"] = set["sourceFolder"].posix
+    if "contactEmail" in set:
+        set["contactEmails"] = set.pop("contactEmail").split(";")
+    if "inputDatasets" in set:
+        set["inputDatasets"] = [str(pid) for pid in set["inputDatasets"]]
+
+    set = _listify_owners(set)
+
+    set["files"] = [
+        {"localPath": os.fspath(file.local_path)}
+        for file in dataset.files
+        if file.local_path is not None
+    ]
+    return set
+
+
+def _listify_owners(data: dict[str, Any]) -> dict[str, Any]:
+    data = dict(data)
+
+    names = _split_list_string(data.pop("owner", ""))
+    emails = _split_list_string(data.pop("ownerEmail", ""))
+    orcids = _split_list_string(data.pop("orcidOfOwner", ""))
+
+    if not names and not emails and not orcids:
+        return data
+
+    lengths = {l for l in (len(names), len(emails), len(orcids)) if l > 0}
+    if len(lengths) != 1:
+        raise ValueError(
+            "Need an equal number of entries in 'owner', 'owner_email', and "
+            f"'orcid_of_owner'. Got {len(names)}, {len(emails)}, and {len(orcids)}"
+        )
+    n = next(iter(lengths))
+    names = names or [""] * n
+    emails = emails or [""] * n
+    orcids = orcids or [""] * n
+
+    data["owners"] = [
+        {"name": name or None, "email": email or None, "orcid": orcid or None}
+        for name, email, orcid in zip(names, emails, orcids, strict=False)
+    ]
+
+    return data
+
+
+def _split_list_string(string: str) -> list[str]:
+    string = string.strip()
+    if not string:
+        return []  # the code below would return [''] in this case
+    # Keep empty strings to get a proper number of elements.
+    return [s.strip() for s in string.split(";")]
 
 
 def _download_scicat_data(
