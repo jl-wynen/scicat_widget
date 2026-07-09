@@ -130,12 +130,10 @@ export abstract class InputComponent<T> {
 
     validate() {
         const element = this.validationElement;
-        if (
-            !(
-                element instanceof HTMLInputElement ||
-                element instanceof HTMLTextAreaElement
-            )
-        ) {
+        if (!(
+            element instanceof HTMLInputElement ||
+            element instanceof HTMLTextAreaElement
+        )) {
             return; // Element does not support validation
         }
 
