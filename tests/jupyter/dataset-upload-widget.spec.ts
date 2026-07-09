@@ -14,11 +14,9 @@ test.describe("Dataset upload", () => {
         await page.notebook.openByPath(nbPath);
         await page.notebook.activate(nbPath);
         const widgetCell = 0;
-
         for (let i = 0; i <= widgetCell; i++) {
             expect(await page.notebook.runCell(i)).toBe(true);
         }
-
         const locator = await page.notebook.getCellOutputLocator(widgetCell);
         if (locator === null) throw new Error("Could not find output locator");
 
@@ -69,11 +67,9 @@ test.describe("Dataset upload", () => {
         await page.notebook.openByPath(nbPath);
         await page.notebook.activate(nbPath);
         const widgetCell = 0;
-
         for (let i = 0; i <= widgetCell; i++) {
             expect(await page.notebook.runCell(i)).toBe(true);
         }
-
         const locator = await page.notebook.getCellOutputLocator(widgetCell);
         if (locator === null) throw new Error("Could not find output locator");
 
@@ -189,8 +185,6 @@ test.describe("Dataset upload", () => {
         expect(await locator.getByLabel("Remote path").inputValue()).toBe("");
     });
 });
-
-// TODO test file buttons
 
 function expectDate(date: string, time: string, expected: string, message: string) {
     const expectedDate = new Date(expected);
