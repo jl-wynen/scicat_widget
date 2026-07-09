@@ -2,20 +2,10 @@ import { expect, galata, test } from "@jupyterlab/galata";
 
 import * as path from "path";
 
-const NOTEBOOK_FILES = [
-    "dataset_upload_widget.ipynb",
-    "dataset_upload_widget_initial_data.ipynb",
-];
-
 test.describe("Dataset upload", () => {
     test.beforeEach(async ({ page, tmpPath }) => {
         const contents = galata.newContentsHelper(undefined, page);
-        for (const fileName of NOTEBOOK_FILES) {
-            await contents.uploadFile(
-                path.resolve(__dirname, `./notebooks/${fileName}`),
-                `${tmpPath}/${fileName}`,
-            );
-        }
+        await contents.uploadDirectory(path.resolve(__dirname, "./assets"), tmpPath);
         await page.filebrowser.refresh();
     });
 
