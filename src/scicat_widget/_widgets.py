@@ -173,9 +173,9 @@ def _listify_owners(data: dict[str, Any]) -> dict[str, Any]:
             f"'orcid_of_owner'. Got {len(names)}, {len(emails)}, and {len(orcids)}"
         )
     n = next(iter(lengths))
-    names = names or [None] * n
-    emails = emails or [None] * n
-    orcids = orcids or [None] * n
+    names = names or [""] * n
+    emails = emails or [""] * n
+    orcids = orcids or [""] * n
 
     data["owners"] = [
         {"name": name or None, "email": email or None, "orcid": orcid or None}
