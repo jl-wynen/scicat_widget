@@ -38,15 +38,19 @@ test.describe("Dataset upload", () => {
         await locator.getByRole("tab", { name: /Files/ }).click();
         await locator.getByLabel("Source folder").fill("/source/folder");
 
+        // ----- Files -----
         const fileInput = locator.getByLabel("Input new file");
         await fileInput.fill(nbPath);
         await fileInput.press("Enter");
         await expect(locator.getByLabel("Remote path")).toHaveCount(1);
 
+        // ----- Attachments -----
         await locator.getByRole("tab", { name: /Attachments/ }).click();
         const attachmentInput = locator.getByLabel("Input new attachment");
-        await attachmentInput.fill(nbPath);
+        await attachmentInput.fill("scicat.png");
         await attachmentInput.press("Enter");
+        // Wait for the attachment to be added, if we proceeded without this, the
+        // attachment might get registered in time.
         await expect(locator.getByLabel("Caption")).toHaveCount(1);
 
         // TODO check times: UI: local, model: UTC
@@ -119,15 +123,70 @@ test.describe("Dataset upload", () => {
         expectDate(
             await locator.getByLabel("Start").inputValue(),
             await locator.locator('input[type="time"]').first().inputValue(),
-            "2020-02-01T01:01:01Z",
+            "2020-02-01T00:00:00Z",
             "Start",
         );
         expectDate(
             await locator.getByLabel("End").inputValue(),
-            await locator.locator('input[type="time"]').first().inputValue(),
+            await locator.locator('input[type="time"]').last().inputValue(),
             "2025-06-23T09:57:30Z",
             "End",
         );
+
+        // Owners
+        const names = locator.getByLabel(/^Name$/);
+        await expect(names, "Number of names").toHaveCount(2);
+        expect(await names.nth(0).inputValue(), "Owner Name 1").toBe("Ponder Stibbons");
+        expect(await names.nth(1).inputValue(), "Owner Name 2").toBe(
+            "Mustrum Ridcully",
+        );
+        const emails = locator.getByLabel(/^Email$/);
+        await expect(emails, "Number of emails").toHaveCount(2);
+        expect(await emails.nth(0).inputValue(), "Owner Email 1").toBe(
+            "stibbons@uu.edu",
+        );
+        expect(await emails.nth(1).inputValue(), "Owner Email 2").toBe("");
+        const orcids = locator.getByLabel("ORCID");
+        await expect(orcids, "Number of orcids").toHaveCount(2);
+        expect(await orcids.nth(0).inputValue(), "Owner ORCID 1").toBe("");
+        expect(await orcids.nth(1).inputValue(), "Owner ORCID 2").toBe(
+            "0000-0000-0000-0001",
+        );
+
+        // Scientific metadata
+        const expectedMetadata = [
+            ["both", "600000", "km/s"],
+            ["value-only", "3.14", ""],
+            ["unit only", "", "m^2"],
+            ["neither", "", ""],
+            ["", "", ""],
+        ];
+        const metadata = locator.locator(".cean-scientific-metadata tbody");
+        for (let i = 0; i < expectedMetadata.length; i++) {
+            const row = metadata.locator(`tr:nth-child(${i + 1})`);
+            const [name, value, unit] = expectedMetadata[i];
+            expect(
+                await row.locator("td:nth-child(1) > .cean-input").inputValue(),
+                `metadata ${i} name`,
+            ).toBe(name);
+            expect(
+                await row.locator("td:nth-child(2) > .cean-input").inputValue(),
+                `metadata ${i} value`,
+            ).toBe(value);
+            expect(
+                await row.locator("td:nth-child(3) > .cean-input").inputValue(),
+                `metadata ${i} unit`,
+            ).toBe(unit);
+        }
+
+        // ----- Files -----
+        await locator.getByRole("tab", { name: /Files/ }).click();
+        expect(await locator.getByLabel("Source folder").inputValue()).toBe(
+            "/scicat/upload",
+        );
+
+        expect(await locator.getByLabel("Local path").textContent()).toBe("data.csv");
+        expect(await locator.getByLabel("Remote path").inputValue()).toBe("");
     });
 });
 
