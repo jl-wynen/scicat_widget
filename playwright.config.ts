@@ -63,8 +63,8 @@ export default defineConfig({
 
         // TODO other browsers?
         {
-            name: "e2e-chromium",
-            testDir: "./tests/e2e",
+            name: "jupyter-chromium",
+            testDir: "./tests/jupyter",
             testMatch: /.*\.spec\.ts$/,
             timeout: 20_000, // Jupyter setup is slow
             workers: 1, // tests can be flaky with multiple workers
@@ -131,7 +131,7 @@ export default defineConfig({
             // JupyterLab for Galata
             command:
                 "npm run build && " +
-                "uv run jupyter lab --config ./tests/e2e/jupyter_server_test_config.py " +
+                "uv run jupyter lab --config ./tests/jupyter/jupyter_server_test_config.py " +
                 `--port=${JUPYTER_PORT}`,
             url: `http://localhost:${JUPYTER_PORT}/lab`,
             timeout: 120_000,
