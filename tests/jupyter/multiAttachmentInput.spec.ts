@@ -31,7 +31,7 @@ test.describe("MultiAttachmentInput", () => {
         await attachmentInput.fill("scicat.png");
         await attachmentInput.press("Enter");
         // Wait for the attachment to be added, if we proceeded without this, the
-        // attachment might get registered in time.
+        // attachment might not get registered in time.
         await expect(locator.getByLabel("Caption")).toHaveCount(1);
 
         await attachmentInput.fill(nbPath);
