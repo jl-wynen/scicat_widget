@@ -25,7 +25,7 @@ requires-python = ">=3.11"
 dependencies = [
     "anywidget>=0.9.21",
     "ipykernel>=6.30.1",
-    "jupyter-host-file-picker>=26.2.1",
+    "jupyter-host-file-picker>=26.6.0",
     "pydantic>=2.12",
     "scitacean>=26.7.0",
 ]
@@ -82,7 +82,7 @@ filterwarnings = [
 [tool.mypy]
 plugins = "pydantic.mypy"
 mypy_path = "src"
-exclude = ["docs/conf.py", "tests/e2e/jupyter_server_test_config.py", "venv", ".venv"]
+exclude = ["docs/conf.py", "tests/jupyter/jupyter_server_test_config.py", "venv", ".venv"]
 ignore_missing_imports = true
 enable_error_code = [
     "ignore-without-code",
