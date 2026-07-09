@@ -1,25 +1,32 @@
-import { expect, test } from "@jupyterlab/galata";
+import { expect, galata, test } from "@jupyterlab/galata";
 
 import * as path from "path";
 
+const NOTEBOOK_FILES = [
+    "dataset_upload_widget.ipynb",
+    "dataset_upload_widget_initial_data.ipynb",
+];
+
 test.describe("Dataset upload", () => {
     test.beforeEach(async ({ page, tmpPath }) => {
-        await page.contents.uploadDirectory(
-            path.resolve(__dirname, "./notebooks"),
-            tmpPath,
-        );
-        await page.filebrowser.openDirectory(tmpPath);
+        const contents = galata.newContentsHelper(undefined, page);
+        for (const fileName of NOTEBOOK_FILES) {
+            await contents.uploadFile(
+                path.resolve(__dirname, `./notebooks/${fileName}`),
+                `${tmpPath}/${fileName}`,
+            );
+        }
+        await page.filebrowser.refresh();
     });
 
-    test("Create widget, fill inputs, and run upload", async ({ page, tmpPath }) => {
-        const notebook = "dataset_upload_widget.ipynb";
-        await page.notebook.openByPath(`${tmpPath}/${notebook}`);
-        await page.notebook.activate(notebook);
-
+    test("Create widget, fill inputs, and run upload", async ({ page }) => {
+        const nbPath = "dataset_upload_widget.ipynb";
+        await page.notebook.openByPath(nbPath);
+        await page.notebook.activate(nbPath);
         const widgetCell = 0;
 
         for (let i = 0; i <= widgetCell; i++) {
-            expect(await page.notebook.runCell(i));
+            expect(await page.notebook.runCell(i)).toBe(true);
         }
 
         const locator = await page.notebook.getCellOutputLocator(widgetCell);
@@ -41,10 +48,16 @@ test.describe("Dataset upload", () => {
         await locator.getByRole("tab", { name: /Files/ }).click();
         await locator.getByLabel("Source folder").fill("/source/folder");
 
-        // TODO might need to wait here
-        await locator.getByLabel("Input new file").fill("README.md");
+        const fileInput = locator.getByLabel("Input new file");
+        await fileInput.fill(nbPath);
+        await fileInput.press("Enter");
+        await expect(locator.getByLabel("Remote path")).toHaveCount(1);
 
-        expect((await locator.getByLabel("Remote path").count()) == 1);
+        await locator.getByRole("tab", { name: /Attachments/ }).click();
+        const attachmentInput = locator.getByLabel("Input new attachment");
+        await attachmentInput.fill(nbPath);
+        await attachmentInput.press("Enter");
+        await expect(locator.getByLabel("Caption")).toHaveCount(1);
 
         // await locator.getByRole("button", { name: "Upload dataset" }).click();
         // // TODO need to get dialog locator
@@ -56,10 +69,3 @@ test.describe("Dataset upload", () => {
         expect(await page.notebook.runCell(2));
     });
 });
-
-// Navigation with tab key:
-// await page
-//     .locator("section")
-//     .filter({ hasText: "NameDescriptionProposalSelect" })
-//     .getByLabel("Name")
-//     .press("Tab");
