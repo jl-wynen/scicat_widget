@@ -59,6 +59,7 @@ export function createLabel(
  */
 export function pathOutput(path: string): HTMLOutputElement {
     const el = outputLeftOverflow(path);
+    el.id = crypto.randomUUID();
     el.classList.add("cean-path");
     return el;
 }
