@@ -61,7 +61,6 @@ export default defineConfig({
         //     },
         // },
 
-        // TODO other browsers?
         {
             name: "jupyter-chromium",
             testDir: "./tests/jupyter",
@@ -73,51 +72,17 @@ export default defineConfig({
                 baseURL: `http://localhost:${JUPYTER_PORT}`,
             },
         },
-
-        // {
-        //     name: "jupyterlab-firefox",
-        //     testMatch: "test/jupyterlab/**/*.test.ts",
-        //     testIgnore: "**/.ipynb_checkpoints/**",
-        //     use: {
-        //         contextOptions: {
-        //             // https://github.com/microsoft/playwright/issues/13037
-        //             permissions: [],
-        //         },
-        //         browserName: "firefox",
-        //     },
-        //     // We do not want to match exactly on Firefox
-        //     ignoreSnapshots: true,
-        // },
-
-        // {
-        //     name: "firefox",
-        //     use: { ...devices["Desktop Firefox"] },
-        // },
-
-        // {
-        //     name: "webkit",
-        //     use: { ...devices["Desktop Safari"] },
-        // },
-
-        /* Test against mobile viewports. */
-        // {
-        //   name: 'Mobile Chrome',
-        //   use: { ...devices['Pixel 5'] },
-        // },
-        // {
-        //   name: 'Mobile Safari',
-        //   use: { ...devices['iPhone 12'] },
-        // },
-
-        /* Test against branded browsers. */
-        // {
-        //   name: 'Microsoft Edge',
-        //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-        // },
-        // {
-        //   name: 'Google Chrome',
-        //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-        // },
+        {
+            name: "jupyter-firefox",
+            testDir: "./tests/jupyter",
+            testMatch: /.*\.spec\.ts$/,
+            timeout: 20_000, // Jupyter setup is slow
+            workers: 1, // tests can be flaky with multiple workers
+            use: {
+                ...devices["Desktop Firefox"],
+                baseURL: `http://localhost:${JUPYTER_PORT}`,
+            },
+        },
     ],
 
     /* Run your local dev server before starting the tests */
