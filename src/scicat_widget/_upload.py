@@ -41,6 +41,7 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     """Construct a Scitacean dataset from widget data."""
     converted = _convert_field_names(data)
 
+    converted["contact_email"] = _concat_list(data.get("contactEmails", None))
     converted.update(_convert_owners(data.get("owners", [])))
     converted.update(_convert_relationships(converted.pop("relationships", None)))
     converted.update(_convert_scientific_metadata(data.get("scientificMetadata", [])))
@@ -54,6 +55,12 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     for attachment in attachments:
         dataset.add_attachment(attachment["path"], caption=attachment["caption"])
     return dataset
+
+
+def _concat_list(values: list[str] | None) -> str | None:
+    if values is None:
+        return None
+    return ";".join(values)
 
 
 def _convert_owners(owners: list[dict[str, str]] | None) -> dict[str, str]:
