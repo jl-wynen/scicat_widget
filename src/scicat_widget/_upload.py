@@ -133,10 +133,8 @@ def _convert_attachments(
 
 
 def _convert_field_names(widget_data: dict[str, Any]) -> dict[str, Any]:
-    converted = {
+    return {
         field.name: value
         for field in Dataset.fields()
         if (value := widget_data.get(field.scicat_name)) is not None
     }
-    converted["investigator"] = converted.get("principal_investigator", None)
-    return converted
