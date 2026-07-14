@@ -2,6 +2,7 @@ import {
     ComboboxInput,
     ComboboxManualInput,
     InputComponent,
+    RadioInput,
     TextInput,
 } from "../../../js/components/input";
 
@@ -11,6 +12,7 @@ const INPUT_COMPONENT_TYPES: Record<
 > = {
     combobox: ComboboxInput,
     comboboxManual: ComboboxManualInput,
+    radio: RadioInput,
     text: TextInput,
 };
 

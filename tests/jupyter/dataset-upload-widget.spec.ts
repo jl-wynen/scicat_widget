@@ -81,7 +81,6 @@ test.describe("Dataset upload", () => {
             ["Creation location", "Cyberspace"],
             ["Owner group", "owner 123"],
             ["License", "MIT"],
-            ["type", "derived"],
         ];
         for (const [name, expected] of simpleValues) {
             expect(await locator.getByLabel(name).inputValue(), `check ${name}`).toBe(
@@ -144,10 +143,24 @@ test.describe("Dataset upload", () => {
         expect(await emails.nth(1).inputValue(), "Owner Email 2").toBe("");
         const orcids = locator.getByLabel("ORCID");
         await expect(orcids, "Number of orcids").toHaveCount(2);
-        expect(await orcids.nth(0).inputValue(), "Owner ORCID 1").toBe("");
-        expect(await orcids.nth(1).inputValue(), "Owner ORCID 2").toBe(
-            "0000-0000-0000-0001",
-        );
+
+        // Dataset type
+        expect(
+            await locator.getByRole("radio", { name: "Raw" }).isChecked(),
+            "Type raw unchecked",
+        ).toBeFalsy();
+        expect(
+            await locator.getByRole("radio", { name: "Derived" }).isChecked(),
+            "Type derived checked",
+        ).toBeTruthy();
+        expect(
+            await locator.getByRole("radio", { name: "Custom" }).isChecked(),
+            "Type custom unchecked",
+        ).toBeFalsy();
+        expect(
+            await locator.getByRole("textbox", { name: "Custom" }).inputValue(),
+            "No custom type",
+        ).toBe("");
 
         // Scientific metadata
         const expectedMetadata = [

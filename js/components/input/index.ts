@@ -7,5 +7,6 @@ export { MultiAttachmentInput } from "./multiAttachmentInput.ts";
 export { MultiFileInput } from "./multiFileInput.ts";
 export { MultiInput } from "./multiInput.ts";
 export { PeopleInput } from "./peopleInput.ts";
+export { RadioInput } from "./radioInput.ts";
 export { ScientificMetadataInput } from "./scientificMetadataInput.ts";
 export { TextInput } from "./textInput.ts";

@@ -7,6 +7,7 @@ import {
     MultiFileInput,
     MultiInput,
     PeopleInput,
+    RadioInput,
     ScientificMetadataInput,
     TextInput,
 } from "./components/input";
@@ -50,7 +51,7 @@ export function createInputs(
         makeTechniquesInput(staticData.techniques),
         makeMultiTextInput("usedSoftware"),
         makeMultiTextInput("sampleIds"),
-        new TextInput("type", { required: true }),
+        makeDatasetTypeInput(),
         makeMultiTextInput("keywords"),
         makeMultiTextInput("inputDatasets"),
         new ScientificMetadataInput("scientificMetadata", {
@@ -86,6 +87,27 @@ function makeMultiTextInput(
         compressedItems: true,
         addButton: true,
         required,
+    });
+}
+
+function makeDatasetTypeInput(): RadioInput {
+    return new RadioInput("type", {
+        required: true,
+        choices: [
+            {
+                value: "raw",
+                display: "Raw",
+                description:
+                    "A dataset without predecessors (in the same SciCat catalogue)",
+            },
+            {
+                value: "derived",
+                display: "Derived",
+                description:
+                    "A dataset with predecessors (specify in 'Input datasets')",
+            },
+        ],
+        initial: "derived",
     });
 }
 

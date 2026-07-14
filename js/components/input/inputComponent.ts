@@ -139,10 +139,6 @@ export abstract class InputComponent<T> {
 
         if (this.customValidator) {
             const value = this.value;
-            if (value === null) {
-                element.setCustomValidity("");
-                return;
-            }
             const message = this.customValidator(value);
             element.setCustomValidity(message || "");
         }
