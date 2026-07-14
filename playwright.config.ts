@@ -65,7 +65,7 @@ export default defineConfig({
             name: "jupyter-chromium",
             testDir: "./tests/jupyter",
             testMatch: /.*\.spec\.ts$/,
-            timeout: 20_000, // Jupyter setup is slow
+            timeout: 60_000, // Jupyter setup is slow
             workers: 1, // tests can be flaky with multiple workers
             use: {
                 ...devices["Desktop Chrome"],
@@ -76,7 +76,7 @@ export default defineConfig({
             name: "jupyter-firefox",
             testDir: "./tests/jupyter",
             testMatch: /.*\.spec\.ts$/,
-            timeout: 20_000, // Jupyter setup is slow
+            timeout: 60_000, // Jupyter setup is slow
             workers: 1, // tests can be flaky with multiple workers
             use: {
                 ...devices["Desktop Firefox"],
