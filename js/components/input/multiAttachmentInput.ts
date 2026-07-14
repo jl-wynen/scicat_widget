@@ -49,15 +49,15 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
     setSilent(value: Attachment[] | null) {
         this.clear();
         for (const attachment of value || []) {
-            this.loadImage(attachment.localPath, attachment.caption);
+            this.addAttachment(null, attachment.data, attachment.caption);
         }
     }
 
     get value(): Attachment[] | null {
         return (
             this.attachments.map((view) => {
-                const [localPath, caption] = view.value;
-                return { localPath, caption };
+                const [data, caption] = view.value;
+                return { data, caption };
             }) || null
         );
     }
@@ -88,17 +88,25 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
         } else if (!response.image) {
             this.errorOutput.value = `Failed to load file '${response.path}': Received no image`;
         } else {
-            this.newAttachmentInput.setSilent(null);
-            const view = new AttachmentView(
-                response.path,
-                response.image,
-                response.caption ?? "",
-                this.removeAttachment.bind(this),
-            );
-            this.attachments.push(view);
-            this.attachmentsContainer.append(view.container);
+            this.addAttachment(response.path, response.image, response.caption ?? "");
         }
         this.updated();
+    }
+
+    private addAttachment(
+        path: string | null,
+        data: string,
+        caption: string | undefined,
+    ) {
+        this.newAttachmentInput.setSilent(null);
+        const view = new AttachmentView(
+            path,
+            data,
+            caption ?? "",
+            this.removeAttachment.bind(this),
+        );
+        this.attachments.push(view);
+        this.attachmentsContainer.append(view.container);
     }
 
     private removeAttachment(view: AttachmentView) {
@@ -112,18 +120,18 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
 
 class AttachmentView {
     readonly container: HTMLFieldSetElement;
-    private readonly image: string;
+    private readonly data: string;
     private readonly captionInput: TextInput;
 
     constructor(
-        path: string,
-        image: string,
+        path: string | null,
+        data: string,
         caption: string,
         onRemove: (view: AttachmentView) => void,
     ) {
-        this.image = image;
+        this.data = data;
 
-        const pathField = pathOutput(path);
+        const pathField = pathOutput(path ?? "<unknown>");
 
         const pathLabel = document.createElement("label");
         pathLabel.setAttribute("for", pathField.id);
@@ -140,7 +148,7 @@ class AttachmentView {
 
         const imageContainer = document.createElement("div");
         imageContainer.classList = "cean-image-container";
-        imageContainer.append(makeImg(image));
+        imageContainer.append(makeImg(data));
 
         const button = removeButton(() => {
             onRemove(this);
@@ -160,7 +168,7 @@ class AttachmentView {
     }
 
     get value(): [string, string] {
-        return [this.image, this.captionInput.value || this.captionInput.placeholder];
+        return [this.data, this.captionInput.value || this.captionInput.placeholder];
     }
 }
 

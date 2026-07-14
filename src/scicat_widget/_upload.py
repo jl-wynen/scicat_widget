@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
-from scitacean import PID, Client, Dataset, File, model
+from scitacean import PID, Client, Dataset, File, Thumbnail, model
 
 
 def upload_dataset(
@@ -53,7 +53,9 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     dataset = Dataset(**converted)
     dataset.add_files(*files)
     for attachment in attachments:
-        dataset.add_attachment(attachment["path"], caption=attachment["caption"])
+        dataset.add_attachment(
+            Thumbnail.parse(attachment["data"]), caption=attachment["caption"]
+        )
     return dataset
 
 
@@ -127,7 +129,7 @@ def _convert_attachments(
     attachments: list[dict[str, str]],
 ) -> list[dict[str, Any]]:
     return [
-        {"path": attachment.get("path", ""), "caption": attachment.get("caption", "")}
+        {"data": attachment["data"], "caption": attachment.get("caption", "")}
         for attachment in attachments
     ]
 
