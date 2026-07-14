@@ -4,7 +4,7 @@
  * @param value The value to validate.
  * @returns An error message if the value is invalid, or `null` if it's valid.
  */
-export type Validator<T> = (value: T) => string | null;
+export type Validator<T> = (value: T | null) => string | null;
 
 /**
  * Validate ORCID iDs.
@@ -14,7 +14,8 @@ export type Validator<T> = (value: T) => string | null;
  * @param orcid The string to validate.
  * @returns Error message if the ID is invalid, or `null` if it's valid.'
  */
-export function validateOrcid(orcid: string): string | null {
+export function validateOrcid(orcid: string | null): string | null {
+    if (orcid === null) return null;
     return checkOrcidId(orcid);
 }
 

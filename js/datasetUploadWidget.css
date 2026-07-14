@@ -209,6 +209,44 @@ input.cean-input, select.cean-input, textarea.cean-input {
     align-items: start;
 }
 
+.cean-radio-group {
+    border: none;
+    padding: 0;
+    margin: 0;
+
+    div:not(:first-child) {
+        margin-top: 0.4em;
+    }
+
+    label {
+        /* Use a padding on the label instead of a margin on the label or checkbox
+           so that the user can click the space between checkbox and label.
+         */
+        padding-left: 0.4em;
+    }
+
+    input[type="radio"] {
+        /* Select a good contrast for both default themes. */
+        accent-color: light-dark(var(--jp-brand-color1), var(--jp-brand-color2));
+        margin: 0;
+    }
+
+    .cean-radio-custom-row {
+        display: flex;
+        align-items: center;
+
+        label {
+            display: none;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            min-width: 0;
+            margin-left: 0.4em;
+        }
+    }
+}
+
 .cean-combobox {
     position: relative;
 
