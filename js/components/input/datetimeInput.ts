@@ -44,6 +44,8 @@ export class DatetimeInput extends InputComponent<Date> {
     }
 
     setSilent(value: Date | string | null) {
+        if (this.locked) return;
+
         if (!value) {
             this.dateElement.value = "";
             this.timeElement.value = "";
@@ -57,5 +59,11 @@ export class DatetimeInput extends InputComponent<Date> {
         const dateString = localDate.toISOString();
         this.dateElement.value = dateString.slice(0, 10);
         this.timeElement.value = dateString.slice(11, 19);
+    }
+
+    lock() {
+        super.lock();
+        this.dateElement.disabled = true;
+        this.timeElement.disabled = true;
     }
 }

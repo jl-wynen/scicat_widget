@@ -15,6 +15,7 @@ export abstract class InputComponent<T> {
     private readonly inputContainer: HTMLElement;
     protected readonly statusElement: HTMLOutputElement;
     protected readonly wrapElement: HTMLDivElement;
+    protected locked: boolean = false;
 
     readonly required: boolean;
     customValidator: Validator<T> | null;
@@ -71,6 +72,10 @@ export abstract class InputComponent<T> {
     setSignaling(value: T | null, userTriggered: boolean = true) {
         this.setSilent(value);
         this.updated(userTriggered);
+    }
+
+    lock() {
+        this.locked = true;
     }
 
     /**

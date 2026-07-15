@@ -84,6 +84,17 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
         return this.tableBody.id;
     }
 
+    lock() {
+        super.lock();
+        for (const input of this.container.querySelectorAll("input")) {
+            input.disabled = true;
+        }
+        for (const button of this.container.querySelectorAll("button")) {
+            button.disabled = true;
+        }
+        this.container.classList.add("cean-locked");
+    }
+
     private addNewRow(item?: ScientificMetadataItem) {
         const newItem = item ?? {};
 

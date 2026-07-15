@@ -182,6 +182,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
     border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
     background: var(--jp-cell-editor-background);
     color: var(--jp-content-font-color1);
+    padding: 0.2ch 0.5ch;
 
     &:focus-visible {
         outline: none;
@@ -355,6 +356,12 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-locked .cean-scientific-metadata {
+    td:hover {
+        box-shadow: none !important;
+    }
+}
+
 .cean-source-folder {
     display: block;
     margin-bottom: 2em !important;
@@ -378,7 +385,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
         margin-left: 1em;
         background: var(--jp-layout-color3);
 
-        &:hover {
+        &:hover:not(:disabled) {
             background: var(--jp-layout-color1);
         }
     }
@@ -411,6 +418,11 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
     .cean-button {
         align-self: flex-start;
+    }
+
+    output {
+        /* Same as text inputs */
+        padding: 0.2ch 0.5ch;
     }
 }
 
@@ -511,7 +523,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
     border: none;
     cursor: pointer;
 
-    &:not(:has(:disabled)) {
+    &:not(:has(:disabled), :disabled) {
         &:hover {
             background: var(--jp-input-hover-background);
             color: var(--jp-ui-font-color0);
@@ -522,7 +534,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
         }
     }
 
-    &:has(:disabled) {
+    &:has(:disabled), &:disabled {
         background: var(--jp-input-background);
         color: var(--jp-ui-font-color2);
         cursor: unset;
@@ -535,7 +547,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
 }
 
 .cean-icon-button {
-    &:active {
+    &:active:not(:disabled) {
         box-shadow: none;
         background: var(--jp-input-active-background);
     }
@@ -608,6 +620,15 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-input:disabled {
+    background: var(--jp-layout-color2);
+    border-color: var(--jp-layout-color2);
+
+    & + div .cean-clear-button {
+        display: none;
+    }
+}
+
 .cean-button[type="submit"] {
     /* SciCat brand color */
     background: #27aae1;
@@ -623,10 +644,23 @@ input.cean-input, select.cean-input, textarea.cean-input {
     display: flex;
     flex-wrap: wrap;
     gap: 0.4em;
-    padding-top: 0.4em;
 
     .cean-selected-item {
         margin: 0;
+    }
+}
+
+.cean-selected-items, .cean-compressed-items {
+    margin: 0.4em 0;
+}
+
+.cean-locked {
+    .cean-selected-items, .cean-compressed-items {
+        margin: 0;
+    }
+
+    .cean-button {
+        display: none;
     }
 }
 
@@ -637,6 +671,16 @@ input.cean-input, select.cean-input, textarea.cean-input {
     border: var(--jp-border-width) solid var(--jp-layout-color3);
     border-radius: var(--jp-border-radius);
     margin: 0.4em 0;
+
+    /* Handle margin via parent to deal with locked inputs. */
+
+    &:first-child {
+        margin-top: 0;
+    }
+
+    &:last-child {
+        margin-bottom: 0;
+    }
 
     .cean-item-row {
         display: flex;

@@ -72,6 +72,14 @@ export class FileInput extends InputComponent<string> {
         return this.textInput.id;
     }
 
+    lock() {
+        super.lock();
+        this.textInput.lock();
+        this.container.querySelectorAll("button").forEach((button) => {
+            button.disabled = true;
+        });
+    }
+
     get value(): string | null {
         if (this.textInput.isValid()) {
             return this.textInput.value;

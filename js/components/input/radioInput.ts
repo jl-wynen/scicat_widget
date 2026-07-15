@@ -72,6 +72,14 @@ export class RadioInput extends InputComponent<string> {
         return this.fieldset.id;
     }
 
+    lock() {
+        super.lock();
+        for (const checkbox of this.checkboxes()) {
+            checkbox.disabled = true;
+        }
+        this.customInput.disabled = true;
+    }
+
     protected get validationElement(): HTMLElement {
         return this.customInput;
     }

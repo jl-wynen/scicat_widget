@@ -53,6 +53,7 @@ export class TextInput extends InputComponent<string> {
     }
 
     setSilent(value: string | null) {
+        if (this.locked) return;
         this.inputElement.value = value ?? "";
         this.clearButton.disabled = this.inputElement.value.length === 0;
     }
@@ -72,6 +73,11 @@ export class TextInput extends InputComponent<string> {
 
     get id(): string {
         return this.inputElement.id;
+    }
+
+    lock() {
+        super.lock();
+        this.inputElement.disabled = true;
     }
 
     protected get validationElement(): HTMLElement {

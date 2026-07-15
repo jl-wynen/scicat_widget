@@ -71,12 +71,19 @@ export class ComboboxManualInput extends InputComponent<string> {
     }
 
     setSilent(value: string | null) {
+        if (this.locked) return;
         this.getActive().setSilent(value);
     }
 
     setSignaling(value: string | null, userTriggered: boolean = true) {
         this.getActive().setSignaling(value, userTriggered);
         this.updated(userTriggered);
+    }
+
+    lock() {
+        super.lock();
+        this.textInput.lock();
+        this.comboboxInput.lock();
     }
 
     private setManual() {
