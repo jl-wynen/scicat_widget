@@ -99,7 +99,7 @@ test("opens and filters the dropdown", async ({ page }) => {
 
     const input = page.getByLabel("Combo");
     const listbox = page.getByRole("listbox");
-    const options = listbox.getByRole("option");
+    const options = listbox.getByRole("option", { includeHidden: true });
 
     await expect(listbox).toBeHidden();
     await input.focus();
