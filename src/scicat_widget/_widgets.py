@@ -4,7 +4,9 @@
 import inspect
 import os
 import pathlib
+import warnings
 from collections.abc import Callable
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 from urllib.parse import quote_plus, urljoin
@@ -14,7 +16,7 @@ import IPython.display
 import ipywidgets
 import traitlets
 from jupyter_host_file_picker import HostFilePicker
-from scitacean import Client, Dataset, ScicatCommError, Thumbnail
+from scitacean import Attachment, Client, Dataset, File, ScicatCommError, Thumbnail
 from scitacean.ontology import expands_techniques
 
 from ._filesystem import inspect_file
@@ -149,11 +151,44 @@ def _serialize_dataset(dataset: Dataset) -> dict[str, Any]:
     set = _listify_owners(set)
 
     set["files"] = [
-        {"localPath": os.fspath(file.local_path)}
+        set_file
         for file in dataset.files
-        if file.local_path is not None
+        if (set_file := _serialize_file(file)) is not None
+    ]
+
+    set["attachments"] = [
+        set_att
+        for attachment in dataset.attachments or []
+        if (set_att := _serialize_attachment(attachment)) is not None
     ]
     return set
+
+
+def _serialize_file(file: File) -> dict[str, str | int | datetime] | None:
+    if file.local_path is None:
+        return None
+    for name in ("remote_gid", "remote_perm", "remote_uid"):
+        if value := getattr(file, name):
+            warnings.warn(
+                f"file.{name} will be dropped in upload; input has value '{value}'",
+                UserWarning,
+                stacklevel=2,
+            )
+    result = inspect_file(file.local_path)
+    if not result:
+        return None
+    result.pop("success", None)
+    return {
+        **result,
+        "localPath": os.fspath(file.local_path),
+        "remotePath": file.remote_path.posix,
+    }
+
+
+def _serialize_attachment(attachment: Attachment) -> dict[str, str] | None:
+    if (thumbnail := attachment.thumbnail) is None:
+        return None
+    return {"data": thumbnail.serialize(), "caption": attachment.caption}
 
 
 def _listify_owners(data: dict[str, Any]) -> dict[str, Any]:

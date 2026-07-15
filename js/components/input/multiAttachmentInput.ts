@@ -49,7 +49,7 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
     setSilent(value: Attachment[] | null) {
         this.clear();
         for (const attachment of value || []) {
-            this.addAttachment(null, attachment.data, attachment.caption);
+            this.addAttachment(null, attachment.data, attachment.caption, false);
         }
     }
 
@@ -97,6 +97,7 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
         path: string | null,
         data: string,
         caption: string | undefined,
+        captionIsPlaceholder: boolean = true,
     ) {
         this.newAttachmentInput.setSilent(null);
         const view = new AttachmentView(
@@ -104,6 +105,7 @@ export class MultiAttachmentInput extends InputComponent<Attachment[]> {
             data,
             caption ?? "",
             this.removeAttachment.bind(this),
+            captionIsPlaceholder,
         );
         this.attachments.push(view);
         this.attachmentsContainer.append(view.container);
@@ -128,6 +130,7 @@ class AttachmentView {
         data: string,
         caption: string,
         onRemove: (view: AttachmentView) => void,
+        captionIsPlaceholder: boolean = true,
     ) {
         this.data = data;
 
@@ -137,9 +140,15 @@ class AttachmentView {
         pathLabel.setAttribute("for", pathField.id);
         pathLabel.textContent = "Path";
 
-        this.captionInput = new TextInput(crypto.randomUUID(), {
-            placeholder: caption,
-        });
+        if (path === null) {
+            pathField.style.visibility = "hidden";
+            pathLabel.style.visibility = "hidden";
+        }
+
+        this.captionInput = new TextInput(crypto.randomUUID(), {});
+        if (captionIsPlaceholder) this.captionInput.placeholder = caption;
+        else this.captionInput.setSilent(caption);
+
         const captionLabel = createLabelFor(
             this.captionInput,
             "Caption",

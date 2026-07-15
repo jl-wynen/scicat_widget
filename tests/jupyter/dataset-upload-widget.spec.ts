@@ -228,8 +228,24 @@ Second line.`);
             "/scicat/upload",
         );
 
-        expect(await locator.getByLabel("Local path").textContent()).toBe("data.csv");
-        expect(await locator.getByLabel("Remote path").inputValue()).toBe("");
+        expect(await locator.getByLabel("Local path").nth(0).textContent()).toBe(
+            "data.csv",
+        );
+        expect(await locator.getByLabel("Remote path").nth(0).inputValue()).toBe("");
+        await expect(locator.getByPlaceholder("data.csv")).toHaveCount(1);
+        expect(await locator.getByLabel("Local path").nth(1).textContent()).toBe(
+            "dataset_upload_widget_initial_data.ipynb",
+        );
+        expect(await locator.getByLabel("Remote path").nth(1).inputValue()).toBe("");
+        await expect(locator.getByPlaceholder("notebook.ipynb")).toHaveCount(1);
+
+        // ----- Attachments -----
+        await locator.getByRole("tab", { name: /Attachments/ }).click();
+        expect(await locator.getByLabel("Caption").inputValue()).toBe("SciCat logo");
+        await expect(
+            locator.locator(".cean-image-container").getByRole("img"),
+            `Attachment is an image`,
+        ).toHaveCount(1);
     });
 });
 
