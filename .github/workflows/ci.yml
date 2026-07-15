@@ -23,7 +23,6 @@ jobs:
 
   type-checking:
     name: Type checking
-    needs: formatting
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -41,14 +40,12 @@ jobs:
 
   tests:
     name: Tests
-    needs: formatting
     uses: ./.github/workflows/test.yml
     with:
       python-version: '3.11'
 
   build:
     name: Build
-    needs: formatting
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
