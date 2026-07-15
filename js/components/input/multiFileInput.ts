@@ -79,6 +79,15 @@ export class MultiFileInput extends InputComponent<File[]> {
         return this.newFileInput.id;
     }
 
+    lock() {
+        super.lock();
+        this.newFileInput.lock();
+        this.selectedContainer.classList.add("cean-locked");
+        this.selectedFiles.forEach(({ remotePathInput }) => {
+            remotePathInput.lock();
+        });
+    }
+
     private addFileItem(file: File) {
         const [container, localPath, remotePathInput] = createFileItem((p) => {
             this.onInputRemoved(p);

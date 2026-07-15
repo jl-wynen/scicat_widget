@@ -182,6 +182,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
     border: var(--jp-border-width) solid var(--jp-cell-editor-border-color);
     background: var(--jp-cell-editor-background);
     color: var(--jp-content-font-color1);
+    padding: 0.2ch 0.5ch;
 
     &:focus-visible {
         outline: none;
@@ -384,7 +385,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
         margin-left: 1em;
         background: var(--jp-layout-color3);
 
-        &:hover {
+        &:hover:not(:disabled) {
             background: var(--jp-layout-color1);
         }
     }
@@ -417,6 +418,11 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
     .cean-button {
         align-self: flex-start;
+    }
+
+    output {
+        /* Same as text inputs */
+        padding: 0.2ch 0.5ch;
     }
 }
 
@@ -517,7 +523,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
     border: none;
     cursor: pointer;
 
-    &:not(:has(:disabled)) {
+    &:not(:has(:disabled), :disabled) {
         &:hover {
             background: var(--jp-input-hover-background);
             color: var(--jp-ui-font-color0);
@@ -528,7 +534,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
         }
     }
 
-    &:has(:disabled) {
+    &:has(:disabled), &:disabled {
         background: var(--jp-input-background);
         color: var(--jp-ui-font-color2);
         cursor: unset;
@@ -541,7 +547,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
 }
 
 .cean-icon-button {
-    &:active {
+    &:active:not(:disabled) {
         box-shadow: none;
         background: var(--jp-input-active-background);
     }
