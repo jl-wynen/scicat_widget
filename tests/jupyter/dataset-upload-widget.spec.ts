@@ -228,8 +228,16 @@ Second line.`);
             "/scicat/upload",
         );
 
-        expect(await locator.getByLabel("Local path").textContent()).toBe("data.csv");
-        expect(await locator.getByLabel("Remote path").inputValue()).toBe("");
+        expect(await locator.getByLabel("Local path").nth(0).textContent()).toBe(
+            "data.csv",
+        );
+        expect(await locator.getByLabel("Remote path").nth(0).inputValue()).toBe("");
+        await expect(locator.getByPlaceholder("data.csv")).toHaveCount(1);
+        expect(await locator.getByLabel("Local path").nth(1).textContent()).toBe(
+            "dataset_upload_widget_initial_data.ipynb",
+        );
+        expect(await locator.getByLabel("Remote path").nth(1).inputValue()).toBe("");
+        await expect(locator.getByPlaceholder("notebook.ipynb")).toHaveCount(1);
     });
 });
 
