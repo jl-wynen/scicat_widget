@@ -238,6 +238,14 @@ Second line.`);
         );
         expect(await locator.getByLabel("Remote path").nth(1).inputValue()).toBe("");
         await expect(locator.getByPlaceholder("notebook.ipynb")).toHaveCount(1);
+
+        // ----- Attachments -----
+        await locator.getByRole("tab", { name: /Attachments/ }).click();
+        expect(await locator.getByLabel("Caption").inputValue()).toBe("SciCat logo");
+        await expect(
+            locator.locator(".cean-image-container").getByRole("img"),
+            `Attachment is an image`,
+        ).toHaveCount(1);
     });
 });
 
