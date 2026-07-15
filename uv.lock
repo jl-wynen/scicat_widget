@@ -1821,7 +1821,7 @@ requires-dist = [
     { name = "ipykernel", specifier = ">=6.30.1" },
     { name = "jupyter-host-file-picker", specifier = ">=26.6.0" },
     { name = "pydantic", specifier = ">=2.12" },
-    { name = "scitacean", specifier = ">=26.7.0" },
+    { name = "scitacean", specifier = ">=26.7.1" },
 ]
 
 [package.metadata.requires-dev]
@@ -1838,16 +1838,16 @@ test = [{ name = "pytest", specifier = ">=9" }]
 
 [[package]]
 name = "scitacean"
-version = "26.7.0"
+version = "26.7.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "email-validator" },
     { name = "httpx" },
     { name = "pydantic" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/72/ea/353affa7667af22277a7e7b126edef563e70c44de7f5019696a808825e45/scitacean-26.7.0.tar.gz", hash = "sha256:d652463b6727db318827b59230b4d7c90cdc83b4a9f471f4f768601a48d574cc", size = 310948, upload-time = "2026-07-09T09:00:56.482Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/d0/53/137c9e12a6909011e86e38fd069fd57d4d605f8b1c0998def624e3577dd2/scitacean-26.7.1.tar.gz", hash = "sha256:37e1970c7101d7abe2a8bb536de93b1fcf9d7f8b23da4ae62b9510c18a417387", size = 311213, upload-time = "2026-07-15T06:35:21.66Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/a9/45/ff6c380c61efafa25a82aa97c16a7a37d816277fcbdf9a49afce82a566b3/scitacean-26.7.0-py3-none-any.whl", hash = "sha256:54b1ad316996190e2b9956714c9719e8b9cad89f61296156f01d993eda1cde6d", size = 129453, upload-time = "2026-07-09T09:00:55.105Z" },
+    { url = "https://files.pythonhosted.org/packages/6e/35/0ca84949d2fa478a147c4137e58c48e423967662ce27141e5074aa7c045d/scitacean-26.7.1-py3-none-any.whl", hash = "sha256:49d9188d4357454b4b105ce0ea2fa64260ca4ac037bdd3f27f695907dcf9fcbc", size = 129524, upload-time = "2026-07-15T06:35:20.441Z" },
 ]
 
 [[package]]
