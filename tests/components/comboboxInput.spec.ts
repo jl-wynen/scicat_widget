@@ -84,6 +84,40 @@ test("selects options with arrow keys", async ({ page }) => {
     });
 });
 
+test("opens and filters the dropdown", async ({ page }) => {
+    await mount(
+        page,
+        "combobox",
+        "Combo",
+        [
+            { key: "XX", text: "The X" },
+            { key: "Y", text: "y tho?" },
+            { key: "XY", text: "Both" },
+        ],
+        {},
+    );
+
+    const input = page.getByLabel("Combo");
+    const listbox = page.getByRole("listbox");
+    const options = listbox.getByRole("option");
+
+    await expect(listbox).toBeHidden();
+    await input.focus();
+    await expect(listbox).toBeVisible();
+    await expect(options).toHaveCount(3);
+
+    await expect(options.nth(0).locator(".cean-item-key")).toHaveText("XX");
+    await expect(options.nth(0).locator(".cean-item-text")).toHaveText("The X");
+
+    await input.fill("Y");
+    await expect(options.nth(0)).toBeHidden();
+    await expect(options.nth(1)).toBeVisible();
+    await expect(options.nth(2)).toBeVisible();
+
+    await input.press("Tab");
+    await expect(listbox).toBeHidden();
+});
+
 test("selects options with click", async ({ page }) => {
     await mount(
         page,
@@ -99,7 +133,7 @@ test("selects options with click", async ({ page }) => {
 
     const input = page.getByLabel("Combo");
     await input.focus();
-    await page.locator("option").nth(1).click();
+    await page.getByRole("option").nth(1).click();
 
     expect(await input.inputValue()).toEqual("Yy tho?");
 

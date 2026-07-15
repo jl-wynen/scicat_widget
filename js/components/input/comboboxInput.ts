@@ -18,53 +18,63 @@ export interface Options extends InputOptions<string> {
     renderChoice?: (choice: Choice) => HTMLElement;
 }
 
+type ComboboxListElement = HTMLDivElement;
+type ComboboxOptionElement = HTMLDivElement;
+
 /**
  * Input component to select text from a list of options.
  */
 export class ComboboxInput extends InputComponent<string> {
-    private readonly datalist: HTMLDataListElement;
+    private readonly listbox: ComboboxListElement;
     private readonly searchBar: HTMLInputElement;
 
     private error: string = "";
-    private readonly closeListener: (e: PointerEvent) => void;
+    private currentFocus: number | null = null;
+    private readonly closeListener: (e: MouseEvent) => void;
 
     constructor(key: string, choices: Choice[], options: Options) {
-        const datalist = createDatalist(choices, options.renderChoice);
-        const searchBar = createSearchBar(
-            key,
-            datalist,
-            () => {
-                this.open();
-            },
-            () => {
-                this.close();
-            },
-        );
+        const listbox = createListbox(choices, options.renderChoice);
+        const searchBar = createSearchBar(key, listbox.id);
         const [insert, _] = InputComponent.createInsert(searchBar, null);
         insert.appendChild(createChevron(searchBar));
 
         const container = document.createElement("div");
         container.id = crypto.randomUUID();
         container.className = "cean-combobox cean-input-container";
-        container.append(searchBar, datalist, insert);
+        container.append(searchBar, listbox, insert);
 
         super(key, container, options);
 
-        this.datalist = datalist;
+        this.listbox = listbox;
         this.searchBar = searchBar;
 
         this.searchBar.addEventListener("focus", this.open.bind(this));
+        this.searchBar.addEventListener("input", () => {
+            this.open();
+            filterOptions(this.searchBar.value, this.listbox);
+            this.setActive(firstVisibleOption(this.listbox));
+        });
         this.searchBar.addEventListener("keydown", (e: KeyboardEvent) => {
             if (e.code === "Tab") {
                 // Focus moves to the next element.
-                // Cannot use blur events as that would trigger when the user clicks into the datalist.
+                // Cannot use blur events as that would trigger when the user clicks into the listbox.
                 this.blur();
+            } else if (e.code === "ArrowUp") {
+                e.preventDefault();
+                this.setActive(findPreviousOption(this.listbox, this.currentFocus));
+            } else if (e.code === "ArrowDown") {
+                e.preventDefault();
+                this.setActive(findNextOption(this.listbox, this.currentFocus));
             } else if (e.code == "Enter" || e.code == "NumpadEnter") {
+                e.preventDefault();
+                e.stopPropagation();
                 this.selectActive();
+            } else if (e.code === "Escape") {
+                this.close();
             }
         });
 
-        this.datalist.addEventListener("selected-option", ((event: SelectedEvent) => {
+        this.listbox.addEventListener("selected-option", ((event: SelectedEvent) => {
             this.close();
             if (event.text !== this.searchBar.value) {
                 this.searchBar.value = event.text;
@@ -72,12 +82,11 @@ export class ComboboxInput extends InputComponent<string> {
                 this.updated();
             }
         }) as EventListener);
-        this.datalist.addEventListener("blur", this.blur.bind(this));
 
-        this.closeListener = (e: PointerEvent) => {
+        this.closeListener = (e: MouseEvent) => {
             if (!e.composedPath().includes(container)) {
                 if (
-                    this.datalist.style.display !== "none" ||
+                    this.listbox.style.display !== "none" ||
                     document.activeElement === this.searchBar
                 ) {
                     this.blur();
@@ -99,29 +108,27 @@ export class ComboboxInput extends InputComponent<string> {
     }
 
     get value(): string | null {
-        return this.getSelected()?.value || null;
+        return this.getSelected()?.dataset.value || null;
     }
 
     setSilent(value: string | null) {
         if (this.locked) return;
 
-        deselectAll(this.datalist);
-        for (const option of this.datalist.options) {
-            if (option.value == value) {
-                option.selected = true;
-                option.classList.add("cean-selected");
-                this.searchBar.value = option.textContent;
-                this.error = "";
-                filterOptions(value, this.datalist);
-                this.validate();
-                return;
-            }
+        deselectAll(this.listbox);
+        const match = value === null ? null : findOptionByValue(this.listbox, value);
+        if (match !== null) {
+            selectOption(match);
+            this.searchBar.value = optionText(match);
+            this.error = "";
+            filterOptions(value ?? "", this.listbox);
+            this.setActive(optionIndex(this.listbox, match));
+            this.validate();
+            return;
         }
 
         this.searchBar.value = value ?? "";
-        for (const option of this.datalist.options) {
-            option.style.display = "block";
-        }
+        showAllOptions(this.listbox);
+        this.setActive(null);
         this.error = value === null || value === "" ? "" : "Value not recognized";
         this.validate();
     }
@@ -131,8 +138,8 @@ export class ComboboxInput extends InputComponent<string> {
         this.searchBar.disabled = true;
     }
 
-    get options(): HTMLCollectionOf<HTMLOptionElement> {
-        return this.datalist.options;
+    get options(): HTMLCollectionOf<HTMLElement> {
+        return this.listbox.children as HTMLCollectionOf<HTMLElement>;
     }
 
     validate() {
@@ -146,8 +153,8 @@ export class ComboboxInput extends InputComponent<string> {
         }
     }
 
-    private getActive(): HTMLOptionElement | null {
-        for (const option of this.datalist.options) {
+    private getActive(): ComboboxOptionElement | null {
+        for (const option of listboxOptions(this.listbox)) {
             if (option.classList.contains("cean-active")) {
                 return option;
             }
@@ -155,23 +162,36 @@ export class ComboboxInput extends InputComponent<string> {
         return null;
     }
 
-    private getSelected(): HTMLOptionElement | null {
-        for (const option of this.datalist.options) {
-            if (option.selected) {
+    private getSelected(): ComboboxOptionElement | null {
+        for (const option of listboxOptions(this.listbox)) {
+            if (option.classList.contains("cean-selected")) {
                 return option;
             }
         }
         return null;
     }
 
-    private findExactTextMatch(text: string): HTMLOptionElement | null {
+    private findExactTextMatch(text: string): ComboboxOptionElement | null {
         const normalized = text.trim();
-        for (const option of this.datalist.options) {
-            if (option.textContent.trim() === normalized) {
+        for (const option of listboxOptions(this.listbox)) {
+            if (optionText(option).trim() === normalized) {
                 return option;
             }
         }
         return null;
+    }
+
+    private setActive(index: number | null) {
+        this.currentFocus = index;
+        selectActive(this.listbox, index);
+
+        const active = this.getActive();
+        if (active !== null) {
+            this.searchBar.setAttribute("aria-activedescendant", active.id);
+            active.scrollIntoView({ block: "nearest" });
+        } else {
+            this.searchBar.removeAttribute("aria-activedescendant");
+        }
     }
 
     private selectActive() {
@@ -179,7 +199,7 @@ export class ComboboxInput extends InputComponent<string> {
         if (active !== null) {
             this.close();
             this.error = "";
-            this.setSignaling(active.value);
+            this.setSignaling(active.dataset.value || "");
             this.validate();
         }
         // else: do nothing, keep dropdown open
@@ -191,24 +211,23 @@ export class ComboboxInput extends InputComponent<string> {
         const text = this.searchBar.value.trim();
         if (!text) {
             // no search, remove selection
-            deselectAll(this.datalist);
+            deselectAll(this.listbox);
             this.searchBar.value = "";
             this.error = "";
             if (selected !== null) this.updated();
-        } else if (selected !== null && this.searchBar.value === selected.textContent) {
+        } else if (selected !== null && this.searchBar.value === optionText(selected)) {
             // valid search, keep selection
             this.error = "";
         } else {
             const match = this.findExactTextMatch(text);
             if (match !== null) {
-                deselectAll(this.datalist);
-                match.selected = true;
-                match.classList.add("cean-selected");
-                this.searchBar.value = match.textContent;
+                deselectAll(this.listbox);
+                selectOption(match);
+                this.searchBar.value = optionText(match);
                 this.error = "";
                 this.updated();
             } else {
-                deselectAll(this.datalist);
+                deselectAll(this.listbox);
                 this.error = "Value not recognized";
             }
         }
@@ -217,25 +236,64 @@ export class ComboboxInput extends InputComponent<string> {
     }
 
     private open() {
-        this.datalist.style.display = "block";
+        this.listbox.style.display = "block";
+        this.searchBar.setAttribute("aria-expanded", "true");
     }
 
     private close() {
-        this.datalist.style.display = "none";
+        this.listbox.style.display = "none";
+        this.searchBar.setAttribute("aria-expanded", "false");
     }
 }
 
-function selectActive(datalist: HTMLDataListElement, index: number | null) {
-    removeActive(datalist);
+function listboxOptions(
+    listbox: ComboboxListElement,
+): HTMLCollectionOf<ComboboxOptionElement> {
+    return listbox.children as HTMLCollectionOf<ComboboxOptionElement>;
+}
+
+function optionText(option: ComboboxOptionElement): string {
+    return option.textContent ?? "";
+}
+
+function optionIndex(
+    listbox: ComboboxListElement,
+    option: ComboboxOptionElement,
+): number | null {
+    const options = listboxOptions(listbox);
+    for (let i = 0; i < options.length; ++i) {
+        if (options[i] === option) return i;
+    }
+    return null;
+}
+
+function findOptionByValue(
+    listbox: ComboboxListElement,
+    value: string,
+): ComboboxOptionElement | null {
+    for (const option of listboxOptions(listbox)) {
+        if (option.dataset.value === value) {
+            return option;
+        }
+    }
+    return null;
+}
+
+function selectOption(option: ComboboxOptionElement) {
+    option.classList.add("cean-selected");
+    option.setAttribute("aria-selected", "true");
+}
+
+function selectActive(listbox: ComboboxListElement, index: number | null) {
+    removeActive(listbox);
     if (index === null) return;
-    const opt = datalist.options[index];
+    const opt = listboxOptions(listbox)[index];
     if (!opt) return;
-    // opt.scrollIntoView(false); // TODO scrolls whole page, not popover
     opt.classList.add("cean-active");
 }
 
-function removeActive(datalist: HTMLDataListElement) {
-    for (const opt of datalist.options) {
+function removeActive(listbox: ComboboxListElement) {
+    for (const opt of listboxOptions(listbox)) {
         opt.classList.remove("cean-active");
     }
 }
@@ -253,12 +311,7 @@ function defaultRenderChoice(choice: Choice): HTMLElement {
     return wrap;
 }
 
-function createSearchBar(
-    key: string,
-    datalist: HTMLDataListElement,
-    openCombobox: () => void,
-    closeCombobox: () => void,
-): HTMLInputElement {
+function createSearchBar(key: string, listboxId: string): HTMLInputElement {
     const searchBar = document.createElement("input");
     searchBar.id = crypto.randomUUID();
     searchBar.name = key;
@@ -267,123 +320,120 @@ function createSearchBar(
     searchBar.autocomplete = "off";
     searchBar.placeholder = "Select ...";
     searchBar.className = "cean-input";
-
-    let currentFocus: number | null = null;
-    searchBar.addEventListener("input", () => {
-        openCombobox();
-        filterOptions(searchBar.value, datalist);
-        currentFocus = firstVisibleOption(datalist);
-        selectActive(datalist, currentFocus);
-    });
-    searchBar.addEventListener("keydown", (event: KeyboardEvent) => {
-        if (event.code === "ArrowUp") {
-            event.preventDefault();
-            currentFocus = findPreviousOption(datalist, currentFocus);
-            selectActive(datalist, currentFocus);
-        } else if (event.code === "ArrowDown") {
-            event.preventDefault();
-            currentFocus = findNextOption(datalist, currentFocus);
-            selectActive(datalist, currentFocus);
-        } else if (event.code === "Enter" || event.code === "NumpadEnter") {
-            event.preventDefault();
-            event.stopPropagation();
-            if (currentFocus !== null) datalist.options[currentFocus].click();
-        } else if (event.code === "Escape") {
-            closeCombobox();
-        }
-    });
+    searchBar.setAttribute("aria-autocomplete", "list");
+    searchBar.setAttribute("aria-controls", listboxId);
+    searchBar.setAttribute("aria-expanded", "false");
+    searchBar.setAttribute("aria-haspopup", "listbox");
 
     return searchBar;
 }
 
-function firstVisibleOption(datalist: HTMLDataListElement): number | null {
-    for (let i = 0; i < datalist.options.length; ++i) {
-        if (datalist.options[i].style.display !== "none") {
+function firstVisibleOption(listbox: ComboboxListElement): number | null {
+    const options = listboxOptions(listbox);
+    for (let i = 0; i < options.length; ++i) {
+        if (options[i].style.display !== "none") {
             return i;
         }
     }
     return null;
 }
 
-function createDatalist(
+function lastVisibleOption(listbox: ComboboxListElement): number | null {
+    const options = listboxOptions(listbox);
+    for (let i = options.length - 1; i >= 0; --i) {
+        if (options[i].style.display !== "none") {
+            return i;
+        }
+    }
+    return null;
+}
+
+function createListbox(
     choices: Choice[],
     renderChoice?: (choice: Choice) => HTMLElement,
-): HTMLDataListElement {
+): ComboboxListElement {
     if (renderChoice === undefined) renderChoice = defaultRenderChoice;
 
-    const datalist = document.createElement("datalist");
-    datalist.id = crypto.randomUUID();
-    datalist.role = "listbox";
-    datalist.tabIndex = -1;
-    datalist.style.display = "none";
+    const listbox = document.createElement("div");
+    listbox.id = crypto.randomUUID();
+    listbox.role = "listbox";
+    listbox.tabIndex = -1;
+    listbox.className = "cean-combobox-list";
+    listbox.style.display = "none";
 
     for (const choice of choices) {
-        const option = document.createElement("option");
-        option.value = choice.key;
+        const option = document.createElement("div");
+        option.id = crypto.randomUUID();
+        option.role = "option";
+        option.className = "cean-combobox-option";
+        option.tabIndex = -1;
+        option.dataset.value = choice.key;
+        option.setAttribute("aria-selected", "false");
         option.appendChild(renderChoice(choice));
-        datalist.appendChild(option);
+        listbox.appendChild(option);
 
         option.addEventListener("click", () => {
-            deselectAll(datalist);
-            option.selected = true;
-            option.classList.add("cean-selected");
-            datalist.dispatchEvent(
-                new SelectedEvent(option.value, option.textContent, { bubbles: true }),
+            deselectAll(listbox);
+            selectOption(option);
+            listbox.dispatchEvent(
+                new SelectedEvent(choice.key, optionText(option), { bubbles: true }),
             );
         });
     }
 
-    return datalist;
+    return listbox;
 }
 
-function deselectAll(datalist: HTMLDataListElement) {
-    for (const option of datalist.options) {
-        option.selected = false;
+function deselectAll(listbox: ComboboxListElement) {
+    for (const option of listboxOptions(listbox)) {
         option.classList.remove("cean-selected");
+        option.setAttribute("aria-selected", "false");
     }
 }
 
 function findNextOption(
-    datalist: HTMLDataListElement,
+    listbox: ComboboxListElement,
     start: number | null,
 ): number | null {
-    const len = datalist.options.length;
+    const options = listboxOptions(listbox);
+    const len = options.length;
     if (len === 0) return null;
+    if (start === null) return firstVisibleOption(listbox);
 
-    const end = start === null ? len - 1 : start;
-    for (
-        let index = start === null ? 0 : (start + 1) % len;
-        index !== end;
-        index = (index + 1) % len
-    ) {
-        if (datalist.options[index].style.display !== "none") return index;
+    for (let step = 1; step <= len; ++step) {
+        const index = (start + step) % len;
+        if (options[index].style.display !== "none") return index;
     }
     return null;
 }
 
 function findPreviousOption(
-    datalist: HTMLDataListElement,
+    listbox: ComboboxListElement,
     start: number | null,
 ): number | null {
-    const len = datalist.options.length;
+    const options = listboxOptions(listbox);
+    const len = options.length;
     if (len === 0) return null;
+    if (start === null) return lastVisibleOption(listbox);
 
-    const end = start === null ? 0 : start;
-    for (
-        let index = start === null ? len - 1 : (start - 1 + len) % len;
-        index !== end;
-        index = (index - 1 + len) % len
-    ) {
-        if (datalist.options[index].style.display !== "none") return index;
+    for (let step = 1; step <= len; ++step) {
+        const index = (start - step + len) % len;
+        if (options[index].style.display !== "none") return index;
     }
     return null;
 }
 
-function filterOptions(filter: string, datalist: HTMLDataListElement) {
+function showAllOptions(listbox: ComboboxListElement) {
+    for (const option of listboxOptions(listbox)) {
+        option.style.display = "block";
+    }
+}
+
+function filterOptions(filter: string, listbox: ComboboxListElement) {
     const text = filter.toLowerCase();
     let nVisible = 0;
-    for (const option of datalist.options) {
-        if (option.textContent.toLowerCase().indexOf(text) > -1) {
+    for (const option of listboxOptions(listbox)) {
+        if (optionText(option).toLowerCase().indexOf(text) > -1) {
             option.style.display = "block";
             nVisible++;
         } else {
@@ -392,10 +442,9 @@ function filterOptions(filter: string, datalist: HTMLDataListElement) {
     }
 
     if (nVisible === 1) {
-        // findNextOption will iterate until it finds the one active element
-        selectActive(datalist, findNextOption(datalist, 0));
+        selectActive(listbox, firstVisibleOption(listbox));
     } else {
-        removeActive(datalist);
+        removeActive(listbox);
     }
 }
 

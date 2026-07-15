@@ -251,8 +251,10 @@ input.cean-input, select.cean-input, textarea.cean-input {
 .cean-combobox {
     position: relative;
 
-    datalist {
+    .cean-combobox-list {
         position: absolute;
+        top: 100%;
+        left: 0;
         z-index: 10;
         display: none;
         width: 100%;
@@ -265,7 +267,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
         overflow: hidden scroll;
     }
 
-    option {
+    .cean-combobox-option {
         cursor: pointer;
         user-select: none;
         padding: 0.1em 0.5em;
@@ -730,7 +732,7 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
-option:not(:last-child):has(.cean-proposal) {
+.cean-combobox-option:not(:last-child):has(.cean-proposal) {
     border-bottom: 1px solid var(--jp-layout-color2);
 }
 
