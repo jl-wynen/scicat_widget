@@ -355,6 +355,12 @@ input.cean-input, select.cean-input, textarea.cean-input {
     }
 }
 
+.cean-locked .cean-scientific-metadata {
+    td:hover {
+        box-shadow: none !important;
+    }
+}
+
 .cean-source-folder {
     display: block;
     margin-bottom: 2em !important;
