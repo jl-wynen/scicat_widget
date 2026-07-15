@@ -164,7 +164,7 @@ export class ComboboxInput extends InputComponent<string> {
 
     private getSelected(): ComboboxOptionElement | null {
         for (const option of listboxOptions(this.listbox)) {
-            if (option.classList.contains("cean-selected")) {
+            if (option.getAttribute("aria-selected") === "true") {
                 return option;
             }
         }
@@ -280,7 +280,6 @@ function findOptionByValue(
 }
 
 function selectOption(option: ComboboxOptionElement) {
-    option.classList.add("cean-selected");
     option.setAttribute("aria-selected", "true");
 }
 
@@ -386,7 +385,6 @@ function createListbox(
 
 function deselectAll(listbox: ComboboxListElement) {
     for (const option of listboxOptions(listbox)) {
-        option.classList.remove("cean-selected");
         option.setAttribute("aria-selected", "false");
     }
 }
