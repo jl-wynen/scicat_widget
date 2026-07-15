@@ -1,7 +1,7 @@
 import { FileType } from "./components/icon.ts";
 
 export type Attachment = {
-    localPath: string;
+    data: string;
     caption: string;
 };
 

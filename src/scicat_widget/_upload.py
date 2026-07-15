@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
-from scitacean import PID, Client, Dataset, File, model
+from scitacean import PID, Client, Dataset, File, Thumbnail, model
 
 
 def upload_dataset(
@@ -41,6 +41,7 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     """Construct a Scitacean dataset from widget data."""
     converted = _convert_field_names(data)
 
+    converted["contact_email"] = _concat_list(data.get("contactEmails", None))
     converted.update(_convert_owners(data.get("owners", [])))
     converted.update(_convert_relationships(converted.pop("relationships", None)))
     converted.update(_convert_scientific_metadata(data.get("scientificMetadata", [])))
@@ -52,8 +53,16 @@ def make_dataset_from_widget_data(data: dict[str, Any]) -> Dataset:
     dataset = Dataset(**converted)
     dataset.add_files(*files)
     for attachment in attachments:
-        dataset.add_attachment(attachment["path"], caption=attachment["caption"])
+        dataset.add_attachment(
+            Thumbnail.parse(attachment["data"]), caption=attachment["caption"]
+        )
     return dataset
+
+
+def _concat_list(values: list[str] | None) -> str | None:
+    if values is None:
+        return None
+    return ";".join(values)
 
 
 def _convert_owners(owners: list[dict[str, str]] | None) -> dict[str, str]:
@@ -120,16 +129,14 @@ def _convert_attachments(
     attachments: list[dict[str, str]],
 ) -> list[dict[str, Any]]:
     return [
-        {"path": attachment.get("path", ""), "caption": attachment.get("caption", "")}
+        {"data": attachment["data"], "caption": attachment.get("caption", "")}
         for attachment in attachments
     ]
 
 
 def _convert_field_names(widget_data: dict[str, Any]) -> dict[str, Any]:
-    converted = {
+    return {
         field.name: value
         for field in Dataset.fields()
         if (value := widget_data.get(field.scicat_name)) is not None
     }
-    converted["investigator"] = converted.get("principal_investigator", None)
-    return converted

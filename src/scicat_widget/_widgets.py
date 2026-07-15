@@ -350,7 +350,8 @@ def _upload_dataset(
                         "datasetName": ds.name,
                         "pid": str(ds.pid),
                         "datasetUrl": urljoin(
-                            widget.scicatUrl, "datasets/" + quote_plus(str(ds.pid))
+                            widget.config["frontendUrl"],
+                            "datasets/" + quote_plus(str(ds.pid)),
                         ),
                     },
                 }

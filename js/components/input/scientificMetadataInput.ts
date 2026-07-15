@@ -1,7 +1,7 @@
 import { InputComponent, InputOptions } from "./inputComponent.ts";
 import { removeButton, textButton } from "../button.ts";
 
-export type ScientificMetadataItem = Map<string, string | undefined>;
+export type ScientificMetadataItem = Record<string, string | undefined>;
 
 type Schema = "plain" | "value-unit";
 
@@ -70,13 +70,11 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
             // This is data from Python (scientificMetadata is a dict)
             for (const [name, entry] of Object.entries(value)) {
                 const { value, unit } = entry as { value: string; unit?: string };
-                this.addNewRow(
-                    new Map([
-                        ["name", name],
-                        ["value", value],
-                        ["unit", unit],
-                    ]),
-                );
+                this.addNewRow({
+                    name: name,
+                    value: value,
+                    unit: unit,
+                });
             }
             this.addNewRow();
         }
@@ -87,7 +85,7 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
     }
 
     private addNewRow(item?: ScientificMetadataItem) {
-        const newItem = item ?? new Map();
+        const newItem = item ?? {};
 
         const tr = document.createElement("tr");
 
@@ -96,9 +94,9 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
             const input = document.createElement("input");
             input.classList.add("cean-input");
             input.type = "text";
-            input.value = newItem.get(key) ?? "";
+            input.value = newItem[key] ?? "";
             input.addEventListener("input", () => {
-                newItem.set(key, input.value);
+                newItem[key] = input.value;
                 this.autoAddRow(tr);
             });
             const td = document.createElement("td");
@@ -131,13 +129,16 @@ export class ScientificMetadataInput extends InputComponent<ScientificMetadataIt
 }
 
 function readRow(tr: HTMLTableRowElement, schema: Schema): ScientificMetadataItem {
-    const item = new Map();
-    item.set("name", readCellInput(tr.cells[0]));
+    const item: ScientificMetadataItem = {
+        name: readCellInput(tr.cells[0]),
+        value: readCellInput(tr.cells[1]),
+    };
     if (schema == "plain") {
-        item.set("value", readCellInput(tr.cells[1]));
+        // nothing to do
+    } else if (schema == "value-unit") {
+        item.unit = readCellInput(tr.cells[2]) || undefined;
     } else {
-        item.set("value", readCellInput(tr.cells[1]));
-        item.set("unit", readCellInput(tr.cells[2]) || undefined);
+        console.error(`Unknown scientific metadata schema: ${schema}`);
     }
     return item;
 }
@@ -147,7 +148,7 @@ function readCellInput(cell: HTMLTableCellElement): string {
 }
 
 function itemIsEmpty(item: ScientificMetadataItem): boolean {
-    for (const value of item.values()) {
+    for (const value of Object.values(item)) {
         if (value) {
             return false;
         }

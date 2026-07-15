@@ -1,5 +1,6 @@
-import { expect, galata, test } from "@jupyterlab/galata";
+import { expect, galata, IJupyterLabPageFixture, test } from "@jupyterlab/galata";
 
+import { Locator } from "@playwright/test";
 import * as path from "path";
 
 test.describe("Dataset upload", () => {
@@ -20,25 +21,56 @@ test.describe("Dataset upload", () => {
         const locator = await page.notebook.getCellOutputLocator(widgetCell);
         if (locator === null) throw new Error("Could not find output locator");
 
+        // The fields are set in an arbitrary order so we don't rely on the field order.
         await locator.getByLabel("Dataset name").fill("Test dataset name");
-
         await locator.getByLabel("Creation Location").fill("TEST:widget");
         await locator.getByLabel("Owner group").fill("135246");
         await locator.getByLabel("PI").fill("Principal Skinner");
         await locator.getByLabel("Contact email").fill("skinner@princi.pal");
-        // Need `exact: true` to avoid conflict with 'Dataset name'
-        await locator.getByLabel("Name", { exact: true }).fill("Billy Ownerson");
 
-        const techniques = locator.getByLabel("Techniques");
-        await techniques.fill("PaNET00100");
-        await techniques.press("Enter");
+        // Need `exact: true` to avoid conflicts with other fields
+        await locator.getByLabel("Name", { exact: true }).fill("Billy Ownersson");
+        await locator.getByLabel("Email", { exact: true }).fill("b@ownersson.com");
+        await locator.getByLabel("ORCID").fill("0000-0000-0000-0001");
+        await locator.getByRole("button", { name: "Add person" }).click();
+        await locator.getByRole("button", { name: "Add person" }).click();
+        await locator
+            .getByLabel("Name", { exact: true })
+            .nth(2)
+            .fill("Martha the Wise");
+        await locator
+            .getByLabel("Email", { exact: true })
+            .nth(1)
+            .fill("stibbons@uu.am");
+        await locator.getByRole("button", { name: "Add person" }).click();
+
+        await fillMulti(locator.getByLabel("Instruments"), ["I/DIF2"]);
+        await fillMulti(locator.getByLabel("Proposals"), ["dada.663", "0098.aa.2"]);
+        await locator.getByLabel("Description").fill(`Test dataset description
+Second line.`);
+
+        await fillMulti(locator.getByLabel("Access groups"), ["A1", "tillgång"]);
+        await fillMulti(locator.getByLabel("Techniques"), ["PaNET00100"]);
+        await fillMulti(locator.getByLabel("Input datasets"), [
+            "abc/1234.5bd6",
+            "76.feda",
+        ]);
+        await fillMulti(locator.getByLabel("Sample IDs"), ["Probe Eins"]);
+        await fillMulti(locator.getByLabel("Used software"), [
+            "scitacean==26.6.0",
+            "Thingamatronic = 2.0",
+        ]);
+
+        await locator.getByLabel("Start").fill("1984-07-24");
+        await locator.getByLabel("End").fill("1985-02-11");
+        await locator.locator('input[type="time"]').nth(1).fill("16:00:13");
 
         await locator.getByRole("tab", { name: /Files/ }).click();
         await locator.getByLabel("Source folder").fill("/source/folder");
 
         // ----- Files -----
         const fileInput = locator.getByLabel("Input new file");
-        await fileInput.fill(nbPath);
+        await fileInput.fill("data.csv");
         await fileInput.press("Enter");
         await expect(locator.getByLabel("Remote path")).toHaveCount(1);
 
@@ -50,16 +82,18 @@ test.describe("Dataset upload", () => {
         // Wait for the attachment to be added, if we proceeded without this, the
         // attachment might get registered in time.
         await expect(locator.getByLabel("Caption")).toHaveCount(1);
+        await locator.getByLabel("Caption").fill("Pretty picture");
 
-        // TODO check times: UI: local, model: UTC
-        // await locator.getByRole("button", { name: "Upload dataset" }).click();
-        // // TODO need to get dialog locator
-        // await locator.getByRole("button", { name: "Upload", exact: true }).click();
-        // await locator.getByRole("button", { name: "Close" }).click();
+        // ----- Upload -----
+        await locator.getByRole("button", { name: "Upload dataset" }).click();
+        const dialog = page.locator("dialog.cean-modal-dialog");
+        await dialog.getByRole("button", { name: "Upload", exact: true }).click();
+        await dialog.getByRole("button", { name: "Close" }).click();
 
-        // TODO catch assertion failures
-        expect(await page.notebook.runCell(1));
-        expect(await page.notebook.runCell(2));
+        // ----- Check -----
+        for (let i = 1; i < 7; ++i) {
+            await expectRunCellWithoutError(page, i);
+        }
     });
 
     test("Create widget with initial data", async ({ page }) => {
@@ -129,13 +163,13 @@ test.describe("Dataset upload", () => {
         );
 
         // Owners
-        const names = locator.getByLabel(/^Name$/);
+        const names = locator.getByLabel("Name", { exact: true });
         await expect(names, "Number of names").toHaveCount(2);
         expect(await names.nth(0).inputValue(), "Owner Name 1").toBe("Ponder Stibbons");
         expect(await names.nth(1).inputValue(), "Owner Name 2").toBe(
             "Mustrum Ridcully",
         );
-        const emails = locator.getByLabel(/^Email$/);
+        const emails = locator.getByLabel("Email", { exact: true });
         await expect(emails, "Number of emails").toHaveCount(2);
         expect(await emails.nth(0).inputValue(), "Owner Email 1").toBe(
             "stibbons@uu.edu",
@@ -189,7 +223,7 @@ test.describe("Dataset upload", () => {
         }
 
         // ----- Files -----
-        await locator.getByRole("tab", { name: /Files/ }).click();
+        await locator.getByRole("tab", { name: "Files" }).click();
         expect(await locator.getByLabel("Source folder").inputValue()).toBe(
             "/scicat/upload",
         );
@@ -210,4 +244,19 @@ function expectDate(date: string, time: string, expected: string, message: strin
 
     expect(date, `${message} date`).toBe(`${year}-${month}-${day}`);
     expect(time, `${message} time`).toBe(`${hours}:${minutes}:${seconds}`);
+}
+
+async function expectRunCellWithoutError(page: IJupyterLabPageFixture, index: number) {
+    expect(await page.notebook.runCell(index));
+    const output = (await page.notebook.getCellOutputLocator(index))!;
+    expect(await output.textContent(), "Output contains no error").not.toMatch(
+        /error/i,
+    );
+}
+
+async function fillMulti(input: Locator, values: string[]) {
+    for (const value of values) {
+        await input.fill(value);
+        await input.press("Enter");
+    }
 }
