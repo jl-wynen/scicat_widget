@@ -38,7 +38,7 @@ jobs:
       - name: Typecheck Python
         run: uv run --group=dev python -m mypy .
 
-  tests:
+  base-tests:
     name: Tests
     strategy:
       matrix:
@@ -46,9 +46,19 @@ jobs:
           - { python: '3.11', os: ubuntu-24.04 }
           - { python: '3.11', os: macos-14 }
           - { python: '3.11', os: windows-2025 }
-    uses: ./.github/workflows/test.yml
+    uses: ./.github/workflows/base-test.yml
     with:
       os-variant: ${{ matrix.os }}
+      python-version: ${{ matrix.python }}
+
+  ui-tests:
+    name: Tests
+    strategy:
+      matrix:
+        include:
+          - { python: '3.11' }
+    uses: ./.github/workflows/ui-test.yml
+    with:
       python-version: ${{ matrix.python }}
 
   build:
