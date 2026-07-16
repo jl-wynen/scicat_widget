@@ -19,9 +19,32 @@ on:
         type: string
 
 jobs:
-  tests:
-    name: Tests ${{ inputs.os-variant }} py${{ inputs.python-version }}
+  base-tests:
+    name: Basic Tests ${{ inputs.os-variant }} py${{ inputs.python-version }}
     runs-on: ${{ inputs.os-variant }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Node
+        uses: actions/setup-node@v6
+        with:
+          node-version: lts/*
+      - name: Install dependencies
+        run: npm ci
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          python-version: "${{ inputs.python-version }}"
+      - name: Install Python packages
+        run: uv sync
+
+      - name: Run Tests
+        run: uv run pytest
+
+  # Playwright tests only work on Linux because they use a custom container.
+  ui-tests:
+    name: Tests py${{ inputs.python-version }}
+    runs-on: ubuntu-24.04
+    if: ${{ inputs.os-variant == 'ubuntu-24.04' }}
     # Use the official Playwright image to avoid the dependency installation stalling
     # on Ubuntu, see https://github.com/microsoft/playwright/issues/34297
     container:
