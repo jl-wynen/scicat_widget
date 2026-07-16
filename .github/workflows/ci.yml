@@ -40,13 +40,26 @@ jobs:
 
   tests:
     name: Tests
+    strategy:
+      matrix:
+        include:
+          - { python: '3.11', os: ubuntu-24.04 }
+          - { python: '3.11', os: macos-14 }
+          - { python: '3.11', os: windows-2025 }
     uses: ./.github/workflows/test.yml
     with:
-      python-version: '3.11'
+      os-variant: ${{ matrix.os }}
+      python-version: ${{ matrix.python }}
 
   build:
     name: Build
-    runs-on: ubuntu-24.04
+    strategy:
+      matrix:
+        include:
+          - { python: '3.11', os: ubuntu-24.04 }
+          - { python: '3.11', os: macos-14 }
+          - { python: '3.11', os: windows-2025 }
+    runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
       - name: Install Node
@@ -55,5 +68,7 @@ jobs:
         run: npm install
       - name: Install uv
         uses: astral-sh/setup-uv@v7
+      - name: Pin Python version
+        run: uv python pin ${{ matrix.python }}
       - name: Build package
         run: uv build
