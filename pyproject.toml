@@ -46,8 +46,8 @@ test = [
 
 [project.urls]
 # "Documentation" = "https://scicatproject.github.io/scitacean"
-"Bug Tracker" = "https://github.com/jl-wynen/scicat_widget/issues"
-"Source" = "https://github.com/jl-wynen/scicat_widget"
+"Bug Tracker" = "https://github.com/SciCatProject/scicat_widget"
+"Source" = "https://github.com/SciCatProject/scicat_widget"
 
 [tool.hatch.build]
 only-packages = true
