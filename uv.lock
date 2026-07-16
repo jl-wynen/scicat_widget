@@ -799,15 +799,15 @@ wheels = [
 
 [[package]]
 name = "jupyter-host-file-picker"
-version = "26.6.0"
+version = "26.7.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "anywidget" },
     { name = "ipykernel" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4e/1c/29d0685b307175662db72d1cef0c5b4579f743a489d8b6251eed34c2cd13/jupyter_host_file_picker-26.6.0.tar.gz", hash = "sha256:882d1506380608351c31f19e1e2d619e5ad2b69d1f73160cc0a1367c4aa512f7", size = 100281, upload-time = "2026-06-25T12:01:46.172Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/47/d2/f540051588450eebabd62c37e6b719b461ecb0903cd865c894edab59baf8/jupyter_host_file_picker-26.7.0.tar.gz", hash = "sha256:f20e4183d329e70231bbb50506c152a24afdc490e95b01c9cd0f20ddfb66d2d1", size = 100429, upload-time = "2026-07-16T10:54:36.632Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ba/e9/25da7eb03731ffae267505ce0b368d17b3d59adbb60941493235f68b7e92/jupyter_host_file_picker-26.6.0-py3-none-any.whl", hash = "sha256:1e2ee2eb71b5018ca5fa36276710b5dfcd5fa5e1143fef49774027957202ffc2", size = 100884, upload-time = "2026-06-25T12:01:44.552Z" },
+    { url = "https://files.pythonhosted.org/packages/53/5f/8395a317965b534dccc8ae30e496679964de7685c3e28ca1a795c9c6aea2/jupyter_host_file_picker-26.7.0-py3-none-any.whl", hash = "sha256:ae3437e6efa0a08f437b83aaed54848c2cebe3ab82fef69aa5530314dffd4e7a", size = 101061, upload-time = "2026-07-16T10:54:35.16Z" },
 ]
 
 [[package]]
@@ -1956,7 +1956,7 @@ test = [
 requires-dist = [
     { name = "anywidget", specifier = ">=0.9.21" },
     { name = "ipykernel", specifier = ">=6.30.1" },
-    { name = "jupyter-host-file-picker", specifier = ">=26.6.0" },
+    { name = "jupyter-host-file-picker", specifier = ">=26.7.0" },
     { name = "pydantic", specifier = ">=2.12" },
     { name = "scitacean", specifier = ">=26.7.1" },
 ]

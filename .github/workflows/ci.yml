@@ -38,14 +38,35 @@ jobs:
       - name: Typecheck Python
         run: uv run --group=dev python -m mypy .
 
-  tests:
+  base-tests:
     name: Tests
-    uses: ./.github/workflows/test.yml
+    strategy:
+      matrix:
+        include:
+          - { python: '3.11', os: ubuntu-24.04 }
+          - { python: '3.11', os: macos-14 }
+          - { python: '3.11', os: windows-2025 }
+    uses: ./.github/workflows/base-test.yml
     with:
-      python-version: '3.11'
+      os-variant: ${{ matrix.os }}
+      python-version: ${{ matrix.python }}
+
+  ui-tests:
+    name: Tests
+    strategy:
+      matrix:
+        include:
+          - { python: '3.11' }
+    uses: ./.github/workflows/ui-test.yml
+    with:
+      python-version: ${{ matrix.python }}
 
   build:
     name: Build
+    strategy:
+      matrix:
+        include:
+          - { python: '3.11' }
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
@@ -53,8 +74,9 @@ jobs:
         uses: actions/setup-node@v6
       - name: Install Javascript dependencies
         run: npm install
-
       - name: Install uv
         uses: astral-sh/setup-uv@v7
-      - name: Typecheck Python
+      - name: Pin Python version
+        run: uv python pin ${{ matrix.python }}
+      - name: Build package
         run: uv build
