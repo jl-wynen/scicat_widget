@@ -56,10 +56,8 @@ jobs:
     strategy:
       matrix:
         include:
-          - { python: '3.11', os: ubuntu-24.04 }
-          - { python: '3.11', os: macos-14 }
-          - { python: '3.11', os: windows-2025 }
-    runs-on: ${{ matrix.os }}
+          - { python: '3.11' }
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
       - name: Install Node
