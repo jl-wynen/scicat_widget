@@ -68,7 +68,7 @@ source = "vcs"
 
 [tool.pytest.ini_options]
 minversion = "7.0"
-testpaths = "tests"
+testpaths = "tests/python"
 addopts = """
 --strict-config
 --strict-markers
@@ -77,6 +77,8 @@ addopts = """
 """
 filterwarnings = [
     "error",
+    # From anywidget
+    "ignore:Passing unrecognized arguments to super:DeprecationWarning",
 ]
 
 [tool.mypy]
