@@ -47,9 +47,8 @@ class DatasetUploadWidget(anywidget.AnyWidget):
             config=config.model_dump(),
             initial=initial_data,
             staticData=static,
-            client=client,  # TODO create client here if not given
         )
-        self.client = client
+        self.client = client  # TODO create client here if not given
 
         # This `Output` is displayed alongside `self` so that sub widgets,
         # e.g., a file picker can be attached to it and displayed.

@@ -77,8 +77,6 @@ addopts = """
 """
 filterwarnings = [
     "error",
-    # From anywidget
-    "ignore:Passing unrecognized arguments to super:DeprecationWarning",
 ]
 
 [tool.mypy]
