@@ -22,7 +22,7 @@ export class DatetimeInput extends InputComponent<Date> {
 
         const wrap = document.createElement("div");
         wrap.className = "cean-datetime-input";
-        wrap.append(dateElement, timeElement);
+        wrap.append(dateElement, timeElement, createTimezoneElement());
 
         super(key, wrap, options);
         this.dateElement = dateElement;
@@ -66,4 +66,17 @@ export class DatetimeInput extends InputComponent<Date> {
         this.dateElement.disabled = true;
         this.timeElement.disabled = true;
     }
+}
+
+function getLocalTimezoneLabel(): string {
+    return Intl.DateTimeFormat().resolvedOptions().timeZone || "Local";
+}
+
+function createTimezoneElement(): HTMLSpanElement {
+    const timezoneLabel = document.createElement("span");
+    timezoneLabel.className = "cean-datetime-timezone";
+    timezoneLabel.textContent = getLocalTimezoneLabel();
+    timezoneLabel.title =
+        "Dates and times are in your browser's local timezone. They will be converted to Universal Coordinated Time (UTC) during upload.";
+    return timezoneLabel;
 }

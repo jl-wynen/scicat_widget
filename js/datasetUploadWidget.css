@@ -205,9 +205,15 @@ input.cean-input, select.cean-input, textarea.cean-input {
 
 .cean-datetime-input {
     display: grid;
-    grid-template-columns: max-content max-content;
+    grid-template-columns: max-content max-content auto;
     gap: 10px 0;
-    align-items: start;
+    align-items: center;
+}
+
+.cean-datetime-timezone {
+    color: var(--jp-ui-font-color2);
+    white-space: nowrap;
+    margin-left: 0.6em;
 }
 
 .cean-radio-group {
