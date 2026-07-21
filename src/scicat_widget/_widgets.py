@@ -147,7 +147,8 @@ def _serialize_dataset(dataset: Dataset) -> dict[str, Any]:
     if "sourceFolder" in set:
         set["sourceFolder"] = set["sourceFolder"].posix
     if "contactEmail" in set:
-        set["contactEmails"] = set.pop("contactEmail").split(";")
+        mails = set.pop("contactEmail").split(";")
+        set["contactEmails"] = [] if len(mails) == 1 and not mails[0] else mails
     if "inputDatasets" in set:
         set["inputDatasets"] = [str(pid) for pid in set["inputDatasets"]]
 
