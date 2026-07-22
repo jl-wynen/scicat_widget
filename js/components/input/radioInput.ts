@@ -37,6 +37,13 @@ export class RadioInput extends InputComponent<string> {
         this.customCheckbox = customCheckbox;
         this.customInput = customInput;
 
+        this.checkboxes().forEach((checkbox) => {
+            checkbox.addEventListener("click", () => {
+                this.updated(true);
+            });
+        });
+        this.triggerUpdatesFrom(this.customInput);
+
         this.setupValidation();
         if (options.initial !== undefined) this.setSignaling(options.initial, false);
     }
