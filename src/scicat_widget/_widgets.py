@@ -34,13 +34,13 @@ class DatasetUploadWidget(anywidget.AnyWidget):
     staticData = traitlets.Dict().tag(sync=True)
 
     def __init__(
-            self,
-            client: Client,
-            /,
-            *,
-            initial: Dataset | None = None,
-            locked: Iterable[str] = (),
-            skip_confirm: bool = False,
+        self,
+        client: Client,
+        /,
+        *,
+        initial: Dataset | None = None,
+        locked: Iterable[str] = (),
+        skip_confirm: bool = False,
     ) -> None:
         config = _build_config(client, locked=locked, skip_confirm=skip_confirm)
         initial_data, static = _collect_initial_data(client, initial)
@@ -62,7 +62,7 @@ class DatasetUploadWidget(anywidget.AnyWidget):
         self.on_msg(handle_event)
 
     def _repr_mimebundle_(
-            self, **kwargs: Any
+        self, **kwargs: Any
     ) -> tuple[dict[Any, Any], dict[Any, Any]] | None:
         # This is a bit hacky, but it allows us to display this DatasetUploadWidget like
         # normal while also placing the aux output widget next to it.
@@ -78,10 +78,10 @@ class DatasetUploadWidget(anywidget.AnyWidget):
 
 
 def _build_config(
-        client: Client,
-        *,
-        locked: Iterable[str],
-        skip_confirm: bool,
+    client: Client,
+    *,
+    locked: Iterable[str],
+    skip_confirm: bool,
 ) -> Config:
     profile = client.profile
     return Config(
@@ -104,7 +104,7 @@ def _extract_factory_dependencies(factory: Callable[..., object]) -> list[str]:
 
 
 def _collect_initial_data(
-        client: Client | None = None, initial: Dataset | None = None
+    client: Client | None = None, initial: Dataset | None = None
 ) -> tuple[dict[str, Any], dict[str, Any]]:
     if client is None:
         return {}, {}
@@ -124,7 +124,7 @@ def _collect_initial_data(
 
 
 def _download_scicat_data(
-        client: Client,
+    client: Client,
 ) -> tuple[dict[str, Any], list[Instrument], list[ProposalOverview], list[str]]:
     try:
         user_info, instruments = get_user_and_scicat_info(client)
