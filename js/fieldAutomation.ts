@@ -69,6 +69,19 @@ function connectHardCoded(
             }
         },
     );
+
+    connectInputPair(
+        inputs,
+        "type",
+        "inputDatasets",
+        (datasetType: InputComponent<string>, inputDatasets: string[] | null) => {
+            if (inputDatasets === null || inputDatasets.length == 0) {
+                datasetType.setSignaling("raw", false);
+            } else {
+                datasetType.setSignaling("derived", false);
+            }
+        },
+    );
 }
 
 function connectUserDefined(

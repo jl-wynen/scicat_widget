@@ -107,7 +107,7 @@ function makeDatasetTypeInput(): RadioInput {
                     "A dataset with predecessors (specify in 'Input datasets')",
             },
         ],
-        initial: "derived",
+        initial: "raw",
     });
 }
 
