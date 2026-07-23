@@ -68,6 +68,7 @@ const FA_ICONS = [
     "folder-open",
     "pen",
     "plus",
+    "sign-in-alt",
     "times-circle",
     "trash",
 ];
